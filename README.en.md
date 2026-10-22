@@ -1,36 +1,60 @@
 # In this life I have infinite tokens.
 
-#### Description
-{**When you're done, you can delete the content in this README and update the file with details for others getting started with your repository**}
+A cross-platform desktop calculator written with **plain JDK (Java 21 + Swing)** — no third-party
+dependencies, no Maven/Gradle. It builds, runs and packages into native installers on Windows and macOS.
+
+#### Features
+
+- Full expression evaluation with `+ - * / % ^`, parentheses, decimals and unary signs
+- Right-associative power: `2^3^2 = 512`
+- Keyboard: `Enter` evaluate, `Esc` clear, `Backspace` delete, `Ctrl+C` copy result, `Ctrl+A` recall last expression
+- Operators typed after a result continue from that result
+- Chinese error messages for divide-by-zero and mismatched parentheses
+- Native look and feel, HiDPI aware
 
 #### Software Architecture
-Software architecture description
+
+```
+src/main/java/com/helloworld/taiin/calculator/
+    ExpressionEvaluator.java   Recursive-descent evaluator (UI-independent)
+    CalculatorFrame.java       Swing UI and key handling
+src/test/java/com/helloworld/taiin/calculator/
+    EvaluatorTest.java         25 evaluator checks
+    UiTest.java                6 UI key checks (skipped when headless)
+scripts/
+    build.ps1                  Windows build script
+    build.sh                   macOS / Linux build script
+```
 
 #### Installation
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+Requires **JDK 21 or newer** (a full JDK — a JRE has no `javac`, `jar` or `jpackage`).
+
+1. `java -version`
+2. Clone the repository
+3. `scripts\build.ps1 -Task build` (macOS / Linux: `scripts/build.sh build`)
 
 #### Instructions
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+| Action | Windows | macOS / Linux |
+| --- | --- | --- |
+| Run | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
+| Run all tests | `scripts\build.ps1 -Task test` | `scripts/build.sh test` |
+| Build runnable jar | `scripts\build.ps1 -Task jar` → `dist\Calculator.jar` | `scripts/build.sh jar` |
+| Build installer | `scripts\build.ps1 -Task package` | `scripts/build.sh package` |
+| Clean | `scripts\build.ps1 -Task clean` | `scripts/build.sh clean` |
+
+Packaging notes:
+
+- **Windows**: builds an `msi`, which needs [WiX Toolset 3](https://wixtoolset.org/). When WiX is
+  missing the script falls back to `dist\Calculator\Calculator.exe`, a portable app you can double-click.
+- **macOS**: builds a `dmg` in `dist/`.
+
+You can also run the jar directly: `java -jar dist\Calculator.jar`.
 
 #### Contribution
 
-1.  Fork the repository
-2.  Create Feat_xxx branch
-3.  Commit your code
-4.  Create Pull Request
-
-
-#### Gitee Feature
-
-1.  You can use Readme\_XXX.md to support different languages, such as Readme\_en.md, Readme\_zh.md
-2.  Gitee blog [blog.gitee.com](https://blog.gitee.com)
-3.  Explore open source project [https://gitee.com/explore](https://gitee.com/explore)
-4.  The most valuable open source project [GVP](https://gitee.com/gvp)
-5.  The manual of Gitee [https://gitee.com/help](https://gitee.com/help)
-6.  The most popular members  [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+1. Fork the repository
+2. Create a Feat_xxx branch
+3. Commit your code
+4. Open a Pull Request
