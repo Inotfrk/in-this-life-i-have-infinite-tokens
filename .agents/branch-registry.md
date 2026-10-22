@@ -19,6 +19,7 @@ hello-world-tai-this-...  ← 账号段：Gitee 账号名，固定
 | 本地仓库路径 | 账号段 | 电脑段 | 基础分支 | 登记日期 |
 | --- | --- | --- | --- | --- |
 | `D:\BaiduSyncdisk\comhello-world-taiin-this-life-i-have-infinite-tokens` | `hello-world-tai` | `Fairy` | `hello-world-tai-Fairy-Main` | 2026-10-22 |
+| `/home/ql_leo/AIY_repo` | `hello-world-tai` | `FedoraChan` | `hello-world-tai-FedoraChan-Main` | 2026-10-22 |
 
 > 新电脑第一次工作时，agent 追加一行并创建 `<账号段>-<电脑段>-Main`（从最新 `gitee/master` 切出）。
 
@@ -28,6 +29,7 @@ hello-world-tai-this-...  ← 账号段：Gitee 账号名，固定
 | --- | --- | --- | --- |
 | `hello-world-tai-Fairy-Main` | `master`（远端） | 本机基础分支，集成该机器的所有工作 | 使用中 |
 | `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支 |
+| `hello-world-tai-FedoraChan-Main` | `master`（远端） | 本机基础分支（`/home/ql_leo/AIY_repo`，hostname `FedoraChan`） | 使用中 |
 
 > 子分支示例：`hello-world-tai-Fairy-text` 的父分支为 `hello-world-tai-Fairy-Main`。
 > 子分支完成后合并回父分支，再由父分支决定是否进入 `master`。
