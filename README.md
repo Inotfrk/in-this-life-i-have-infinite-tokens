@@ -52,6 +52,15 @@ scripts/
 
 已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
 
+#### Agent 协作规则
+
+本仓库由多个 agent 协作维护，规则写在 [AGENTS.md](AGENTS.md)（每次对话自动加载）：
+
+- 平台配置与本仓库文件免询问；仓库外的改动需要同意
+- 一机一分支 `<账号段>-<电脑段>-<后缀>`，登记在 [.agents/branch-registry.md](.agents/branch-registry.md)
+- 每轮迭代完成后 push 本机分支，小功能完成后合并 `master`
+- 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务
+
 #### 参与贡献
 
 1. Fork 本仓库
