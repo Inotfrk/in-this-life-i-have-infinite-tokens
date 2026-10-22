@@ -46,9 +46,23 @@ Requires **JDK 21 or newer** (a full JDK — a JRE has no `javac`, `jar` or `jpa
 
 Packaging notes:
 
-- **Windows**: builds an `msi`, which needs [WiX Toolset 3](https://wixtoolset.org/). When WiX is
-  missing the script falls back to `dist\Calculator\Calculator.exe`, a portable app you can double-click.
-- **macOS**: builds a `dmg` in `dist/`.
+- **Windows**: one run produces both
+  - `dist\Calculator\Calculator.exe` — portable app, no install needed; zipped into
+    `dist\Calculator-<version>-windows-x64-portable.zip`
+  - `dist\Calculator-<version>.msi` — installer, requires [WiX Toolset 3](https://wixtoolset.org/)
+    on `PATH`. Without WiX only the msi step is skipped; the portable build still succeeds
+- **macOS**: one run produces `dist/Calculator.app` (portable) and `dist/Calculator-<version>.dmg`
+- **Version**: `-Task package -Version 1.2.0` (Windows) or `APP_VERSION=1.2.0 scripts/build.sh package`
+
+Cross-platform packaging runs in CI, so neither platform has to be built by hand:
+
+| Platform | File | Artifacts |
+| --- | --- | --- |
+| GitHub Actions | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`, Windows `zip` + `msi`, uploaded as artifacts |
+| Gitee Go | [.workflow/package.yml](.workflow/package.yml) | runs tests on Linux and archives the cross-platform `Calculator.jar` |
+
+CI runs on pushes to `master` / `hello-world-tai-*-Main` / `v*` tags, or manually via
+`workflow_dispatch` (version can be overridden). Artifacts are kept for 30 days.
 
 You can also run the jar directly: `java -jar dist\Calculator.jar`.
 

@@ -1,0 +1,121 @@
+name: package
+
+# 在原生 macOS / Windows runner 上打包，产物作为 workflow artifact 上传：
+#   macOS  : dist/Calculator-<version>.dmg（外加便携 Calculator.app）
+#   Windows: dist/Calculator-<version>.msi + dist/Calculator-<version>-windows-x64-portable.zip（内含 Calculator.exe）
+
+on:
+  push:
+    branches:
+      - master
+      - 'hello-world-tai-*-Main'
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 应用版本号（默认 1.0.0）
+        required: false
+        default: '1.0.0'
+
+permissions:
+  contents: read
+
+env:
+  APP_VERSION: ${{ github.event.inputs.version || '1.0.0' }}
+
+jobs:
+  test:
+    name: test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-14]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Run tests (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: powershell -NoProfile -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test
+      - name: Run tests (macOS / Linux)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: bash scripts/build.sh test
+
+  package:
+    name: package (${{ matrix.name }})
+    needs: test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: macos-arm64
+            os: macos-14
+            artifact: macos-arm64-dmg
+          - name: macos-x64
+            os: macos-13
+            artifact: macos-x64-dmg
+          - name: windows-x64
+            os: windows-latest
+            artifact: windows-installer
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Install WiX Toolset 3 (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: choco install wixtoolset --version=3.14.1 --no-progress -y
+
+      - name: Build macOS dmg
+        if: runner.os == 'macOS'
+        shell: bash
+        run: APP_VERSION="$APP_VERSION" bash scripts/build.sh package
+
+      - name: Build Windows exe and msi
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          # WiX installs into a versioned folder; add it to PATH for this session.
+          $wix = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset*' -Directory -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if ($wix) { $env:Path = "$($wix.FullName);$env:Path" }
+          if (-not (Get-Command candle.exe -ErrorAction SilentlyContinue)) {
+            throw 'WiX Toolset 3 is not on PATH; cannot build the msi'
+          }
+          powershell -NoProfile -ExecutionPolicy Bypass -File scripts\build.ps1 -Task package -Version $env:APP_VERSION
+
+      - name: Verify artifacts
+        shell: bash
+        run: |
+          echo '--- dist ---'
+          ls -la dist
+          if [ "${{ runner.os }}" = 'macOS' ]; then
+            ls -l dist/*.dmg
+            ls -d dist/Calculator.app
+            file dist/Calculator.app/Contents/runtime/Contents/Home/bin/java || true
+          else
+            ls -l dist/*.msi
+            ls -l dist/*.zip
+            ls -l dist/Calculator/Calculator.exe
+          fi
+
+      - name: Upload installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: |
+            dist/*.dmg
+            dist/*.msi
+            dist/*.zip
+          if-no-files-found: error
+          retention-days: 30

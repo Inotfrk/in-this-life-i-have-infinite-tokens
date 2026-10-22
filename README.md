@@ -46,9 +46,23 @@ scripts/
 
 安装包说明：
 
-- **Windows**：默认打包 `msi`，需要安装 [WiX Toolset 3](https://wixtoolset.org/)；
-  未安装时会自动退回到 `dist\Calculator\Calculator.exe`（免安装绿色版，双击即用）。
-- **macOS**：打包 `dmg`，产物在 `dist/`。
+- **Windows**：一次打包同时产出两个结果
+  - `dist\Calculator\Calculator.exe`：免安装绿色版，双击即用；同时压成
+    `dist\Calculator-<版本>-windows-x64-portable.zip` 方便分发
+  - `dist\Calculator-<版本>.msi`：安装包，需要 [WiX Toolset 3](https://wixtoolset.org/) 在 PATH 上；
+    没有 WiX 时只跳过 msi，绿色版照常生成，脚本仍以成功退出
+- **macOS**：一次打包产出 `dist/Calculator.app`（便携）与 `dist/Calculator-<版本>.dmg`（安装包）
+- **版本号**：`-Task package -Version 1.2.0`（Windows）或 `APP_VERSION=1.2.0 scripts/build.sh package`
+
+跨平台打包在 CI 上跑，本地不需要装 mac 也不需要买 Mac 就能出两个平台的包：
+
+| 平台 | 位置 | 产物 |
+| --- | --- | --- |
+| GitHub Actions | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
+| Gitee Go | [.workflow/package.yml](.workflow/package.yml) | Linux 上跑测试并归档跨平台 `Calculator.jar` |
+
+CI 触发方式：push 到 `master` / `hello-world-tai-*-Main` / `v*` 标签，或在 Actions 页面手动
+`workflow_dispatch`（可填版本号）。artifacts 保留 30 天。
 
 已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
 
