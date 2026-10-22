@@ -2,7 +2,8 @@
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test
 param(
     [ValidateSet('build', 'test', 'run', 'jar', 'package', 'clean')]
-    [string]$Task = 'build'
+    [string]$Task = 'build',
+    [string]$Version = '1.0.0'
 )
 
 $ErrorActionPreference = 'Stop'
@@ -68,6 +69,31 @@ function Invoke-Jar {
     Write-Host "Jar -> $jarPath"
 }
 
+function Get-PlatformTag {
+    $arch = 'x64'
+    if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { $arch = 'arm64' }
+    return "windows-$arch"
+}
+
+function Invoke-AppImage {
+    param([string]$Stage)
+    # jpackage refuses to overwrite an existing app-image directory.
+    $appDir = Join-Path $dist $appName
+    if (Test-Path $appDir) { Remove-Item -Recurse -Force $appDir }
+    $jpackageArgs = @(
+        '--type', 'app-image',
+        '--name', $appName,
+        '--app-version', $Version,
+        '--input', $Stage,
+        '--main-jar', "$appName.jar",
+        '--main-class', $mainClass,
+        '--dest', $dist,
+        '--java-options', '-Dfile.encoding=UTF-8'
+    )
+    & $jpackageExe @jpackageArgs
+    if ($LASTEXITCODE -ne 0) { throw 'jpackage app-image failed' }
+}
+
 function Invoke-Package {
     Invoke-Jar
     if (-not (Test-Path $jpackageExe)) {
@@ -80,32 +106,49 @@ function Invoke-Package {
     Copy-Item (Join-Path $dist "$appName.jar") $stage
     New-Item -ItemType Directory -Force -Path $dist | Out-Null
 
-    $type = 'deb'
-    if ($env:OS -eq 'Windows_NT') { $type = 'msi' }
-    elseif (Get-Command sw_vers -ErrorAction SilentlyContinue) { $type = 'dmg' }
+    $isWindows = $env:OS -eq 'Windows_NT'
+    $isMac = -not $isWindows -and [bool](Get-Command sw_vers -ErrorAction SilentlyContinue)
 
-    $jpackageArgs = @(
-        '--type', $type,
-        '--name', $appName,
-        '--app-version', '1.0.0',
-        '--input', $stage,
-        '--main-jar', "$appName.jar",
-        '--main-class', $mainClass,
-        '--dest', $dist,
-        '--java-options', '-Dfile.encoding=UTF-8'
-    )
-    & $jpackageExe @jpackageArgs
-    if ($LASTEXITCODE -ne 0) {
-        if ($type -eq 'msi') {
-            Write-Host 'MSI failed (WiX Toolset not installed). Building a portable app-image instead...'
-            & $jpackageExe '--type', 'app-image', '--name', $appName, '--app-version', '1.0.0',
-                '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
-                '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
-            if ($LASTEXITCODE -ne 0) { throw 'jpackage failed' }
-            Write-Host "Portable app -> $(Join-Path $dist $appName)"
-            return
+    # Portable build first: it needs neither WiX nor Xcode tooling.
+    Invoke-AppImage -Stage $stage
+    if ($isWindows) {
+        $zip = Join-Path $dist "$appName-$Version-$(Get-PlatformTag)-portable.zip"
+        if (Test-Path $zip) { Remove-Item -Force $zip }
+        Compress-Archive -Path (Join-Path $dist $appName) -DestinationPath $zip
+        Write-Host "Portable exe -> $(Join-Path $dist "$appName\$appName.exe")"
+        Write-Host "Portable zip -> $zip"
+    }
+
+    if ($isWindows) {
+        $msi = Join-Path $dist "$appName-$Version.msi"
+        if (Test-Path $msi) { Remove-Item -Force $msi }
+        & $jpackageExe '--type', 'msi', '--name', $appName, '--app-version', $Version,
+            '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
+            '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
+        if ($LASTEXITCODE -ne 0) {
+            Write-Warning 'MSI build failed (install WiX Toolset 3 to get an installer). Portable exe/zip is still available.'
+            exit 0
+        } else {
+            Write-Host "Installer -> $(Join-Path $dist "$appName-$Version.msi")"
         }
-        throw 'jpackage failed'
+        return
+    }
+
+    if ($isMac) {
+        & $jpackageExe '--type', 'dmg', '--name', $appName, '--app-version', $Version,
+            '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
+            '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
+        if ($LASTEXITCODE -ne 0) { throw 'DMG build failed' }
+        Write-Host "Installer -> $(Join-Path $dist "$appName-$Version.dmg")"
+        return
+    }
+
+    & $jpackageExe '--type', 'deb', '--name', $appName, '--app-version', $Version,
+        '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
+        '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning 'DEB build failed (dpkg/fakeroot/rpmbuild missing). Portable app-image is still available.'
+        return
     }
     Write-Host "Installer -> $dist"
 }
