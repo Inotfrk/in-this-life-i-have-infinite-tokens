@@ -103,3 +103,8 @@ scripts/build.sh test                                                   # macOS 
 - 格式：`<type>: <一句话说明>`，`type` 取 `feat` / `fix` / `docs` / `chore` / `refactor` / `test`。
 - 正文用中文说明「改了什么、为什么改」，涉及任务时附上 `TODO.md` 的任务 ID。
 - 结尾保留 `Co-authored-by` trailer。
+
+## 6. 共享信息
+
+Agents可以在 [NOTE.md](NOTE.md)中以 <ISO8601时间戳>[命名格式]文本信息 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
+- 示例:<2026-10-22T22:21:23+08:00>[ql_leo-FedoraChan-test]测试消息
