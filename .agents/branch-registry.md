@@ -27,6 +27,7 @@ hello-world-tai-this-...  ← 账号段：Gitee 账号名，固定
 | 分支 | 父分支 | 用途 | 状态 |
 | --- | --- | --- | --- |
 | `hello-world-tai-Fairy-Main` | `master`（远端） | 本机基础分支，集成该机器的所有工作 | 使用中 |
+| `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支 |
 
 > 子分支示例：`hello-world-tai-Fairy-text` 的父分支为 `hello-world-tai-Fairy-Main`。
 > 子分支完成后合并回父分支，再由父分支决定是否进入 `master`。
