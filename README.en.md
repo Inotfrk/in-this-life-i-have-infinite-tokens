@@ -86,20 +86,39 @@ You can also run the jar directly: `java -jar dist\Calculator.jar`.
 
 #### How to use this repository (read this first)
 
-The point of the repo is not only the calculator but the workflow it demonstrates:
+The point of the repo is not only the calculator but the workflow it demonstrates. There are exactly three
+branch layers, and changes only flow **upwards**:
 
-1. **One branch per machine**: name branches `<account>-<machine>-<suffix>`, e.g.
-   `hello-world-tai-Fairy-Main`. The account segment is the Gitee account name, the machine segment is
-   `hostname`, the suffix is yours; each machine's base branch always uses the `Main` suffix.
-2. **Sub-branches start from the local `-Main`** and merge back into it, which then decides whether the
-   work goes to `master`. `master` only takes pull requests.
-3. **Register before you work**: repository paths, parents and purposes live in
+| Layer | Branch | What it is |
+| --- | --- | --- |
+| 1 | `master` | **Released version** — always ready to ship |
+| 2 | `develop` | **Development mainline** — where every developer converges |
+| 3 | `<account>-<machine>-<suffix>` | **Your own branch** — push any time, isolated from others |
+
+```mermaid
+flowchart BT
+    A["Layer 3: hello-world-tai-Fairy-ui<br/>(local work, push freely)"] --> B["Layer 3: hello-world-tai-Fairy-Main<br/>(machine base branch)"]
+    B --> C["Layer 2: develop<br/>(development mainline)"]
+    C --> D["Layer 1: master<br/>(released version)"]
+```
+
+1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-Fairy-ui`.
+   The account segment is the Gitee account name, the machine segment is `hostname`, the suffix is yours;
+   each machine's base branch always uses the `Main` suffix.
+2. **Merge back into the local `-Main`** when a sub-branch is done; `-Main` is that machine's integration branch.
+3. **Move `-Main` into `develop`** once a batch is ready — the single convergence point for all developers.
+4. **`develop` promotes itself into `master`**: run `scripts\release.ps1` (macOS / Linux: `scripts/release.sh`),
+   which runs the tests, merges with `--no-ff` and tags `v<date>`. With Gitee Go enabled,
+   [.workflow/release.yml](.workflow/release.yml) does the same automatically on every `develop` push.
+5. **Register before you work**: repository paths, parents and purposes live in
    [.agents/branch-registry.md](.agents/branch-registry.md); agents use the repository path to identify
    which machine they run on.
-4. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
+6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.
-5. **Verify before committing**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).
-   Push the machine branch after each iteration; merge into `master` when a small feature is done.
+7. **Verify before promoting**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).
+
+Neither `master` nor `develop` takes direct commits: the former only receives layer-2 promotions, the latter
+only layer-3 merges.
 
 Full rules are in [AGENTS.md](AGENTS.md) (loaded on every conversation); agent notes are in [NOTE.md](NOTE.md).
 
@@ -107,5 +126,5 @@ Full rules are in [AGENTS.md](AGENTS.md) (loaded on every conversation); agent n
 
 1. Fork the repository
 2. Branch off the local `-Main` as `<account>-<machine>-<suffix>`
-3. Commit your code with tests passing
-4. Open a Pull Request
+3. Commit with tests passing, then merge back into `-Main`
+4. Open a pull request against `develop`; `master` is promoted automatically

@@ -23,7 +23,8 @@
 3. 按 `目标分支` 工作：分支不存在就从本机 `-Main` 切出并在
    [.agents/branch-registry.md](.agents/branch-registry.md) 的「子分支」表登记父分支。
 4. 每轮迭代通过验收后 commit + push 到当前分支（见 AGENTS.md 2.5）。
-5. 任务完成：状态改 `done`，合并回本机 `-Main`；属于完整小功能的再合并并 push `master`。
+5. 任务完成：状态改 `done`，合并回本机 `-Main`；再由 `-Main` 进入 `develop`，
+   `develop` 经 `scripts/release` 自动推进 `master`（三层流，见 AGENTS.md 2.5 / 第 8 节）。
 6. 需求不清或受阻：状态改 `blocked`，在说明里写清缺什么决策，不做猜测性改动。
 7. 队列为空 → 不改动任何代码，直接结束。
 
@@ -41,6 +42,32 @@
 - 说明：README 已把 C++17 单文件计算器作为主线描述，但仓库里尚无 `calculator.cpp`。
   需要把 `ExpressionEvaluator` 的递归下降逻辑（`+ - * / % ^`、括号、一元正负号、右结合乘方）
   转成单个 C++ 源文件，错误提示保持中文；Java 实现保留为历史示例，不删除。
+
+### T-002 上传流改为三层（master ← develop ← 本机分支）
+
+- 状态：in-progress
+- 目标分支：hello-world-tai-Fairy-flow
+- 优先级：P0
+- 依赖：无
+- 涉及文件：`AGENTS.md`、`README.md`、`README.en.md`、`.github/copilot-instructions.md`、
+  `TODO.md`、`.agents/branch-registry.md`、`scripts/release.ps1`、`scripts/release.sh`、
+  `.workflow/release.yml`
+- 验收：`scripts\build.ps1 -Task test` 全绿；`scripts\release.ps1 -DryRun` 能正确列出待发布提交
+- 说明：第一层 `master`（线上发布）← 第二层 `develop`（开发主线）← 第三层各机分支。
+  文档、规则、发布脚本一次性对齐；剩余待办是远端 `develop` 落后 `master` 15 个提交，需要先同步。
+
+### T-003 同步远端 develop 与 master
+
+- 状态：queued
+- 目标分支：hello-world-tai-Fairy-flow
+- 优先级：P0
+- 依赖：T-002
+- 涉及文件：无代码改动（纯 git 操作）
+- 验收：`git rev-list --count gitee/master..gitee/develop` 为 0 或仅领先不落后；
+  `scripts\release.ps1 -DryRun` 无冲突风险
+- 说明：`develop` 目前停在 `ca62600` Initial commit，落后 `master` 15 个提交。三层流要求
+  `develop` 是开发主线，必须先让它追上 `master`（把 `master` 合进 `develop`），否则后续
+  `develop → master` 会把历史回退。
 
 ## 已完成
 
