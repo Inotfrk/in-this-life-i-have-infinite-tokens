@@ -79,6 +79,11 @@ try {
     Invoke-Git push $remote $relBranch
     Invoke-Git push $remote $tag
 
+    # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
+    Invoke-Git switch $devBranch
+    Invoke-Git merge --ff-only $relBranch
+    Invoke-Git push $remote $devBranch
+
     Write-Host "发布完成：$devBranch -> $relBranch，标签 $tag"
 }
 finally {

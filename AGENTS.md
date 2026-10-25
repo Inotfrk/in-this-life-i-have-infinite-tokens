@@ -148,3 +148,5 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 - **远端**：`.workflow/release.yml`（Gitee Go）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
   Gitee Go 需在仓库里手动「一键开启」；未开启时以本机脚本为准。
 - 自动推进只做 fast-forward / `--no-ff` 合并，**禁止强推**；冲突时停下来报告，由人决定。
+- 发布完成后把 `master` 的合并提交快速回合到 `develop`（`git switch develop && git merge --ff-only master`），
+  否则每次 `--no-ff` 都会在两层之间留下永久偏移。
