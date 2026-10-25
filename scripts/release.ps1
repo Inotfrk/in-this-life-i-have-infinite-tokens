@@ -11,13 +11,16 @@ $remote = 'gitee'
 $devBranch = 'develop'
 $relBranch = 'master'
 
-# git 会把进度写到 stderr；Stop 模式下那会被当成终止错误，所以调用期间放宽。
+# git 会把进度写到 stderr；直接调用时 PowerShell 会把它当成错误记录打印。
+# 走 cmd.exe 包一层，把 stderr 合并进 stdout，只按退出码判断成败。
 function Invoke-GitText {
     param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
+    $quoted = $GitArgs | ForEach-Object { if ($_ -match '[\s"]') { '"' + ($_ -replace '"', '\"') + '"' } else { $_ } }
+    $command = "git -C `"$root`" $($quoted -join ' ') 2>&1"
     $previous = $ErrorActionPreference
     $ErrorActionPreference = 'Continue'
     try {
-        return (& git -C $root @GitArgs 2>&1 | Out-String)
+        return (& $env:ComSpec /c $command | Out-String)
     }
     finally {
         $ErrorActionPreference = $previous
@@ -80,7 +83,8 @@ try {
 }
 finally {
     $current = (Invoke-GitText rev-parse --abbrev-ref HEAD).Trim()
-    if ($current -ne $startBranch -and $current -ne $relBranch) {
+    if ($current -ne $startBranch) {
         $null = Invoke-GitText switch $startBranch
+        Write-Host "已切回 $startBranch"
     }
 }
