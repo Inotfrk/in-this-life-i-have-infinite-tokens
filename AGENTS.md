@@ -63,8 +63,11 @@
 | 时机 | 动作 |
 | --- | --- |
 | 每次迭代（一轮改动 / 一次答复带来的修改）完成并通过验证后 | commit 并 **push 到本机当前分支**（`git push gitee HEAD`） |
-| 一个小功能完成、测试全绿后 | 合并到 `master` 并 **push `master`**（`git switch master && git merge --no-ff <分支> && git push gitee master`） |
+| 一个小功能完成、测试全绿后 | 合并回本机 `-Main` 并 **push `-Main`**（`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push gitee HEAD`）；**不进 `master`** |
+| 需要进入 `master` | 先 push 工作分支，再开 PR；PR 通过审查与 CI 后才合并（详见第 7 节） |
 | 推送冲突 / 被拒绝 | 先 `git fetch gitee` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+
+> 推送目标与保护分支的约束以第 7 节为准；本节的 `master` 相关动作只在 PR 流程内发生。
 
 以上 push 属于用户预先授权，不需要逐次确认；`--force`、删除远端分支、改写历史仍然需要先问。
 
@@ -106,8 +109,8 @@ scripts/build.sh test                                                   # macOS 
 
 ## 6. 共享信息
 
-Agents可以在 [NOTE.md](NOTE.md)中以 <ISO8601时间戳>[命名格式]文本信息 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
-- 示例:<2026-10-22T22:21:23+08:00>[ql_leo-FedoraChan-test]测试消息
+Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本信息` 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
+- 示例：`<2026-10-22T22:21:23+08:00>[hello-world-tai-FedoraChan-Main]测试消息`
 
 ## 7. Git 分支与提交规范
 

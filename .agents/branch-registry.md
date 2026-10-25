@@ -28,7 +28,8 @@ hello-world-tai-this-...  ← 账号段：Gitee 账号名，固定
 | 分支 | 父分支 | 用途 | 状态 |
 | --- | --- | --- | --- |
 | `hello-world-tai-Fairy-Main` | `master`（远端） | 本机基础分支，集成该机器的所有工作 | 使用中 |
-| `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支 |
+| `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-sync` | `hello-world-tai-Fairy-Main` | 同步仓库并修订 AGENTS.md 规则冲突 | 使用中 |
 | `hello-world-tai-FedoraChan-Main` | `master`（远端） | 本机基础分支（`/home/ql_leo/AIY_repo`，hostname `FedoraChan`） | 使用中 |
 
 > 子分支示例：`hello-world-tai-Fairy-text` 的父分支为 `hello-world-tai-Fairy-Main`。
