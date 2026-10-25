@@ -61,6 +61,11 @@ git -C "$ROOT" merge --no-ff "$DEV_BRANCH" -m "release: 自动发布 $DEV_BRANCH
 git -C "$ROOT" tag -a "$TAG" -m "release $TAG"
 git -C "$ROOT" push "$REMOTE" "$REL_BRANCH"
 git -C "$ROOT" push "$REMOTE" "$TAG"
+
+# 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
+git -C "$ROOT" switch "$DEV_BRANCH"
+git -C "$ROOT" merge --ff-only "$REL_BRANCH"
+git -C "$ROOT" push "$REMOTE" "$DEV_BRANCH"
 git -C "$ROOT" switch "$START_BRANCH"
 
 echo "发布完成：$DEV_BRANCH -> $REL_BRANCH，标签 $TAG"
