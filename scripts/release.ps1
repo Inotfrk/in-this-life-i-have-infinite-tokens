@@ -1,4 +1,4 @@
-# 把第二层 develop 自动推进到第一层 master（见 AGENTS.md 第 8 节）。
+﻿# 把第二层 develop 自动推进到第一层 master（见 AGENTS.md 第 8 节）。
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\release.ps1 [-DryRun] [-SkipTests]
 param(
     [switch]$DryRun,
