@@ -27,9 +27,12 @@ hello-world-tai-this-...  ← 账号段：Gitee 账号名，固定
 
 | 分支 | 父分支 | 用途 | 状态 |
 | --- | --- | --- | --- |
-| `hello-world-tai-Fairy-Main` | `master`（远端） | 本机基础分支，集成该机器的所有工作 | 使用中 |
-| `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支 |
-| `hello-world-tai-FedoraChan-Main` | `master`（远端） | 本机基础分支（`/home/ql_leo/AIY_repo`，hostname `FedoraChan`） | 使用中 |
+| `hello-world-tai-Fairy-Main` | `develop`（第二层） | 本机基础分支，集成该机器的所有工作 | 使用中 |
+| `hello-world-tai-FedoraChan-Main` | `develop`（第二层） | 本机基础分支（`/home/ql_leo/AIY_repo`，hostname `FedoraChan`） | 使用中 |
+| `hello-world-tai-Fairy-packaging` | `hello-world-tai-Fairy-Main` | 打包链路：Win exe/msi + mac dmg、CI 配置 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-sync` | `hello-world-tai-Fairy-Main` | 同步仓库并修订 AGENTS.md 规则冲突 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-docs-cpp` | `hello-world-tai-Fairy-Main` | README 主描述改为 C++17 单文件计算器、补充仓库用法说明 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-flow` | `hello-world-tai-Fairy-Main` | 三层上传流：AGENTS.md 2.5/7/8、scripts/release、Gitee Go 自动发布 | 进行中 |
 
-> 子分支示例：`hello-world-tai-Fairy-text` 的父分支为 `hello-world-tai-Fairy-Main`。
-> 子分支完成后合并回父分支，再由父分支决定是否进入 `master`。
+> 两层主线：`master`（第一层，线上发布版本）← `develop`（第二层，开发主线）← 各机器 `-Main`（第三层）。
+> 子分支完成后合并回本机 `-Main`，再由 `-Main` 合进 `develop`，最后自动推进 `master`。
