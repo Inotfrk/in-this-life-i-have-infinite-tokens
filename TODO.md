@@ -58,15 +58,15 @@
 
 ### T-003 同步远端 develop 与 master
 
-- 状态：queued
+- 状态：done
 - 目标分支：hello-world-tai-Fairy-Main
 - 优先级：P0
 - 依赖：T-002
 - 涉及文件：无代码改动（纯 git 操作）
-- 验收：`git rev-list --count master..develop` 只看领先量、不看落后量；`scripts\release.ps1 -DryRun` 无冲突
-- 说明：`develop` 原来停在 `ca62600` Initial commit，落后 `master` 15 个提交（已在 T-002 中
-  用本地 `--ff-only` 合并 `gitee/master` 补齐并合入本机改动）。剩下的动作是把本地 `develop`
-  推上远端：`git push gitee develop`，推之前确认 `git rev-list --count develop..master` 已不增长。
+- 验收：`scripts\release.ps1 -DryRun` 输出「develop 与 master 已一致，无需发布」
+- 说明：`develop` 原来停在 `ca62600` Initial commit、落后 `master` 15 个提交。已把 `gitee/master`
+  快进合入本地 `develop`，接收本机改动后推送，再用 `scripts/release.ps1` 完成首次
+  `develop -> master` 自动发布（标签 `v2026.10.25-1731`）。三层流现已闭合。
 
 ## 已完成
 
