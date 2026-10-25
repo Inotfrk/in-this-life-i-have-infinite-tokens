@@ -1,44 +1,64 @@
 # In this life I have infinite tokens.
 
-一个用 **纯 JDK（Java 21 + Swing）** 写的跨平台桌面计算器：零第三方依赖，不用 Maven/Gradle，
-在 Windows 和 macOS 上都能编译、运行并打包成原生安装包。
+一个用 **C++17** 写的跨平台计算器：核心逻辑收在一个源文件里，**零第三方依赖**，
+不需要 CMake 之类的构建系统，一条编译命令就能跑起来。这个仓库同时是「一个小项目该怎么用分支、
+任务队列和 agent 协作来维护」的样板——看懂这份说明，就明白这个仓库怎么用。
 
 #### 功能
 
 - 支持 `+ - × ÷ % ^`、括号、小数、一元正负号
 - 完整表达式求值（不是逐步运算），乘方右结合：`2^3^2 = 512`
-- 键盘：`Enter` 计算、`Esc` 清空、`Backspace` 退格、`Ctrl+C` 复制结果、`Ctrl+A` 取回上次表达式
-- 计算后可直接按运算符继续用上一次结果计算
-- 除零、括号不匹配等错误在状态栏用中文提示
-- 界面跟随系统外观，高 DPI 下按系统缩放
+- 交互命令：直接输入表达式回车计算，`clear` 清空、`del` 退格、`copy` 输出上次结果、`recall` 取回上次表达式
+- 计算后可直接接运算符，继续用上一次结果计算
+- 除零、括号不匹配等错误给出中文提示
+- 单文件、无全局状态，`std::string` 切片 + 递归下降解析，整个程序可以塞进一个 `.cpp`
 
 #### 软件架构
 
 ```
-src/main/java/com/helloworld/taiin/calculator/
-    ExpressionEvaluator.java   递归下降求值器（纯逻辑，无 UI 依赖）
-    CalculatorFrame.java       Swing 界面与按键逻辑
-src/test/java/com/helloworld/taiin/calculator/
-    EvaluatorTest.java         求值器测试（25 项）
-    UiTest.java                界面按键测试（6 项，无图形环境自动跳过）
+calculator.cpp        单文件示例：递归下降求值器 + 交互循环，整个程序就是这一个文件（规划中）
 scripts/
-    build.ps1                  Windows 构建脚本
-    build.sh                   macOS / Linux 构建脚本
+    build.ps1         Windows 构建脚本（build / test / run / jar / package / clean）
+    build.sh          macOS / Linux 构建脚本
+src/                  早期 Java 实现（历史示例，构建脚本仍可直接编译运行）
 ```
+
+单文件示例的分层就是几个函数，从上往下读即可：
+
+```cpp
+// calculator.cpp —— 结构示意
+double parseExpression();   // 顶层：加减
+double parseTerm();         // 乘除取模
+double parsePower();        // 乘方，右结合
+double parseUnary();        // 一元正负号
+double parsePrimary();      // 数字与括号
+```
+
+> **当前状态**：仓库里目前真正可运行、被 `scripts/` 构建与测试覆盖的仍是早期的 Java 实现
+> （`src/main/java`）；C++ 单文件形态是本仓库的目标，`calculator.cpp` 尚未入库，
+> 移植工作按 [TODO.md](TODO.md) 排队推进。下面标「C++ 示例」的步骤在移植完成后即可使用。
 
 #### 安装教程
 
-只需要 **JDK 21 或更高版本**（必须是完整 JDK，JRE 里没有 `javac` / `jar` / `jpackage`）。
+**C++ 示例**（移植完成后可用）：只需要一个支持 C++17 的编译器（Windows 用 MSVC 或 MinGW-w64 的 `g++`，
+macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
+
+1. 检查环境：`g++ --version`（Windows 也可用 `cl` / `clang++`）
+2. 克隆本仓库
+3. 编译：`g++ -std=c++17 -O2 calculator.cpp -o calculator`
+
+**现有 Java 实现**（`scripts/` 覆盖的那一套）：需要 **JDK 21 或更高版本**
+（必须是完整 JDK，JRE 里没有 `javac` / `jar` / `jpackage`）。
 
 1. 检查环境：`java -version`
-2. 克隆本仓库
-3. 编译：`scripts\build.ps1 -Task build`（macOS / Linux：`scripts/build.sh build`）
+2. 编译：`scripts\build.ps1 -Task build`（macOS / Linux：`scripts/build.sh build`）
 
 #### 使用说明
 
 | 操作 | Windows | macOS / Linux |
 | --- | --- | --- |
-| 直接运行 | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
+| 运行 C++ 示例（编译后） | `calculator.exe` | `./calculator` |
+| 运行 Java 版界面 | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
 | 运行全部测试 | `scripts\build.ps1 -Task test` | `scripts/build.sh test` |
 | 生成可执行 jar | `scripts\build.ps1 -Task jar` → `dist\Calculator.jar` | `scripts/build.sh jar` |
 | 打安装包 | `scripts\build.ps1 -Task package` | `scripts/build.sh package` |
@@ -54,30 +74,48 @@ scripts/
 - **macOS**：一次打包产出 `dist/Calculator.app`（便携）与 `dist/Calculator-<版本>.dmg`（安装包）
 - **版本号**：`-Task package -Version 1.2.0`（Windows）或 `APP_VERSION=1.2.0 scripts/build.sh package`
 
-跨平台打包在 CI 上跑，本地不需要装 mac 也不需要买 Mac 就能出两个平台的包：
+打包脚本设计成两个平台各跑一次，产物放在 CI 上是可以的，但本仓库的 CI 并未实际运行：
 
 | 平台 | 位置 | 产物 |
 | --- | --- | --- |
 | GitHub Actions | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
 | Gitee Go | [.workflow/package.yml](.workflow/package.yml) | Linux 上跑测试并归档跨平台 `Calculator.jar` |
 
-CI 触发方式：push 到 `master` / `hello-world-tai-*-Main` / `v*` 标签，或在 Actions 页面手动
-`workflow_dispatch`（可填版本号）。artifacts 保留 30 天。
+> 实测结论（见 [NOTE.md](NOTE.md)）：本仓库远端在 Gitee，**目前没有任何 CI 真正执行**。
+> GitHub Actions 不会触发；Gitee Go 需要在仓库里手动开启，且只提供 Linux 构建机，
+> 出不了 `dmg` / `msi` / `exe`。要安装包就在本机跑 `scripts\build.ps1 -Task package`
+> 或 `scripts/build.sh package`。
 
 已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
 
+#### 仓库怎么用（同学先看这段）
+
+这个仓库的重点不只是那个计算器，而是它示范的协作方式：
+
+1. **一机一分支**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-Fairy-Main`。
+   账号段取 Gitee 账号名，电脑段取 `hostname`，后缀自选；每台机器的基础分支后缀固定为 `Main`。
+2. **子分支从本机 `-Main` 切出**，做完合并回 `-Main`，再由它决定是否进 `master`；`master` 只收 Pull Request。
+3. **先登记再动手**：仓库路径、父分支、用途登记在
+   [.agents/branch-registry.md](.agents/branch-registry.md)，agent 用仓库路径判断自己在哪台电脑上。
+4. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
+   认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
+5. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
+   不通过不提交；每轮迭代完成 push 本机分支，一个小功能做完再合并 `master`。
+
+完整规则见 [AGENTS.md](AGENTS.md)（每次对话自动加载），agent 之间的留言在 [NOTE.md](NOTE.md)。
+
 #### Agent 协作规则
 
-本仓库由多个 agent 协作维护，规则写在 [AGENTS.md](AGENTS.md)（每次对话自动加载）：
+本仓库由多个 agent 协作维护，完整规则写在 [AGENTS.md](AGENTS.md)（每次对话自动加载），要点：
 
-- 平台配置与本仓库文件免询问；仓库外的改动需要同意
-- 一机一分支 `<账号段>-<电脑段>-<后缀>`，登记在 [.agents/branch-registry.md](.agents/branch-registry.md)
-- 每轮迭代完成后 push 本机分支，小功能完成后合并 `master`
-- 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务
+- 平台配置与本仓库文件免询问；仓库外的改动、破坏性 git 操作需要先取得同意
+- 分支命名与父子关系按上文「一机一分支」执行，改代码前先核对本机分支与工作区状态
+- 每轮迭代验证通过后 push 本机分支，一个小功能完成后合并 `master`
+- 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务，不擅自扩大范围
 
 #### 参与贡献
 
 1. Fork 本仓库
-2. 新建 Feat_xxx 分支
-3. 提交代码
+2. 从本机 `-Main` 切出 `<账号段>-<电脑段>-<后缀>` 分支
+3. 提交代码并跑通测试
 4. 新建 Pull Request

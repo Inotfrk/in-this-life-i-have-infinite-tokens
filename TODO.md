@@ -29,8 +29,28 @@
 
 ## 排队中
 
-_（暂无。需要夜间执行的工作请按上面的格式追加在这里。）_
+### T-001 把计算器核心移植为单文件 C++
+
+- 状态：queued
+- 目标分支：hello-world-tai-Fairy-cpp
+- 优先级：P1
+- 依赖：无
+- 涉及文件：新增 `calculator.cpp`；`README.md` / `README.en.md` 的 C++ 段落
+- 验收：`g++ -std=c++17 -O2 calculator.cpp -o calculator` 编译通过，示例表达式结果与
+  `EvaluatorTest` 的 25 项一致；`scripts\build.ps1 -Task test` 仍全绿
+- 说明：README 已把 C++17 单文件计算器作为主线描述，但仓库里尚无 `calculator.cpp`。
+  需要把 `ExpressionEvaluator` 的递归下降逻辑（`+ - * / % ^`、括号、一元正负号、右结合乘方）
+  转成单个 C++ 源文件，错误提示保持中文；Java 实现保留为历史示例，不删除。
 
 ## 已完成
 
-_（暂无。）_
+### T-000 README 主描述从 Java 改为 C++
+
+- 状态：done
+- 目标分支：hello-world-tai-Fairy-docs-cpp
+- 优先级：P2
+- 依赖：无
+- 涉及文件：`README.md`、`README.en.md`、`.agents/branch-registry.md`
+- 验收：Markdown 链接与命令示例正确，Java 构建与测试流程未被改动
+- 说明：按用户要求把仓库说明的技术栈从 Java 改为 C++17 单文件计算器，补齐「仓库怎么用」的
+  入门段落，并把 Java 实现标注为历史示例；源码、构建脚本与 CI 未改动。
