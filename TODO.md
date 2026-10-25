@@ -23,7 +23,8 @@
 3. 按 `目标分支` 工作：分支不存在就从本机 `-Main` 切出并在
    [.agents/branch-registry.md](.agents/branch-registry.md) 的「子分支」表登记父分支。
 4. 每轮迭代通过验收后 commit + push 到当前分支（见 AGENTS.md 2.5）。
-5. 任务完成：状态改 `done`，合并回本机 `-Main`；属于完整小功能的再合并并 push `master`。
+5. 任务完成：状态改 `done`，合并回本机 `-Main`；再由 `-Main` 进入 `develop`，
+   `develop` 经 `scripts/release` 自动推进 `master`（三层流，见 AGENTS.md 2.5 / 第 8 节）。
 6. 需求不清或受阻：状态改 `blocked`，在说明里写清缺什么决策，不做猜测性改动。
 7. 队列为空 → 不改动任何代码，直接结束。
 

@@ -90,17 +90,36 @@ macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 
 #### 仓库怎么用（同学先看这段）
 
-这个仓库的重点不只是那个计算器，而是它示范的协作方式：
+这个仓库的重点不只是那个计算器，而是它示范的协作方式。分支只有三层，改动只能**自下往上**流动：
 
-1. **一机一分支**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-Fairy-Main`。
+| 层次 | 分支 | 是什么 |
+| --- | --- | --- |
+| 第一层 | `master` | **线上发布版本**，任何时刻都能直接发布 |
+| 第二层 | `develop` | **开发主线**，所有开发者汇集到这里 |
+| 第三层 | `<账号段>-<电脑段>-<后缀>` | **开发者自己的分支**，随时 push，互不影响 |
+
+```mermaid
+flowchart BT
+    A["第三层：hello-world-tai-Fairy-ui<br/>（本地开发，随时 push）"] --> B["第三层：hello-world-tai-Fairy-Main<br/>（本机基础分支）"]
+    B --> C["第二层：develop<br/>（开发主线）"]
+    C --> D["第一层：master<br/>（线上发布版本）"]
+```
+
+1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-Fairy-ui`。
    账号段取 Gitee 账号名，电脑段取 `hostname`，后缀自选；每台机器的基础分支后缀固定为 `Main`。
-2. **子分支从本机 `-Main` 切出**，做完合并回 `-Main`，再由它决定是否进 `master`；`master` 只收 Pull Request。
-3. **先登记再动手**：仓库路径、父分支、用途登记在
+2. **做完合并回本机 `-Main`**：`-Main` 是该机器的集成分支，子分支都从它切出、合并回它。
+3. **`-Main` 攒够一批就进 `develop`**：这是唯一的合流点，同机器的多次小改动在这里合成一批。
+4. **`develop` 自动进 `master`**：跑 `scripts\release.ps1`（macOS / Linux：`scripts/release.sh`），
+   它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；开启 Gitee Go 后
+   [.workflow/release.yml](.workflow/release.yml) 也会在 `develop` 推送时自动做同一件事。
+5. **先登记再动手**：仓库路径、父分支、用途登记在
    [.agents/branch-registry.md](.agents/branch-registry.md)，agent 用仓库路径判断自己在哪台电脑上。
-4. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
+6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
-5. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
-   不通过不提交；每轮迭代完成 push 本机分支，一个小功能做完再合并 `master`。
+7. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
+   不通过不得进入上一层。
+
+`master` 与 `develop` 都不接受直接提交：前者只收第二层的自动合并，后者只收第三层的合并。
 
 完整规则见 [AGENTS.md](AGENTS.md)（每次对话自动加载），agent 之间的留言在 [NOTE.md](NOTE.md)。
 
@@ -109,13 +128,13 @@ macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 本仓库由多个 agent 协作维护，完整规则写在 [AGENTS.md](AGENTS.md)（每次对话自动加载），要点：
 
 - 平台配置与本仓库文件免询问；仓库外的改动、破坏性 git 操作需要先取得同意
-- 分支命名与父子关系按上文「一机一分支」执行，改代码前先核对本机分支与工作区状态
-- 每轮迭代验证通过后 push 本机分支，一个小功能完成后合并 `master`
+- 分支三层：第三层 `<账号段>-<电脑段>-<后缀>` → 第二层 `develop` → 第一层 `master`，不越层、不倒流
+- 每轮迭代验证通过后 push 本机分支，做完的功能合并进 `develop`，再由 `scripts/release` 自动发布到 `master`
 - 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务，不擅自扩大范围
 
 #### 参与贡献
 
 1. Fork 本仓库
 2. 从本机 `-Main` 切出 `<账号段>-<电脑段>-<后缀>` 分支
-3. 提交代码并跑通测试
-4. 新建 Pull Request
+3. 提交代码并跑通测试，合并回本机 `-Main`
+4. 向 `develop` 提交 PR；`master` 由 `develop` 自动推进
