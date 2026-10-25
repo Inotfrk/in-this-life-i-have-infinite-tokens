@@ -11,28 +11,39 @@ $remote = 'gitee'
 $devBranch = 'develop'
 $relBranch = 'master'
 
+# git 会把进度写到 stderr；Stop 模式下那会被当成终止错误，所以调用期间放宽。
+function Invoke-GitText {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
+    $previous = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        return (& git -C $root @GitArgs 2>&1 | Out-String)
+    }
+    finally {
+        $ErrorActionPreference = $previous
+    }
+}
+
 function Invoke-Git {
     param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
-    & git -C $root @GitArgs
-    if ($LASTEXITCODE -ne 0) { throw "git $($GitArgs -join ' ') failed" }
+    $output = Invoke-GitText @GitArgs
+    if ($LASTEXITCODE -ne 0) {
+        throw "git $($GitArgs -join ' ') 失败：$($output.Trim())"
+    }
+    Write-Host $output.Trim()
 }
 
-function Invoke-GitQuiet {
-    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$GitArgs)
-    & git -C $root @GitArgs 2>&1 | Out-Null
-    return $LASTEXITCODE -eq 0
+$dirty = (Invoke-GitText status --porcelain).Trim()
+if ($dirty) {
+    throw '工作区有未提交改动；先提交或 stash（AGENTS.md 7.6）'
 }
 
-$startBranch = (& git -C $root rev-parse --abbrev-ref HEAD).Trim()
+$startBranch = (Invoke-GitText rev-parse --abbrev-ref HEAD).Trim()
 if ($startBranch -eq $relBranch -or $startBranch -eq $devBranch) {
     throw "当前在受保护分支 $startBranch 上；先切回第三层工作分支再发布（AGENTS.md 7.7）"
 }
 
-if (-not (Invoke-GitQuiet status --porcelain)) {
-    throw '工作区有未提交改动；先提交或 stash（AGENTS.md 7.6）'
-}
-
-$null = Invoke-Git fetch $remote --prune
+Invoke-Git fetch $remote --prune
 try {
     Invoke-Git switch $devBranch
     Invoke-Git pull --ff-only $remote $devBranch
@@ -43,14 +54,14 @@ try {
         if ($LASTEXITCODE -ne 0) { throw '测试未通过，发布中止' }
     }
 
-    $behind = [int]((& git -C $root rev-list --count "$relBranch..$devBranch").Trim())
-    if ($behind -eq 0) {
+    $ahead = [int]((Invoke-GitText rev-list --count "$relBranch..$devBranch").Trim())
+    if ($ahead -eq 0) {
         Write-Host "$devBranch 与 $relBranch 已一致，无需发布"
         return
     }
 
     $tag = "v$(Get-Date -Format 'yyyy.MM.dd-HHmm')"
-    Write-Host "将把 $behind 个提交从 $devBranch 推进到 $relBranch，标签 $tag"
+    Write-Host "将把 $ahead 个提交从 $devBranch 推进到 $relBranch，标签 $tag"
 
     if ($DryRun) {
         Invoke-Git --no-pager log --oneline "$relBranch..$devBranch"
@@ -68,8 +79,8 @@ try {
     Write-Host "发布完成：$devBranch -> $relBranch，标签 $tag"
 }
 finally {
-    $current = (& git -C $root rev-parse --abbrev-ref HEAD).Trim()
+    $current = (Invoke-GitText rev-parse --abbrev-ref HEAD).Trim()
     if ($current -ne $startBranch -and $current -ne $relBranch) {
-        & git -C $root switch $startBranch 2>&1 | Out-Null
+        $null = Invoke-GitText switch $startBranch
     }
 }
