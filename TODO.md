@@ -45,7 +45,7 @@
 
 ### T-002 上传流改为三层（master ← develop ← 本机分支）
 
-- 状态：in-progress
+- 状态：done
 - 目标分支：hello-world-tai-Fairy-flow
 - 优先级：P0
 - 依赖：无
@@ -54,20 +54,19 @@
   `.workflow/release.yml`
 - 验收：`scripts\build.ps1 -Task test` 全绿；`scripts\release.ps1 -DryRun` 能正确列出待发布提交
 - 说明：第一层 `master`（线上发布）← 第二层 `develop`（开发主线）← 第三层各机分支。
-  文档、规则、发布脚本一次性对齐；剩余待办是远端 `develop` 落后 `master` 15 个提交，需要先同步。
+  文档、规则、发布脚本一次性对齐。
 
 ### T-003 同步远端 develop 与 master
 
 - 状态：queued
-- 目标分支：hello-world-tai-Fairy-flow
+- 目标分支：hello-world-tai-Fairy-Main
 - 优先级：P0
 - 依赖：T-002
 - 涉及文件：无代码改动（纯 git 操作）
-- 验收：`git rev-list --count gitee/master..gitee/develop` 为 0 或仅领先不落后；
-  `scripts\release.ps1 -DryRun` 无冲突风险
-- 说明：`develop` 目前停在 `ca62600` Initial commit，落后 `master` 15 个提交。三层流要求
-  `develop` 是开发主线，必须先让它追上 `master`（把 `master` 合进 `develop`），否则后续
-  `develop → master` 会把历史回退。
+- 验收：`git rev-list --count master..develop` 只看领先量、不看落后量；`scripts\release.ps1 -DryRun` 无冲突
+- 说明：`develop` 原来停在 `ca62600` Initial commit，落后 `master` 15 个提交（已在 T-002 中
+  用本地 `--ff-only` 合并 `gitee/master` 补齐并合入本机改动）。剩下的动作是把本地 `develop`
+  推上远端：`git push gitee develop`，推之前确认 `git rev-list --count develop..master` 已不增长。
 
 ## 已完成
 
