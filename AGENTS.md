@@ -48,25 +48,40 @@
 ### 2.3 新电脑的处理
 
 1. 在 `.agents/branch-registry.md` 追加一行：本地仓库路径、账号段、电脑段、基础分支。
-2. 从最新 `master` 创建基础分支：`git switch -c <账号段>-<电脑段>-Main gitee/master`。
+2. 从最新 `develop` 创建基础分支：`git fetch gitee && git switch -c <账号段>-<电脑段>-Main gitee/develop`。
 3. `git push -u gitee <账号段>-<电脑段>-Main`。
 4. 把这次登记 commit 到新分支上。
 
 ### 2.4 父子关系与多分支
 
 - 子分支**必须**从本机的 `-Main` 切出，并在 `.agents/branch-registry.md` 的「子分支」表里登记父分支、用途、状态。
-- 子分支完成后合并回本机 `-Main`，再按 2.5 决定是否进 `master`。
-- 禁止跨电脑共享分支名；不同电脑只通过 `master` 汇合。
+- 子分支完成后合并回本机 `-Main`，再由 `-Main` 按 2.5 的流向进入 `develop`。
+- 禁止跨电脑共享分支名；不同电脑只通过第二层 `develop` 汇合，最终由 `develop` 进入 `master`。
 
-### 2.5 上传时机（这是硬性要求）
+### 2.5 三层上传流（这是硬性要求）
 
-| 时机 | 动作 |
-| --- | --- |
-| 每次迭代（一轮改动 / 一次答复带来的修改）完成并通过验证后 | commit 并 **push 到本机当前分支**（`git push gitee HEAD`） |
-| 一个小功能完成、测试全绿后 | 合并到 `master` 并 **push `master`**（`git switch master && git merge --no-ff <分支> && git push gitee master`） |
-| 推送冲突 / 被拒绝 | 先 `git fetch gitee` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+仓库只有三个层次。任何改动都按 **第三层 → 第二层 → 第一层** 向上流动，
+禁止越层（第三层直接进 `master`）、禁止反向（主线倒推回个人分支）。
 
-以上 push 属于用户预先授权，不需要逐次确认；`--force`、删除远端分支、改写历史仍然需要先问。
+| 层次 | 分支 | 是什么 | 谁能写入 |
+| --- | --- | --- | --- |
+| 第一层 | `master` | **线上发布版本**，只能处于可发布状态 | 只接受第二层的自动合并 |
+| 第二层 | `develop` | **开发主线**，所有开发者汇聚在这里 | 只接受第三层合并（PR 或 fast-forward） |
+| 第三层 | `<账号段>-<电脑段>-<后缀>` | **开发者自己的分支**，`-Main` 是本人基础分支 | 本人，随时 push |
+
+推进动作，一步都不能跳：
+
+| # | 时机 | 动作 |
+| --- | --- | --- |
+| 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push gitee HEAD` |
+| 2 | 一个子分支做完、测试全绿 | 合并回本机 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push gitee HEAD` |
+| 3 | 本机 `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only gitee develop && git merge --no-ff <账号段>-<电脑段>-Main && git push gitee develop` |
+| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本机跑 `scripts/release`，或由 `.workflow/release.yml` 在 Gitee Go 上合并（见第 7 节） |
+| 5 | 推送冲突 / 被拒绝 | 先 `git fetch gitee` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+
+- 第三层分支**允许多个、允许随时 push**，它本来就是「开发者自己那堆东西」，不进主线也不会影响别人。
+- 第二层与第一层不接受第三层的直接推送；`master` 更不接受任何直接推送。
+- 以上 push 属于用户预先授权，不需要逐次确认；`--force`、删除远端分支、改写历史仍然需要先问。
 
 ---
 
@@ -106,17 +121,30 @@ scripts/build.sh test                                                   # macOS 
 
 ## 6. 共享信息
 
-Agents可以在 [NOTE.md](NOTE.md)中以 <ISO8601时间戳>[命名格式]文本信息 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
-- 示例:<2026-10-22T22:21:23+08:00>[ql_leo-FedoraChan-test]测试消息
+Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本信息` 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
+- 示例：`<2026-10-22T22:21:23+08:00>[hello-world-tai-FedoraChan-Main]测试消息`
 
 ## 7. Git 分支与提交规范
 
-1. 禁止直接向 `main`、`master`、`develop` 等受保护的主分支提交代码或推送代码。
-2. 每项独立任务必须在专用工作分支上完成，例如 `feature/<name>`、`fix/<name>`、`chore/<name>`。
-3. 完成修改后，先在当前工作分支执行代码检查、测试和 Git commit。
-4. 确认工作分支的提交成功后，再推送该分支并创建 Pull Request。
-5. 只有在 PR 满足项目规定的审查与 CI 条件后，才能将改动合并到目标分支。
-6. 禁止为了省事而绕过 PR、分支保护、CI 检查或既定的合并流程。
-7. 执行任何 Git 写操作前，必须检查当前分支、工作区状态及目标分支，避免将无关改动一起提交。
-8. 如果当前位于主分支，应先创建或切换到合适的工作分支，再进行修改和提交。
-9. 如果仓库已有明确的分支策略，以仓库策略为准；遇到规则冲突或无法安全执行的情况，应停止并说明原因，不得擅自绕过规则。
+第 2.5 节的三层流是唯一通道，本节给出它对应的强制约束：
+
+1. **第一层 `master`**：禁止任何直接提交或直接推送，只接受来自 `develop` 的自动合并（见第 8 节）。
+2. **第二层 `develop`**：禁止直接提交；只接受第三层 `-Main` 的合并，合并方式为 PR 或已在本地验证过的 fast-forward。
+3. **第三层 `<账号段>-<电脑段>-<后缀>`**：唯一可自由提交、自由推送的层次；每项独立任务都在专用子分支上完成
+   （如 `hello-world-tai-Fairy-ui`、`hello-world-tai-Fairy-fix`），完成后合并回本人 `-Main`。
+4. 完成修改后，先在当前工作分支执行代码检查、测试和 Git commit；测试不通过不得进入上一层。
+5. 禁止为了省事而绕过 PR、分支保护、CI 检查或既定的合并流程；禁止 `--force` 推送。
+6. 执行任何 Git 写操作前，必须检查当前分支、工作区状态及目标分支，避免将无关改动一起提交。
+7. 如果当前位于 `master` 或 `develop`，应先切回第三层工作分支，再进行修改和提交。
+8. 遇到规则冲突或无法安全执行的情况，应停止并说明原因，不得擅自绕过规则。
+
+## 8. 自动发布（develop → master）
+
+`develop` 每收到一次通过测试的提交，就要自动推进到 `master`，保证第一层始终等于「最新可发布状态」。
+
+- **本机**：`powershell -ExecutionPolicy Bypass -File scripts\release.ps1`（macOS / Linux：`scripts/release.sh`）。
+  脚本依次执行：切到 `develop` 并 `pull --ff-only` → 跑测试 → `--no-ff` 合并进 `master` → push 两个分支
+  → 给 `master` 打 `v<日期>` 标签。任何一步失败即中止，不留半成品。
+- **远端**：`.workflow/release.yml`（Gitee Go）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
+  Gitee Go 需在仓库里手动「一键开启」；未开启时以本机脚本为准。
+- 自动推进只做 fast-forward / `--no-ff` 合并，**禁止强推**；冲突时停下来报告，由人决定。

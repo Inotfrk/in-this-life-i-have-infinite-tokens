@@ -23,14 +23,60 @@
 3. 按 `目标分支` 工作：分支不存在就从本机 `-Main` 切出并在
    [.agents/branch-registry.md](.agents/branch-registry.md) 的「子分支」表登记父分支。
 4. 每轮迭代通过验收后 commit + push 到当前分支（见 AGENTS.md 2.5）。
-5. 任务完成：状态改 `done`，合并回本机 `-Main`；属于完整小功能的再合并并 push `master`。
+5. 任务完成：状态改 `done`，合并回本机 `-Main`；再由 `-Main` 进入 `develop`，
+   `develop` 经 `scripts/release` 自动推进 `master`（三层流，见 AGENTS.md 2.5 / 第 8 节）。
 6. 需求不清或受阻：状态改 `blocked`，在说明里写清缺什么决策，不做猜测性改动。
 7. 队列为空 → 不改动任何代码，直接结束。
 
 ## 排队中
 
-_（暂无。需要夜间执行的工作请按上面的格式追加在这里。）_
+### T-001 把计算器核心移植为单文件 C++
+
+- 状态：queued
+- 目标分支：hello-world-tai-Fairy-cpp
+- 优先级：P1
+- 依赖：无
+- 涉及文件：新增 `calculator.cpp`；`README.md` / `README.en.md` 的 C++ 段落
+- 验收：`g++ -std=c++17 -O2 calculator.cpp -o calculator` 编译通过，示例表达式结果与
+  `EvaluatorTest` 的 25 项一致；`scripts\build.ps1 -Task test` 仍全绿
+- 说明：README 已把 C++17 单文件计算器作为主线描述，但仓库里尚无 `calculator.cpp`。
+  需要把 `ExpressionEvaluator` 的递归下降逻辑（`+ - * / % ^`、括号、一元正负号、右结合乘方）
+  转成单个 C++ 源文件，错误提示保持中文；Java 实现保留为历史示例，不删除。
+
+### T-002 上传流改为三层（master ← develop ← 本机分支）
+
+- 状态：done
+- 目标分支：hello-world-tai-Fairy-flow
+- 优先级：P0
+- 依赖：无
+- 涉及文件：`AGENTS.md`、`README.md`、`README.en.md`、`.github/copilot-instructions.md`、
+  `TODO.md`、`.agents/branch-registry.md`、`scripts/release.ps1`、`scripts/release.sh`、
+  `.workflow/release.yml`
+- 验收：`scripts\build.ps1 -Task test` 全绿；`scripts\release.ps1 -DryRun` 能正确列出待发布提交
+- 说明：第一层 `master`（线上发布）← 第二层 `develop`（开发主线）← 第三层各机分支。
+  文档、规则、发布脚本一次性对齐。
+
+### T-003 同步远端 develop 与 master
+
+- 状态：queued
+- 目标分支：hello-world-tai-Fairy-Main
+- 优先级：P0
+- 依赖：T-002
+- 涉及文件：无代码改动（纯 git 操作）
+- 验收：`git rev-list --count master..develop` 只看领先量、不看落后量；`scripts\release.ps1 -DryRun` 无冲突
+- 说明：`develop` 原来停在 `ca62600` Initial commit，落后 `master` 15 个提交（已在 T-002 中
+  用本地 `--ff-only` 合并 `gitee/master` 补齐并合入本机改动）。剩下的动作是把本地 `develop`
+  推上远端：`git push gitee develop`，推之前确认 `git rev-list --count develop..master` 已不增长。
 
 ## 已完成
 
-_（暂无。）_
+### T-000 README 主描述从 Java 改为 C++
+
+- 状态：done
+- 目标分支：hello-world-tai-Fairy-docs-cpp
+- 优先级：P2
+- 依赖：无
+- 涉及文件：`README.md`、`README.en.md`、`.agents/branch-registry.md`
+- 验收：Markdown 链接与命令示例正确，Java 构建与测试流程未被改动
+- 说明：按用户要求把仓库说明的技术栈从 Java 改为 C++17 单文件计算器，补齐「仓库怎么用」的
+  入门段落，并把 Java 实现标注为历史示例；源码、构建脚本与 CI 未改动。
