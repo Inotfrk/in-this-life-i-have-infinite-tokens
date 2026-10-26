@@ -93,7 +93,7 @@ branch layers, and changes only flow **upwards**:
 | --- | --- | --- |
 | 1 | `master` | **Released version** — always ready to ship |
 | 2 | `develop` | **Development mainline** — where every developer converges |
-| 3 | `<account>-<machine>-<suffix>` | **Your own branch** — push any time, isolated from others |
+| 3 | `<account>-<machine>-<suffix>` | **Your account's own branch** — push any time, isolated from others; each account only pushes its own prefix |
 
 ```mermaid
 flowchart BT
@@ -103,10 +103,13 @@ flowchart BT
 ```
 
 1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-Fairy-ui`.
-   The account segment is the Gitee account name, the machine segment is `hostname`, the suffix is yours;
+   The account segment is the Gitee account name (and owns the branch); the machine segment comes from the
+   **local repository path** (`hostname` is only used when registering a new machine); the suffix is yours;
    each machine's base branch always uses the `Main` suffix.
 2. **Merge back into the local `-Main`** when a sub-branch is done; `-Main` is that machine's integration branch.
 3. **Move `-Main` into `develop`** once a batch is ready — the single convergence point for all developers.
+   Push only content from your own account; on cross-account or mainline conflicts, never force push —
+   keep the working state and **raise an OA**.
 4. **`develop` promotes itself into `master`**: run `scripts\release.ps1` (macOS / Linux: `scripts/release.sh`),
    which runs the tests, merges with `--no-ff` and tags `v<date>`. With Gitee Go enabled,
    [.workflow/release.yml](.workflow/release.yml) does the same automatically on every `develop` push.
