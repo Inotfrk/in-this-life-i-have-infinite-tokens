@@ -7,10 +7,13 @@
 
 | 显示名 | 账号段（分支前缀） | 角色 | 允许推送的分支 |
 | --- | --- | --- | --- |
-| Hallo_world_Tai | `hello-world-tai` | 仓库拥有者 / 管理员 | `hello-world-tai-*` |
+| Hallo_world_Tai | `hello-world-tai` | 仓库拥有者 | `hello-world-tai-*` |
 | QL_Leo | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
 | 吴泓霄 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
-| QAqwANG | `qwerty6543210` | 开发者 | `qwerty6543210-*` |
+| QAqwANG | `qwerty6543210`（Gitee 登录名为大写 `QWERTY6543210`） | 开发者 | `qwerty6543210-*` |
+
+> 分支前缀的规范写法只有小写一种：`QAqwANG` 的 Gitee 登录名显示为 `QWERTY6543210`，
+> 但分支必须写成 `qwerty6543210-*`，保护规则也按小写建，避免同一个人出现两种写法。
 
 ## 新成员接入
 
