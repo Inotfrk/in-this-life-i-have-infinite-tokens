@@ -4,8 +4,10 @@
 
 - **权限**：可免询问读取 / 修改 agent 所在平台的配置文件与本仓库内的全部文件；**仓库以外文件的任何改动都要先取得同意**，破坏性 git 操作同样要先问。
 - **分支**：`<账号段>-<电脑段>-<后缀>`，前两段固定按规则生成（账号段 = Gitee 账号名，电脑段 = `hostname`），后缀由用户自定义，本机基础分支后缀为 `Main`。
-- **识别电脑**：用 `git rev-parse --show-toplevel` 的路径去匹配 [.agents/branch-registry.md](../.agents/branch-registry.md)，未命中即为新电脑，自动登记并创建 `...-Main`。
+- **归属**：分支归账号段所有，每个账号**只能提交 / 推送自己账号段的分支**，别人的分支只能合并请求不能直接推。
+- **识别电脑**：用 `git rev-parse --show-toplevel` 的**仓库路径**去匹配 [.agents/branch-registry.md](../.agents/branch-registry.md)，未命中即为新电脑，自动登记并创建 `...-Main`；`hostname` 只用于首次生成电脑段。
 - **父子关系**：子分支从本机 `-Main` 切出并登记父分支，完成后合并回 `-Main`。
 - **上传**：三层流 —— 第三层（`<账号段>-<电脑段>-<后缀>`）随时 push；做完合并进第二层 `develop`；
   `develop` 再自动推进到第一层 `master`（`scripts/release.ps1` 或 Gitee Go），永不越层。
+- **冲突**：遇到跨账号、跨主线（`develop` / `master`）的冲突，**不要 force push**，保留现场并提示用户去提 OA。
 - **队列**：[TODO.md](../TODO.md) 是唯一待完成清单，夜间 / 空闲 agent 按其中协议领取 `queued` 任务执行。
