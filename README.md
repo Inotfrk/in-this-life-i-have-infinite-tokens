@@ -96,7 +96,7 @@ macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 | --- | --- | --- |
 | 第一层 | `master` | **线上发布版本**，任何时刻都能直接发布 |
 | 第二层 | `develop` | **开发主线**，所有开发者汇集到这里 |
-| 第三层 | `<账号段>-<电脑段>-<后缀>` | **开发者自己的分支**，随时 push，互不影响 |
+| 第三层 | `<账号段>-<电脑段>-<后缀>` | **账号自己的分支**，随时 push，互不影响；只能推自己账号段的分支 |
 
 ```mermaid
 flowchart BT
@@ -106,9 +106,11 @@ flowchart BT
 ```
 
 1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-Fairy-ui`。
-   账号段取 Gitee 账号名，电脑段取 `hostname`，后缀自选；每台机器的基础分支后缀固定为 `Main`。
+   账号段取 Gitee 账号名（同时是分支归属），电脑段由**本地仓库路径**查出（`hostname` 只在首次登记时使用），
+   后缀自选；每台机器的基础分支后缀固定为 `Main`。
 2. **做完合并回本机 `-Main`**：`-Main` 是该机器的集成分支，子分支都从它切出、合并回它。
 3. **`-Main` 攒够一批就进 `develop`**：这是唯一的合流点，同机器的多次小改动在这里合成一批。
+   只提交自己账号段的内容；撞上别人的改动或主线冲突时**不要 force push**，保留现场并**去提 OA**。
 4. **`develop` 自动进 `master`**：跑 `scripts\release.ps1`（macOS / Linux：`scripts/release.sh`），
    它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；开启 Gitee Go 后
    [.workflow/release.yml](.workflow/release.yml) 也会在 `develop` 推送时自动做同一件事。
@@ -129,6 +131,8 @@ flowchart BT
 
 - 平台配置与本仓库文件免询问；仓库外的改动、破坏性 git 操作需要先取得同意
 - 分支三层：第三层 `<账号段>-<电脑段>-<后缀>` → 第二层 `develop` → 第一层 `master`，不越层、不倒流
+- 分支归账号段所有，每个账号只能推自己账号段的分支；跨账号 / 主线冲突不 force push，提示去提 OA
+- 用本地仓库路径（不是 `hostname`）判断当前是哪台电脑
 - 每轮迭代验证通过后 push 本机分支，做完的功能合并进 `develop`，再由 `scripts/release` 自动发布到 `master`
 - 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务，不擅自扩大范围
 
