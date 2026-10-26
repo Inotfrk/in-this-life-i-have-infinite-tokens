@@ -53,6 +53,7 @@ hello-world-tai-Fairy-Main
 | `hello-world-tai-Fairy-docs-cpp` | `hello-world-tai-Fairy-Main` | README 主描述改为 C++17 单文件计算器、补充仓库用法说明 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-flow` | `hello-world-tai-Fairy-Main` | 三层上传流：AGENTS.md 2.5/7/8、scripts/release、Gitee Go 自动发布 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-rules` | `hello-world-tai-Fairy-Main` | 分支归属规则：账号段 = 分支主人，只能推自己的分支，冲突提 OA，路径识别电脑；Gitee 保护分支落地 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-rules2` | `hello-world-tai-Fairy-Main` | 收尾：登记表、NOTE、TODO 与保护分支规则实测结果 | 使用中 |
 
 > 两层主线：`master`（第一层，线上发布版本）← `develop`（第二层，开发主线）← 各机器 `-Main`（第三层）。
 > 子分支完成后合并回本机 `-Main`，再由 `-Main` 合进 `develop`，最后自动推进 `master`。
