@@ -54,7 +54,7 @@ hello-world-tai-Fairy-Main
 | `hello-world-tai-Fairy-docs-cpp` | `hello-world-tai-Fairy-Main` | README 主描述改为 C++17 单文件计算器、补充仓库用法说明 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-flow` | `hello-world-tai-Fairy-Main` | 三层上传流：AGENTS.md 2.5/7/8、scripts/release、Gitee Go 自动发布 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-rules` | `hello-world-tai-Fairy-Main` | 分支归属规则：账号段 = 分支主人，只能推自己的分支，冲突提 OA，路径识别电脑；Gitee 保护分支落地 | 已合并回父分支（本地分支已删除，远端分支仍在，待确认是否删除） |
-| `hello-world-tai-Fairy-rules2` | `hello-world-tai-Fairy-Main` | 收尾：登记表、NOTE、TODO 与保护分支规则实测结果 | 使用中 |
+| `hello-world-tai-Fairy-rules2` | `hello-world-tai-Fairy-Main` | 收尾：登记表、NOTE、TODO 与保护分支规则实测结果 | 已合并回父分支（本地分支已删除） |
 
 > 远端临时探针分支 `shawnwu1086-probe`、`qwerty6543210-probe` 是权限实测的残留，等用户确认后再删。
 
