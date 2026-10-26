@@ -97,15 +97,15 @@ branch layers, and changes only flow **upwards**:
 
 ```mermaid
 flowchart BT
-    A["Layer 3: hello-world-tai-Fairy-ui<br/>(local work, push freely)"] --> B["Layer 3: hello-world-tai-Fairy-Main<br/>(machine base branch)"]
+    A["Layer 3: &lt;account&gt;-&lt;machine&gt;-ui<br/>(local work, push freely)"] --> B["Layer 3: &lt;account&gt;-&lt;machine&gt;-Main<br/>(machine integration branch)"]
     B --> C["Layer 2: develop<br/>(development mainline)"]
     C --> D["Layer 1: master<br/>(released version)"]
 ```
 
-1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-Fairy-ui`.
-   The account segment is the Gitee account name (and owns the branch); the machine segment comes from the
-   **local repository path** (`hostname` is only used when registering a new machine); the suffix is yours;
-   each machine's base branch always uses the `Main` suffix.
+1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-studiomac-ui`.
+   The account segment is the **Gitee login name** (lowercase, and it owns the branch); the machine segment is
+   the local `hostname` with spaces and illegal characters stripped; the suffix is yours; each machine's base
+   branch always uses the `Main` suffix. See [.agents/branch-registry.md](.agents/branch-registry.md).
 2. **Merge back into the local `-Main`** when a sub-branch is done; `-Main` is that machine's integration branch.
 3. **Move `-Main` into `develop`** once a batch is ready — the single convergence point for all developers.
    Push only content from your own account; on cross-account or mainline conflicts, never force push —
@@ -113,9 +113,8 @@ flowchart BT
 4. **`develop` promotes itself into `master`**: run `scripts\release.ps1` (macOS / Linux: `scripts/release.sh`),
    which runs the tests, merges with `--no-ff` and tags `v<date>`. With Gitee Go enabled,
    [.workflow/release.yml](.workflow/release.yml) does the same automatically on every `develop` push.
-5. **Register before you work**: repository paths, parents and purposes live in
-   [.agents/branch-registry.md](.agents/branch-registry.md); agents use the repository path to identify
-   which machine they run on.
+5. **Onboard a new member**: invite on Gitee → add a `<login>-*` protected-branch rule →
+   update [.agents/branch-registry.md](.agents/branch-registry.md).
 6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.
 7. **Verify before promoting**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).

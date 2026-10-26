@@ -100,22 +100,23 @@ macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 
 ```mermaid
 flowchart BT
-    A["第三层：hello-world-tai-Fairy-ui<br/>（本地开发，随时 push）"] --> B["第三层：hello-world-tai-Fairy-Main<br/>（本机基础分支）"]
+    A["第三层：&lt;账号段&gt;-&lt;电脑段&gt;-ui<br/>（本地开发，随时 push）"] --> B["第三层：&lt;账号段&gt;-&lt;电脑段&gt;-Main<br/>（该机器的集成分支）"]
     B --> C["第二层：develop<br/>（开发主线）"]
     C --> D["第一层：master<br/>（线上发布版本）"]
 ```
 
-1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-Fairy-ui`。
-   账号段取 Gitee 账号名（同时是分支归属），电脑段由**本地仓库路径**查出（`hostname` 只在首次登记时使用），
-   后缀自选；每台机器的基础分支后缀固定为 `Main`。
-2. **做完合并回本机 `-Main`**：`-Main` 是该机器的集成分支，子分支都从它切出、合并回它。
+1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-studiomac-ui`。
+   账号段取 **Gitee 登录名**（小写，同时是分支归属），电脑段取本机 `hostname` 去掉空格和非法字符，
+   后缀自选；每台机器的基础分支后缀固定为 `Main`。对照表见
+   [.agents/branch-registry.md](.agents/branch-registry.md)。
+2. **做完合并回 `-Main`**：`-Main` 是该账号在该机器上的集成分支，子分支都从它切出、合并回它。
 3. **`-Main` 攒够一批就进 `develop`**：这是唯一的合流点，同机器的多次小改动在这里合成一批。
    只提交自己账号段的内容；撞上别人的改动或主线冲突时**不要 force push**，保留现场并**去提 OA**。
 4. **`develop` 自动进 `master`**：跑 `scripts\release.ps1`（macOS / Linux：`scripts/release.sh`），
    它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；开启 Gitee Go 后
    [.workflow/release.yml](.workflow/release.yml) 也会在 `develop` 推送时自动做同一件事。
-5. **先登记再动手**：仓库路径、父分支、用途登记在
-   [.agents/branch-registry.md](.agents/branch-registry.md)，agent 用仓库路径判断自己在哪台电脑上。
+5. **新成员接入**：Gitee 邀请 → 建一条 `<登录名>-*` 保护分支规则 → 更新
+   [.agents/branch-registry.md](.agents/branch-registry.md)。
 6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
 7. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
@@ -132,13 +133,13 @@ flowchart BT
 - 平台配置与本仓库文件免询问；仓库外的改动、破坏性 git 操作需要先取得同意
 - 分支三层：第三层 `<账号段>-<电脑段>-<后缀>` → 第二层 `develop` → 第一层 `master`，不越层、不倒流
 - 分支归账号段所有，每个账号只能推自己账号段的分支；跨账号 / 主线冲突不 force push，提示去提 OA
-- 用本地仓库路径（不是 `hostname`）判断当前是哪台电脑
+- 电脑段取本机 `hostname` 规范化，只用于区分同一账号的不同机器，不参与权限
 - 每轮迭代验证通过后 push 本机分支，做完的功能合并进 `develop`，再由 `scripts/release` 自动发布到 `master`
 - 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务，不擅自扩大范围
 
 #### 参与贡献
 
 1. Fork 本仓库
-2. 从本机 `-Main` 切出 `<账号段>-<电脑段>-<后缀>` 分支
-3. 提交代码并跑通测试，合并回本机 `-Main`
+2. 从你的 `-Main` 切出 `<账号段>-<电脑段>-<后缀>` 分支
+3. 提交代码并跑通测试，合并回你的 `-Main`
 4. 向 `develop` 提交 PR；`master` 由 `develop` 自动推进

@@ -28,54 +28,44 @@
 
 | 段 | 规则 |
 | --- | --- |
-| 账号段（第 1 段） | 固定取 Gitee 账号名，全小写，与远端 URL 一致。本仓库为 `hello-world-tai`。**这一段同时是分支的归属标记** |
-| 电脑段（第 2 段） | 取本机 `hostname`，去掉空格与非法字符，保留大小写。当前电脑为 `Fairy` |
+| 账号段（第 1 段） | 固定取 **Gitee 登录名**（远端 URL 里出现的那个名字，不是昵称），一律小写。**这一段同时是分支的归属标记** |
+| 电脑段（第 2 段） | 取本机 `hostname` 并规范化：去掉空格、`.`、`_` 等非字母数字字符，保留大小写，例如 `studio mac` → `studiomac` |
 | 后缀（第 3 段） | **用户可以自定义**，只用字母、数字、连字符，例如 `Main`、`ui`、`test`、`docs` |
 
 - 前两段必须严格遵守上面的规则，不得自己发明。
-- 每台电脑的**基础分支**后缀固定为 `Main`：`hello-world-tai-Fairy-Main`。
-- 同一台电脑上的其它分支都是基础分支的子分支：`hello-world-tai-Fairy-ui`、`hello-world-tai-Fairy-test`。
+- 每台电脑的**基础分支**后缀固定为 `Main`：`<账号段>-<电脑段>-Main`。
+- 同一台电脑上的其它分支都是基础分支的子分支：`<账号段>-<电脑段>-ui`、`<账号段>-<电脑段>-test`。
 - **归属规则**：分支归它的账号段所有。每个账号**只能推送 `<自己的账号段>-*` 的分支**，
   不得推送、改写、删除别人的分支；需要动别人的分支时只能发起合并请求，由对方账号处理。
+
+电脑段只用来区分「同一个人用的不同机器」，不参与权限判断；换机器就换一段，
+不需要任何人登记或审批。
 
 ### 2.1.1 账号段取值
 
 账号段取 **Gitee 登录名**（远端 URL 里出现的那个名字，一律小写），不是仓库里显示的昵称。
-当前仓库成员与对应前缀见 [.agents/branch-registry.md](.agents/branch-registry.md) 的「账号与分支前缀」表：
+当前成员与对应前缀的唯一清单在 [.agents/branch-registry.md](.agents/branch-registry.md) 的「账号表」。
 
-| 显示名 | 账号段（分支前缀） |
-| --- | --- |
-| Hallo_world_Tai | `hello-world-tai` |
-| QL_Leo | `lihaoyuan114` |
-| 吴泓霄 | `shawnwu1086` |
-| QAqwANG | `qwerty6543210` |
+新成员进来时按顺序做三件事：① 在 Gitee 邀请成员；② 在「保护分支设置」里补一条 `<登录名>-*` 规则
+（可推送代码成员只勾他本人）；③ 更新 [.agents/branch-registry.md](.agents/branch-registry.md) 的账号表。**没有对应保护规则的前缀不许新建分支。**
 
-新成员进来时：先在 Gitee 邀请，再在「保护分支设置」里补一条 `<登录名>-*` 规则
-（可推送代码成员只勾他本人），最后更新登记表。**没有对应保护规则的前缀不许新建分支。**
+### 2.2 电脑段怎么取
 
-### 2.2 用本地仓库路径识别电脑
+1. 跑 `hostname`（或 `git config --get user.hostname`），拿到本机主机名。
+2. 去掉空格与非法字符，保留大小写。
+3. 直接拼进分支名，**不需要登记、不需要查表**；判断当前分支属不属于自己只看账号段。
 
-1. 用 `git rev-parse --show-toplevel` 取本仓库的绝对路径。
-2. 读取 `.agents/branch-registry.md`，用它登记的各电脑仓库路径做**前缀匹配**（Windows 下忽略大小写，最长匹配优先）。
-3. 命中 → 使用该行登记的电脑段与基础分支。
-4. **没有命中 → 视为新电脑**，自动登记并创建基础分支（见 2.3）。
+### 2.3 第一次在某台电脑上工作
 
-**本地项目仓库地址是唯一的判断依据**：路径命中登记表就用表里的电脑段与基础分支，即使当前 `hostname`
-和电脑段不一致也以路径为准（例如同步盘换机、重装系统改了主机名）。`hostname` 只用于**首次登记新电脑时生成电脑段**，
-不用于判断是否已登记，也不要据它改写已登记的分支名。
-
-### 2.3 新电脑的处理
-
-1. 在 `.agents/branch-registry.md` 追加一行：本地仓库路径、账号段、电脑段、基础分支。
-2. 从最新 `develop` 创建基础分支：`git fetch gitee && git switch -c <账号段>-<电脑段>-Main gitee/develop`。
-3. `git push -u gitee <账号段>-<电脑段>-Main`。
-4. 把这次登记 commit 到新分支上。
+1. `git fetch gitee && git switch -c <账号段>-<电脑段>-Main gitee/develop`（从最新 `develop` 切出）。
+2. `git push -u gitee <账号段>-<电脑段>-Main`。
+3. 之后按 2.4 切子分支。
 
 ### 2.4 父子关系与多分支
 
-- 子分支**必须**从本机的 `-Main` 切出，并在 `.agents/branch-registry.md` 的「子分支」表里登记父分支、用途、状态。
-- 子分支完成后合并回本机 `-Main`，再由 `-Main` 按 2.5 的流向进入 `develop`。
-- 禁止跨电脑共享分支名；不同电脑只通过第二层 `develop` 汇合，最终由 `develop` 进入 `master`。
+- 子分支**必须**从所属机器的 `-Main` 切出，命名仍用 `<账号段>-<电脑段>-<后缀>`。
+- 子分支完成后合并回 `-Main`，再由 `-Main` 按 2.5 的流向进入 `develop`。
+- 禁止跨账号、跨电脑共享分支名；不同人只通过第二层 `develop` 汇合，最终由 `develop` 进入 `master`。
 
 ### 2.5 三层上传流（这是硬性要求）
 
@@ -86,16 +76,16 @@
 | --- | --- | --- | --- |
 | 第一层 | `master` | **线上发布版本**，只能处于可发布状态 | 只接受第二层的自动合并 |
 | 第二层 | `develop` | **开发主线**，所有开发者汇聚在这里 | 只接受第三层合并（PR 或 fast-forward） |
-| 第三层 | `<账号段>-<电脑段>-<后缀>` | **账号自己的分支**，`-Main` 是本人基础分支 | 只有该账号段的主人，且只能推自己账号段的分支 |
+| 第三层 | `<账号段>-<电脑段>-<后缀>` | **账号自己的分支**，`-Main` 是该账号在该机器上的集成分支 | 只有该账号段的主人，且只能推自己账号段的分支 |
 
 推进动作，一步都不能跳：
 
 | # | 时机 | 动作 |
 | --- | --- | --- |
 | 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push gitee HEAD` |
-| 2 | 一个子分支做完、测试全绿 | 合并回本机 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push gitee HEAD` |
-| 3 | 本机 `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only gitee develop && git merge --no-ff <账号段>-<电脑段>-Main && git push gitee develop` |
-| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本机跑 `scripts/release`，或由 `.workflow/release.yml` 在 Gitee Go 上合并（见第 7 节） |
+| 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push gitee HEAD` |
+| 3 | `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only gitee develop && git merge --no-ff <账号段>-<电脑段>-Main && git push gitee develop` |
+| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.workflow/release.yml` 在 Gitee Go 上合并（见第 8 节） |
 | 5 | 推送冲突 / 被拒绝 | 先 `git fetch gitee` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
 
 #### 冲突处理（硬性）
@@ -118,13 +108,9 @@ Gitee 侧已经把这些规则落成机器的检查，agent 只读不绕：
 
 | 位置 | 配置 | 效果 |
 | --- | --- | --- |
-| 保护分支设置 | `master`、`develop`、`hello-world-tai-*`、`lihaoyuan114-*`、`shawnwu1086-*`、`qwerty6543210-*` 各一条规则 | 每个 `<登录名>-*` 只允许本人推送；`develop` / `master` 只允许仓库管理员推送，PR 合并仍开放给开发者 |
-| 推送规则设置 | 「只能推送自己的提交」+「仓库管理员不受上述规则限制」 | 非管理员的提交邮箱与账号不符会被拒；管理员（发布脚本、Gitee Go）不受影响，否则打标签会因 `Initial commit` 的作者邮箱不一致而失败 |
-| 仓库设置 → 功能设置 | 「禁止强制推送」 | 是付费企业功能，个人仓库里选项不可用，只能靠上面两条兜底 |
-
-实测记录（2026-10-26）：用 `hello-world-tai` 推送 `shawnwu1086-probe`、`qwerty6543210-probe`、
-`QWERTY6543210-probe` 全部被拒，报错同上；同一账号推自己的 `hello-world-tai-Fairy-*` 正常。
-说明规则确实生效，且**前缀必须小写**——大写前缀同样被拒。
+| 保护分支设置 | 每个账号一条 `<登录名>-*`，另加 `master`、`develop` 两条 | 每个 `<登录名>-*` 只允许本人推送；`develop` / `master` 只允许仓库管理员推送，PR 合并开放给开发者 |
+| 推送规则设置 | 「只能推送自己的提交」+「仓库管理员不受上述规则限制」 | 非管理员的提交邮箱与账号不符会被拒；管理员（发布脚本、Gitee Go）不受影响，否则打标签会因历史提交的作者邮箱不一致而失败 |
+| 仓库设置 → 功能设置 | 「禁止强制推送」 | 该选项只在付费企业版可用；个人仓库无法开启，只能靠上面两条兜底 |
 
 被拒时的典型报错与处理：
 
@@ -134,7 +120,7 @@ remote: Auth error: No permission to push this protected branch
 ```
 
 1. 先确认分支前缀是不是自己的账号段；不是就别推，改推自己的分支或开 PR。
-2. 确认这条提交的 `user.email` 是不是本账号在 Gitee 上登记的邮箱。
+2. 确认这条提交的 `user.email` 是不是本账号在 Gitee 上登记的邮箱（`git config user.email`）。
 3. 改不动就**停下来，告诉用户去提 OA**，不要尝试 force push、改名绕过或删除规则。
 
 ---
@@ -176,7 +162,7 @@ scripts/build.sh test                                                   # macOS 
 ## 6. 共享信息
 
 Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本信息` 的格式与其他Agent交流，该文件只能追加，不能删除或插入。
-- 示例：`<2026-10-22T22:21:23+08:00>[hello-world-tai-FedoraChan-Main]测试消息`
+- 示例：`<2026-10-22T22:21:23+08:00>[<账号段>-<电脑段>-Main]测试消息`
 
 ## 7. Git 分支与提交规范
 
@@ -185,9 +171,9 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 1. **第一层 `master`**：禁止任何直接提交或直接推送，只接受来自 `develop` 的自动合并（见第 8 节）。
 2. **第二层 `develop`**：禁止直接提交；只接受第三层 `-Main` 的合并，合并方式为 PR 或已在本地验证过的 fast-forward。
 3. **第三层 `<账号段>-<电脑段>-<后缀>`**：唯一可自由提交、自由推送的层次；每项独立任务都在专用子分支上完成
-   （如 `hello-world-tai-Fairy-ui`、`hello-world-tai-Fairy-fix`），完成后合并回本人 `-Main`。
+   （如 `<账号段>-<电脑段>-ui`、`<账号段>-<电脑段>-fix`），完成后合并回该机器的 `-Main`。
    **每个账号只能推送自己账号段的分支**：`hello-world-tai` 只能动 `hello-world-tai-*`，
-   其他账号（将来加入的协作者）只能动 `<他们自己的账号段>-*`。
+   其他账号只能动 `<他们自己的账号段>-*`。
 4. 完成修改后，先在当前工作分支执行代码检查、测试和 Git commit；测试不通过不得进入上一层。
 5. 禁止为了省事而绕过 PR、分支保护、CI 检查或既定的合并流程；禁止 `--force` 推送。
 6. 执行任何 Git 写操作前，必须检查当前分支、工作区状态及目标分支，避免将无关改动一起提交。
@@ -198,11 +184,11 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 
 `develop` 每收到一次通过测试的提交，就要自动推进到 `master`，保证第一层始终等于「最新可发布状态」。
 
-- **本机**：`powershell -ExecutionPolicy Bypass -File scripts\release.ps1`（macOS / Linux：`scripts/release.sh`）。
+- **本地**：`powershell -ExecutionPolicy Bypass -File scripts\release.ps1`（macOS / Linux：`scripts/release.sh`）。
   脚本依次执行：切到 `develop` 并 `pull --ff-only` → 跑测试 → `--no-ff` 合并进 `master` → push 两个分支
   → 给 `master` 打 `v<日期>` 标签。任何一步失败即中止，不留半成品。
 - **远端**：`.workflow/release.yml`（Gitee Go）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
-  Gitee Go 需在仓库里手动「一键开启」；未开启时以本机脚本为准。
+  Gitee Go 需在仓库里手动「一键开启」；未开启时以本地脚本为准。
 - 自动推进只做 fast-forward / `--no-ff` 合并，**禁止强推**；冲突时停下来报告，由人决定。
 - 发布完成后把 `master` 的合并提交快速回合到 `develop`（`git switch develop && git merge --ff-only master`），
   否则每次 `--no-ff` 都会在两层之间留下永久偏移。
