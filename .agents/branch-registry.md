@@ -24,9 +24,10 @@ hello-world-tai-Fairy-Main
 | Hallo_world_Tai | `hello-world-tai` | 仓库拥有者 / 管理员 | `hello-world-tai-*` |
 | QL_Leo | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
 | 吴泓霄 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
-| QAqwANG | `QWERTY6543210` | 开发者 | `qwerty6543210-*` |
+| QAqwANG（显示名 QAqwANG） | `qwerty6543210` | 开发者 | `qwerty6543210-*` |
 
-> 分支前缀取 **Gitee 登录名**（远端 URL 里出现的那个名字），不是显示名；一律小写。
+> 分支前缀取 **Gitee 登录名**（远端 URL 里出现的那个名字），不是显示名；写进分支名时**一律小写**，
+> 保护规则的通配符也按小写写（大写前缀的推送同样会被拒）。
 > 这条规则已在 Gitee「保护分支设置」里落成 5 条规则（`master` 加 4 个 `<登录名>-*`）：
 > 每个 `<登录名>-*` 规则只把该成员列为「可推送代码成员」，「可合并 Pull Request」留给仓库管理员。
 > 新增协作者时，先在 Gitee 邀请成员，再补一条 `<他的登录名>-*` 保护规则，最后更新上表。
@@ -52,8 +53,10 @@ hello-world-tai-Fairy-Main
 | `hello-world-tai-Fairy-sync` | `hello-world-tai-Fairy-Main` | 同步仓库并修订 AGENTS.md 规则冲突 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-docs-cpp` | `hello-world-tai-Fairy-Main` | README 主描述改为 C++17 单文件计算器、补充仓库用法说明 | 已合并回父分支（本地分支已删除） |
 | `hello-world-tai-Fairy-flow` | `hello-world-tai-Fairy-Main` | 三层上传流：AGENTS.md 2.5/7/8、scripts/release、Gitee Go 自动发布 | 已合并回父分支（本地分支已删除） |
-| `hello-world-tai-Fairy-rules` | `hello-world-tai-Fairy-Main` | 分支归属规则：账号段 = 分支主人，只能推自己的分支，冲突提 OA，路径识别电脑；Gitee 保护分支落地 | 已合并回父分支（本地分支已删除） |
+| `hello-world-tai-Fairy-rules` | `hello-world-tai-Fairy-Main` | 分支归属规则：账号段 = 分支主人，只能推自己的分支，冲突提 OA，路径识别电脑；Gitee 保护分支落地 | 已合并回父分支（本地分支已删除，远端分支仍在，待确认是否删除） |
 | `hello-world-tai-Fairy-rules2` | `hello-world-tai-Fairy-Main` | 收尾：登记表、NOTE、TODO 与保护分支规则实测结果 | 使用中 |
+
+> 远端临时探针分支 `shawnwu1086-probe`、`qwerty6543210-probe` 是权限实测的残留，等用户确认后再删。
 
 > 两层主线：`master`（第一层，线上发布版本）← `develop`（第二层，开发主线）← 各机器 `-Main`（第三层）。
 > 子分支完成后合并回本机 `-Main`，再由 `-Main` 合进 `develop`，最后自动推进 `master`。
