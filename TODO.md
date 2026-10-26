@@ -30,6 +30,20 @@
 
 ## 排队中
 
+### T-004 分支归属规则落地为账号隔离（Gitee 保护分支）
+
+- 状态：done
+- 目标分支：hello-world-tai-Fairy-rules
+- 优先级：P0
+- 依赖：T-002
+- 涉及文件：`AGENTS.md`、`.github/copilot-instructions.md`、`.agents/branch-registry.md`、
+  `README.md`、`README.en.md`、`NOTE.md`
+- 验收：`scripts\build.ps1 -Task test` 全绿；推送他人账号前缀的分支会被 Gitee 拒绝
+  （`Auth error: No permission to push this protected branch`）
+- 说明：账号段改为「Gitee 登录名」，每个账号只能提交 / 推送 `<登录名>-*`；识别电脑只用本地仓库路径；
+  跨账号或主线冲突一律提示用户提 OA。Gitee 侧已建 6 条保护分支规则并开启「只能推送自己的提交」，
+  `hello-world-tai` 推到 `shawnwu1086-probe` 实测被 pre-receive hook 拒绝。
+
 ### T-001 把计算器核心移植为单文件 C++
 
 - 状态：queued
