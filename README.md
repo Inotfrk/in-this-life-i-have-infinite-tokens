@@ -104,7 +104,7 @@ flowchart BT
     C --> D["第一层：master<br/>（线上发布版本）"]
 ```
 
-1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-studiomac-ui`。
+1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `inotfrk-Fairy-ui`。
    账号段取 **GitHub 用户名**（小写，同时是分支归属），电脑段取本机 `hostname` 去掉空格和非法字符，
    后缀自选；每台机器的基础分支后缀固定为 `Main`。对照表见
    [.agents/branch-registry.md](.agents/branch-registry.md)。

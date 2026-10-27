@@ -7,14 +7,19 @@
 
 | 显示名 | GitHub 账号 | 账号段（分支前缀） | 角色 | 允许推送的分支 |
 | --- | --- | --- | --- | --- |
-| Hallo_world_Tai | `Inotfrk` | `hello-world-tai` | 仓库拥有者 | `hello-world-tai-*` |
+| AiHoshino（Hallo_world_Tai） | `Inotfrk` | `inotfrk` | 仓库拥有者 | `inotfrk-*` |
 | QL_Leo | 待登记 | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
 | 吴泓霄 | 待登记 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
 | QAqwANG | 待登记 | `qwerty6543210` | 开发者 | `qwerty6543210-*` |
 
 > 仓库已于 2026-10-27 整体迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），
-> 远端名统一为 `origin`。上表的前缀沿用 Gitee 时期的写法，**历史分支不改名**；
-> 新成员的账号段取 **GitHub 用户名小写**，与 Gitee 时期无关。
+> 远端名统一为 `origin`。账号段一律取 **GitHub 用户名小写**，与 Gitee 时期的写法无关。
+>
+> 2026-10-27 已把 Gitee 时期的 `hello-world-tai-*` 分支统一改名为 `inotfrk-*`：
+> `hello-world-tai-Fairy-Main` → `inotfrk-Fairy-Main`、`-runner` → `inotfrk-Fairy-runner`、
+> `-docs-cpp` → `inotfrk-Fairy-docs-cpp`、`-packaging` → `inotfrk-Fairy-packaging`，
+> 旧名已从远端删除。仓库内的文档、Workflow 触发器与代办清单已同步为新前缀，
+> 只有 NOTE.md 的追加记录保留旧名（该文件只追加不改写）。
 
 ## 新成员接入
 
