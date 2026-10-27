@@ -74,7 +74,15 @@ jobs:
       - name: Install WiX Toolset 3 (Windows)
         if: runner.os == 'Windows'
         shell: powershell
-        run: choco install wixtoolset --version=3.14.1 --no-progress -y
+        run: |
+          # 部分 runner 镜像已预装 WiX 3，此时 choco 会因「已安装更新版本」而失败，先探测再装。
+          $wix = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset*' -Directory -ErrorAction SilentlyContinue |
+            Select-Object -First 1
+          if ($wix) {
+            Write-Host "WiX Toolset already present: $($wix.FullName)"
+            exit 0
+          }
+          choco install wixtoolset --version=3.14.1 --no-progress -y
 
       - name: Build macOS dmg
         if: runner.os == 'macOS'
