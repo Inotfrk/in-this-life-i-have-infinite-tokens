@@ -57,11 +57,24 @@ open_and_merge_pr() {
     echo "错误：创建 PR $head -> $base 失败" >&2
     exit 1
   fi
-  curl -fsS -X PUT "$api/pulls/$num/merge" \
-      -H "Authorization: Bearer $GH_TOKEN" \
-      -H 'Accept: application/vnd.github+json' \
-      -H 'X-GitHub-Api-Version: 2022-11-28' \
-      -d '{"merge_method":"merge"}' >/dev/null
+  # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+  local merged=0
+  for _ in 1 2 3 4 5; do
+    if curl -fsS -X PUT "$api/pulls/$num/merge" \
+        -H "Authorization: Bearer $GH_TOKEN" \
+        -H 'Accept: application/vnd.github+json' \
+        -H 'X-GitHub-Api-Version: 2022-11-28' \
+        -d '{"merge_method":"merge"}' >/dev/null; then
+      merged=1
+      break
+    fi
+    echo "合并 PR #$num 失败，5 秒后重试" >&2
+    sleep 5
+  done
+  if [[ "$merged" -ne 1 ]]; then
+    echo "错误：PR #$num 合并重试耗尽" >&2
+    exit 1
+  fi
   curl -fsS -X DELETE "$api/git/refs/heads/$head" \
       -H "Authorization: Bearer $GH_TOKEN" \
       -H 'Accept: application/vnd.github+json' \
