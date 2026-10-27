@@ -8,7 +8,7 @@ on:
   push:
     branches:
       - master
-      - 'hello-world-tai-*-Main'
+      - 'inotfrk-*-Main'
     tags:
       - 'v*'
   workflow_dispatch:
