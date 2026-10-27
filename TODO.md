@@ -87,7 +87,7 @@
 ### T-005 仓库整体从 Gitee 迁到 GitHub
 
 - 状态：done
-- 目标分支：`hello-world-tai-Fairy-Main`
+- 目标分支：`inotfrk-Fairy-Main`
 - 优先级：P0
 - 依赖：无
 - 涉及文件：`AGENTS.md`、`.github/copilot-instructions.md`、`.github/workflows/release.yml`、
