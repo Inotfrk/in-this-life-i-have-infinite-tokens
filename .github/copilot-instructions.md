@@ -8,7 +8,8 @@
 - **电脑段**：只用来区分同一账号的不同机器，取 `hostname` 规范化即可，不需要登记。
 - **接入新成员**：GitHub 仓库邀请协作者 → 建 `<用户名>-*` 保护分支规则 → 更新 [.agents/branch-registry.md](../.agents/branch-registry.md)。
 - **父子关系**：子分支从所属机器（账号）的 `-Main` 切出，完成后合并回它。
-- **上传**：三层流 —— 第三层（`<账号段>-<电脑段>-<后缀>`）随时 push；做完合并进第二层 `develop`；
+- **上传**：三层流 —— 第三层（`<账号段>-<电脑段>-<后缀>`）随时 push；做完开 PR 合并进第二层 `develop`；
   `develop` 再自动推进到第一层 `master`（`scripts/release.ps1` 或 GitHub Actions），永不越层。
+  **`develop` / `master` 不允许直接 push，只能走 PR。**
 - **冲突**：遇到跨账号、跨主线（`develop` / `master`）的冲突，**不要 force push**，保留现场并提示用户去提 OA。
 - **队列**：[TODO.md](../TODO.md) 是唯一待完成清单，夜间 / 空闲 agent 按其中协议领取 `queued` 任务执行。

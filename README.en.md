@@ -108,19 +108,21 @@ flowchart BT
    branch always uses the `Main` suffix. See [.agents/branch-registry.md](.agents/branch-registry.md).
 2. **Merge back into the local `-Main`** when a sub-branch is done; `-Main` is that machine's integration branch.
 3. **Move `-Main` into `develop`** once a batch is ready — the single convergence point for all developers.
+   Open a pull request (base `develop`, compare your `-Main`) and merge it; **you cannot push `develop` directly**.
    Push only content from your own account; on cross-account or mainline conflicts, never force push —
    keep the working state and **raise an OA**.
 4. **`develop` promotes itself into `master`**: run `scripts\release.ps1` (macOS / Linux: `scripts/release.sh`),
-   which runs the tests, merges with `--no-ff` and tags `v<date>`. [.github/workflows/release.yml](.github/workflows/release.yml)
+   which runs the tests, opens a pull request, merges it and tags `v<date>`. [.github/workflows/release.yml](.github/workflows/release.yml)
    does the same automatically on every `develop` push.
-5. **Onboard a new member**: invite as a GitHub collaborator → add a `<username>-*` protected-branch rule →
-   update [.agents/branch-registry.md](.agents/branch-registry.md).
+5. **Onboard a new member**: invite as a GitHub collaborator → run `scripts\github-rulesets.ps1` to add the
+   `<username>-*` rule → update [.agents/branch-registry.md](.agents/branch-registry.md).
 6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.
 7. **Verify before promoting**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).
 
-Neither `master` nor `develop` takes direct commits: the former only receives layer-2 promotions, the latter
-only layer-3 merges.
+Neither `master` nor `develop` takes direct pushes: both require a pull request. `develop` only takes
+layer-3 pull requests, `master` only takes `develop` pull requests opened by the release script / workflow.
+Only layer-3 `<account>-*` branches can be pushed directly, and only within your own account segment.
 
 Full rules are in [AGENTS.md](AGENTS.md) (loaded on every conversation); agent notes are in [NOTE.md](NOTE.md).
 
