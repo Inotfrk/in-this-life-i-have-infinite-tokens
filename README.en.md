@@ -76,10 +76,10 @@ Packaging notes:
 - **macOS**: one run produces `dist/Calculator.app` (portable) and `dist/Calculator-<version>.dmg`
 - **Version**: `-Task package -Version 1.2.0` (Windows) or `APP_VERSION=1.2.0 scripts/build.sh package`
 
-Cross-platform packaging is defined in CI, but **no CI actually runs in this repository**: the remote is
-Gitee, so `.github/workflows/package.yml` never triggers, and [.workflow/package.yml](.workflow/package.yml)
-is only a Gitee Go pipeline definition that has to be enabled by hand and only offers Linux runners
-(no `dmg` / `msi` / `exe`). Build installers locally with `scripts\build.ps1 -Task package` or
+Cross-platform packaging runs on GitHub Actions: [.github/workflows/package.yml](.github/workflows/package.yml)
+tests on all three platforms and uploads the macOS `dmg` plus the Windows `zip` / `msi` as artifacts.
+The repository now lives on GitHub (`Inotfrk/in-this-life-i-have-infinite-tokens`), so a push triggers the
+workflow without any manual switch-on. Build installers locally with `scripts\build.ps1 -Task package` or
 `scripts/build.sh package`.
 
 You can also run the jar directly: `java -jar dist\Calculator.jar`.
@@ -103,7 +103,7 @@ flowchart BT
 ```
 
 1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-studiomac-ui`.
-   The account segment is the **Gitee login name** (lowercase, and it owns the branch); the machine segment is
+   The account segment is the **GitHub username** (lowercase, and it owns the branch); the machine segment is
    the local `hostname` with spaces and illegal characters stripped; the suffix is yours; each machine's base
    branch always uses the `Main` suffix. See [.agents/branch-registry.md](.agents/branch-registry.md).
 2. **Merge back into the local `-Main`** when a sub-branch is done; `-Main` is that machine's integration branch.
@@ -111,9 +111,9 @@ flowchart BT
    Push only content from your own account; on cross-account or mainline conflicts, never force push —
    keep the working state and **raise an OA**.
 4. **`develop` promotes itself into `master`**: run `scripts\release.ps1` (macOS / Linux: `scripts/release.sh`),
-   which runs the tests, merges with `--no-ff` and tags `v<date>`. With Gitee Go enabled,
-   [.workflow/release.yml](.workflow/release.yml) does the same automatically on every `develop` push.
-5. **Onboard a new member**: invite on Gitee → add a `<login>-*` protected-branch rule →
+   which runs the tests, merges with `--no-ff` and tags `v<date>`. [.github/workflows/release.yml](.github/workflows/release.yml)
+   does the same automatically on every `develop` push.
+5. **Onboard a new member**: invite as a GitHub collaborator → add a `<username>-*` protected-branch rule →
    update [.agents/branch-registry.md](.agents/branch-registry.md).
 6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.

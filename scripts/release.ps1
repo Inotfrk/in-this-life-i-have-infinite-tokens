@@ -7,7 +7,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$remote = 'gitee'
+$remote = 'origin'
 $devBranch = 'develop'
 $relBranch = 'master'
 
