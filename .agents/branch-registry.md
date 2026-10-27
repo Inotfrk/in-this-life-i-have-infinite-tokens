@@ -8,9 +8,17 @@
 | 显示名 | GitHub 账号 | 账号段（分支前缀） | 角色 | 允许推送的分支 |
 | --- | --- | --- | --- | --- |
 | AiHoshino（Hallo_world_Tai） | `Inotfrk` | `inotfrk` | 仓库拥有者 | `inotfrk-*` |
-| QL_Leo | 待登记 | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
-| 吴泓霄 | 待登记 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
-| QAqwANG | 待登记 | `qwerty6543210` | 开发者 | `qwerty6543210-*` |
+| QL_Leo | `lihaoyuan114` | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
+| 吴泓霄 | `Xiao-xiao10` | `shawnwu1086`、`xiao-xiao10` | 开发者 | `shawnwu1086-*`、`xiao-xiao10-*` |
+| QAqwANG | 未注册 | `qwerty6543210` | 开发者 | 待 GitHub 账号建好并受邀后再加规则 |
+
+> 2026-10-27 已在 GitHub 上落地分支规则（见 [AGENTS.md](../AGENTS.md) 2.5.1）：
+> `master`、`develop` 只能通过 PR 合并；每个已存在的账号段各有一条 `<前缀>-owner-only` 规则，
+> 只有本人能建/推/删该前缀的分支。规则来源是 [scripts/github-rulesets.ps1](../scripts/github-rulesets.ps1)。
+>
+> 注意：`Xiao-xiao10` 一个人挂两个前缀——`shawnwu1086` 是迁到 GitHub 之前就存在的历史分支前缀
+> （已有 `shawnwu1086-MacBookAir3-Main`），`xiao-xiao10` 是他的 GitHub 用户名。两条规则都只授权给他本人。
+> `qwerty6543210` 在 GitHub 上还没有这个账号，脚本会跳过并给出警告，账号建好再重跑即可。
 
 > 仓库已于 2026-10-27 整体迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），
 > 远端名统一为 `origin`。账号段一律取 **GitHub 用户名小写**，与 Gitee 时期的写法无关。
@@ -27,7 +35,9 @@
 2. 「Settings → Rules → Rulesets」（或 Branches）里新建一条 `<用户名>-*` 规则。
 3. 在上表补一行（前缀 = GitHub 用户名小写）。
 
-**没有对应保护规则的前缀不许新建分支。**
+**没有对应保护规则的前缀不许新建分支。** 账号表里的每个前缀都要有一条
+`<前缀>-owner-only` 规则；新成员进来后重跑一次 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1)
+就能补上他的规则。
 
 ## 电脑段不在这里登记
 

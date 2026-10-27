@@ -1,4 +1,5 @@
 ﻿# 把第二层 develop 自动推进到第一层 master（见 AGENTS.md 第 8 节）。
+# master / develop 只接受 Pull Request，所以这里改成：推送临时分支 -> 开 PR -> 合并。
 # Usage: powershell -ExecutionPolicy Bypass -File scripts\release.ps1 [-DryRun] [-SkipTests]
 param(
     [switch]$DryRun,
@@ -10,6 +11,10 @@ $root = Split-Path -Parent $PSScriptRoot
 $remote = 'origin'
 $devBranch = 'develop'
 $relBranch = 'master'
+$owner = 'Inotfrk'
+$repoName = 'in-this-life-i-have-infinite-tokens'
+
+. "$PSScriptRoot\github-pr.ps1"
 
 # git 会把进度写到 stderr；直接调用时 PowerShell 会把它当成错误记录打印。
 # 走 cmd.exe 包一层，把 stderr 合并进 stdout，只按退出码判断成败。
@@ -34,6 +39,12 @@ function Invoke-Git {
         throw "git $($GitArgs -join ' ') 失败：$($output.Trim())"
     }
     Write-Host $output.Trim()
+}
+
+# $Ancestor 是否是 $Descendant 的祖先提交。
+function Test-Ancestor([string]$Ancestor, [string]$Descendant) {
+    $null = Invoke-GitText merge-base --is-ancestor "$remote/$Ancestor" "$remote/$Descendant"
+    return $LASTEXITCODE -eq 0
 }
 
 $dirty = (Invoke-GitText status --porcelain).Trim()
@@ -72,17 +83,35 @@ try {
         return
     }
 
-    Invoke-Git switch $relBranch
-    Invoke-Git pull --ff-only $remote $relBranch
-    Invoke-Git merge --no-ff $devBranch -m "release: 自动发布 $devBranch -> $relBranch ($tag)"
-    Invoke-Git tag -a $tag -m "release $tag"
-    Invoke-Git push $remote $relBranch
+    # develop 与 master 都禁止直接推送，只能通过 PR 合并（AGENTS.md 2.5）。
+    $headBranch = "release/$devBranch-to-$relBranch-$tag"
+    Invoke-Git switch --create $headBranch $devBranch
+    Invoke-Git push $remote $headBranch
+    Invoke-Git switch $devBranch
+
+    $prNumber = Merge-ReleasePullRequest -Owner $owner -Repo $repoName -Head $headBranch -Base $relBranch `
+        -Title "release: 自动发布 $devBranch -> $relBranch ($tag)" `
+        -BodyText "由 scripts/release.ps1 自动创建。$devBranch 已通过测试，合并后打标签 $tag。"
+    Write-Host "已合并 PR #$prNumber ($headBranch -> $relBranch)"
+
+    Invoke-Git fetch $remote --prune
+    Invoke-Git tag -a $tag -m "release $tag" "$remote/$relBranch"
     Invoke-Git push $remote $tag
 
     # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
-    Invoke-Git switch $devBranch
-    Invoke-Git merge --ff-only $relBranch
-    Invoke-Git push $remote $devBranch
+    if (-not (Test-Ancestor $relBranch $devBranch)) {
+        $backBranch = "release/$relBranch-to-$devBranch-$tag"
+        Invoke-Git switch --create $backBranch "$remote/$relBranch"
+        Invoke-Git push $remote $backBranch
+        Invoke-Git switch $devBranch
+        $backPr = Merge-ReleasePullRequest -Owner $owner -Repo $repoName -Head $backBranch -Base $devBranch `
+            -Title "release: 回合 $relBranch -> $devBranch ($tag)" `
+            -BodyText '自动发布产生的合并提交只存在于 master，这里回合到 develop，避免两层永久偏移。'
+        Write-Host "已合并 PR #$backPr ($backBranch -> $devBranch)"
+    }
+
+    Invoke-Git fetch $remote --prune
+    Invoke-Git pull --ff-only $remote $devBranch
 
     Write-Host "发布完成：$devBranch -> $relBranch，标签 $tag"
 }
