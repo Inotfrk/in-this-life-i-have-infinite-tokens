@@ -114,6 +114,7 @@ GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕。配�
 | --- | --- | --- | --- |
 | `main-pr-only` | `master` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
 | `develop-pr-only` | `develop` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
+| `no-unowned-branches` | 除以下之外的所有分支 | `creation` | 只能新建 `master`、`develop`、`release/*`、`<账号段>-*` 这几种名字，杜绝乱命名 |
 | `<账号段>-owner-only` | `<账号段>-*` | `creation` + `update` + `deletion` | 只有该账号段本人能建、能推、能删这条前缀的分支 |
 
 PR 规则设的是 `required_approving_review_count = 0`：**不需要人工批准**，但必须走 PR 这个入口，

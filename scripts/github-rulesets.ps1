@@ -50,8 +50,12 @@ function Invoke-Api {
         return Invoke-RestMethod @params
     }
     catch {
-        $stream = $_.Exception.Response.GetResponseStream()
-        $detail = if ($stream) { (New-Object IO.StreamReader($stream)).ReadToEnd() } else { $_.Exception.Message }
+        $response = $_.Exception.Response
+        $detail = $_.Exception.Message
+        if ($response) {
+            $stream = $response.GetResponseStream()
+            if ($stream) { $detail = (New-Object IO.StreamReader($stream)).ReadToEnd() }
+        }
         throw "$Method $Uri 失败：$detail"
     }
 }
@@ -116,6 +120,25 @@ $desired = @(
         conditions    = @{ ref_name = @{ include = @('refs/heads/develop'); exclude = @() } }
         bypass_actors = @()
         rules         = @(@{ type = 'deletion' }, @{ type = 'non_fast_forward' }, $prRule)
+    },
+    @{
+        # 分支名必须落在「自己的账号段」或发布脚本的 release/* 里，别的名字一律不允许新建。
+        name          = 'no-unowned-branches'
+        target        = 'branch'
+        enforcement   = 'active'
+        conditions    = @{
+            ref_name = @{
+                include = @('refs/heads/**')
+                exclude = @(
+                    'refs/heads/master'
+                    'refs/heads/develop'
+                    'refs/heads/release/*'
+                    foreach ($kv in $accounts.GetEnumerator()) { "refs/heads/$($kv.Key)-*" }
+                )
+            }
+        }
+        bypass_actors = @()
+        rules         = @(@{ type = 'creation' })
     }
 )
 foreach ($kv in $accounts.GetEnumerator()) {
