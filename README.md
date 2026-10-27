@@ -74,16 +74,15 @@ macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 - **macOS**：一次打包产出 `dist/Calculator.app`（便携）与 `dist/Calculator-<版本>.dmg`（安装包）
 - **版本号**：`-Task package -Version 1.2.0`（Windows）或 `APP_VERSION=1.2.0 scripts/build.sh package`
 
-打包脚本设计成两个平台各跑一次，产物放在 CI 上是可以的，但本仓库的 CI 并未实际运行：
+打包脚本按平台各跑一次，交给 GitHub Actions 在原生 runner 上执行：
 
 | 平台 | 位置 | 产物 |
 | --- | --- | --- |
-| GitHub Actions | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
-| Gitee Go | [.workflow/package.yml](.workflow/package.yml) | Linux 上跑测试并归档跨平台 `Calculator.jar` |
+| GitHub Actions（测试） | [.github/workflows/package.yml](.github/workflows/package.yml) | 三平台跑测试 |
+| GitHub Actions（打包） | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
 
-> 实测结论（见 [NOTE.md](NOTE.md)）：本仓库远端在 Gitee，**目前没有任何 CI 真正执行**。
-> GitHub Actions 不会触发；Gitee Go 需要在仓库里手动开启，且只提供 Linux 构建机，
-> 出不了 `dmg` / `msi` / `exe`。要安装包就在本机跑 `scripts\build.ps1 -Task package`
+> 仓库已迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），推送即触发 Actions，
+> 不需要手动开启。想在本机出安装包也可以跑 `scripts\build.ps1 -Task package`
 > 或 `scripts/build.sh package`。
 
 已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
@@ -106,16 +105,16 @@ flowchart BT
 ```
 
 1. **在第三层干活**：分支名固定为 `<账号段>-<电脑段>-<后缀>`，例如 `hello-world-tai-studiomac-ui`。
-   账号段取 **Gitee 登录名**（小写，同时是分支归属），电脑段取本机 `hostname` 去掉空格和非法字符，
+   账号段取 **GitHub 用户名**（小写，同时是分支归属），电脑段取本机 `hostname` 去掉空格和非法字符，
    后缀自选；每台机器的基础分支后缀固定为 `Main`。对照表见
    [.agents/branch-registry.md](.agents/branch-registry.md)。
 2. **做完合并回 `-Main`**：`-Main` 是该账号在该机器上的集成分支，子分支都从它切出、合并回它。
 3. **`-Main` 攒够一批就进 `develop`**：这是唯一的合流点，同机器的多次小改动在这里合成一批。
    只提交自己账号段的内容；撞上别人的改动或主线冲突时**不要 force push**，保留现场并**去提 OA**。
 4. **`develop` 自动进 `master`**：跑 `scripts\release.ps1`（macOS / Linux：`scripts/release.sh`），
-   它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；开启 Gitee Go 后
-   [.workflow/release.yml](.workflow/release.yml) 也会在 `develop` 推送时自动做同一件事。
-5. **新成员接入**：Gitee 邀请 → 建一条 `<登录名>-*` 保护分支规则 → 更新
+   它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；[.github/workflows/release.yml](.github/workflows/release.yml)
+   也会在 `develop` 推送时自动做同一件事。
+5. **新成员接入**：GitHub 仓库邀请协作者 → 建一条 `<用户名>-*` 保护分支规则 → 更新
    [.agents/branch-registry.md](.agents/branch-registry.md)。
 6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。

@@ -1,0 +1,61 @@
+name: release
+
+# 第二层 develop 每次推送后，测试通过即自动合并到第一层 master（AGENTS.md 第 8 节）。
+# 推送即触发，不需要手动开启；本地等价脚本是 scripts/release.ps1 / scripts/release.sh。
+
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+# 同一条 develop 上的多次推送不并发发布，避免两个 run 同时改 master。
+concurrency:
+  group: release-develop
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    name: promote develop -> master
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: develop
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Run tests
+        # 构建机没有图形环境，界面测试会自动跳过。
+        run: bash scripts/build.sh test
+
+      - name: Merge develop into master
+        run: |
+          set -euo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin develop master
+
+          if git merge-base --is-ancestor origin/develop origin/master; then
+            echo 'master 已包含 develop，无需发布'
+            exit 0
+          fi
+
+          TAG="v$(date -u +%Y.%m.%d-%H%M)"
+          git checkout -B master origin/master
+          git merge --no-ff origin/develop -m "release: 自动发布 develop -> master ($TAG)"
+          git tag -a "$TAG" -m "release $TAG"
+          git push origin master
+          git push origin "$TAG"
+
+          # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
+          git checkout -B develop origin/develop
+          git merge --ff-only master
+          git push origin develop

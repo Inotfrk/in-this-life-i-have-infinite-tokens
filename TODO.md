@@ -84,6 +84,24 @@
 
 ## 已完成
 
+### T-005 仓库整体从 Gitee 迁到 GitHub
+
+- 状态：done
+- 目标分支：`hello-world-tai-Fairy-Main`
+- 优先级：P0
+- 依赖：无
+- 涉及文件：`AGENTS.md`、`.github/copilot-instructions.md`、`.github/workflows/release.yml`、
+  `.github/ISSUE_TEMPLATE/bug_report.md`、`.github/pull_request_template.md`、`.agents/branch-registry.md`、
+  `README.md`、`README.en.md`、`TODO.md`、`NOTE.md`、`scripts/release.ps1`、`scripts/release.sh`；
+  删除 `.gitee/`、`.workflow/`
+- 验收：`git ls-remote origin` 与本地 5 个分支 + 12 个标签逐一一致；`scripts\build.ps1 -Task test` 全绿
+- 说明：GitHub 侧新建私有仓库 `Inotfrk/in-this-life-i-have-infinite-tokens`，完整推送全部提交历史
+  （111 个提交、45 个合并提交）、5 条分支与 12 个标签，远端名统一为 `origin`。
+  删除了用户此前用 GitHub Import 试导入的 `in-this-life-i-have-infinite-tokens.` 仓库（只有 1 个
+  Initial commit，无独有内容）。CI 从 Gitee Go 换成 GitHub Actions：`.workflow/` 删除，
+  新增 `.github/workflows/release.yml` 承担 develop → master 自动发布；`.gitee/` 模板迁到 `.github/`。
+  Gitee 仓库保留只读归档，不再接收推送。
+
 ### T-000 README 主描述从 Java 改为 C++
 
 - 状态：done

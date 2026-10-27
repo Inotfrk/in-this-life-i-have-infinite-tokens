@@ -1,25 +1,26 @@
 # 账号与分支前缀
 
-本文件是 [AGENTS.md](../AGENTS.md) 第 2.1.1 节的数据来源：账号段取 **Gitee 登录名**
-（远端 URL 里出现的那个名字，不是昵称），写进分支名时一律小写。
+本文件是 [AGENTS.md](../AGENTS.md) 第 2.1.1 节的数据来源：账号段取 **GitHub 用户名**
+（远端 URL 里出现的那个名字，不是显示名），写进分支名时一律小写。
 
 ## 账号表
 
-| 显示名 | 账号段（分支前缀） | 角色 | 允许推送的分支 |
-| --- | --- | --- | --- |
-| Hallo_world_Tai | `hello-world-tai` | 仓库拥有者 | `hello-world-tai-*` |
-| QL_Leo | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
-| 吴泓霄 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
-| QAqwANG | `qwerty6543210`（Gitee 登录名为大写 `QWERTY6543210`） | 开发者 | `qwerty6543210-*` |
+| 显示名 | GitHub 账号 | 账号段（分支前缀） | 角色 | 允许推送的分支 |
+| --- | --- | --- | --- | --- |
+| Hallo_world_Tai | `Inotfrk` | `hello-world-tai` | 仓库拥有者 | `hello-world-tai-*` |
+| QL_Leo | 待登记 | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
+| 吴泓霄 | 待登记 | `shawnwu1086` | 开发者 | `shawnwu1086-*` |
+| QAqwANG | 待登记 | `qwerty6543210` | 开发者 | `qwerty6543210-*` |
 
-> 分支前缀的规范写法只有小写一种：`QAqwANG` 的 Gitee 登录名显示为 `QWERTY6543210`，
-> 但分支必须写成 `qwerty6543210-*`，保护规则也按小写建，避免同一个人出现两种写法。
+> 仓库已于 2026-10-27 整体迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），
+> 远端名统一为 `origin`。上表的前缀沿用 Gitee 时期的写法，**历史分支不改名**；
+> 新成员的账号段取 **GitHub 用户名小写**，与 Gitee 时期无关。
 
 ## 新成员接入
 
-1. 在 Gitee 邀请成员，确认他的登录名。
-2. 「保护分支设置」里新建一条 `<登录名>-*` 规则，「可推送代码成员」只勾他本人。
-3. 在上表补一行。
+1. 在 GitHub 仓库「Settings → Collaborators」邀请协作者，记下他的 **GitHub 用户名**。
+2. 「Settings → Rules → Rulesets」（或 Branches）里新建一条 `<用户名>-*` 规则。
+3. 在上表补一行（前缀 = GitHub 用户名小写）。
 
 **没有对应保护规则的前缀不许新建分支。**
 

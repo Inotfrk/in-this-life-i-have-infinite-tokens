@@ -28,13 +28,13 @@
 
 | 段 | 规则 |
 | --- | --- |
-| 账号段（第 1 段） | 固定取 **Gitee 登录名**（远端 URL 里出现的那个名字，不是昵称），一律小写。**这一段同时是分支的归属标记** |
+| 账号段（第 1 段） | 固定取 **GitHub 用户名**（远端 URL 里出现的那个名字，不是显示名），一律小写。**这一段同时是分支的归属标记** |
 | 电脑段（第 2 段） | 取本机 `hostname` 并规范化：去掉空格、`.`、`_` 等非字母数字字符，保留大小写，例如 `studio mac` → `studiomac` |
 | 后缀（第 3 段） | **用户可以自定义**，只用字母、数字、连字符，例如 `Main`、`ui`、`test`、`docs` |
 
 - 前两段必须严格遵守上面的规则，不得自己发明。
 - 每台电脑的**基础分支**后缀固定为 `Main`：`<账号段>-<电脑段>-Main`。
-- **账号段一律小写**：即使 Gitee 登录名为大写（如 `QWERTY6543210`），分支前缀也写成小写的
+- **账号段一律小写**：即使 GitHub 用户名为大写（如 `QWERTY6543210`），分支前缀也写成小写的
   `qwerty6543210-*`，全仓库只保留这一种写法。
 - 同一台电脑上的其它分支都是基础分支的子分支：`<账号段>-<电脑段>-ui`、`<账号段>-<电脑段>-test`。
 - **归属规则**：分支归它的账号段所有。每个账号**只能推送 `<自己的账号段>-*` 的分支**，
@@ -45,11 +45,12 @@
 
 ### 2.1.1 账号段取值
 
-账号段取 **Gitee 登录名**（远端 URL 里出现的那个名字，一律小写），不是仓库里显示的昵称。
+账号段取 **GitHub 用户名**（远端 URL 里出现的那个名字，一律小写），不是个人资料里的显示名。
 当前成员与对应前缀的唯一清单在 [.agents/branch-registry.md](.agents/branch-registry.md) 的「账号表」。
 
-新成员进来时按顺序做三件事：① 在 Gitee 邀请成员；② 在「保护分支设置」里补一条 `<登录名>-*` 规则
-（可推送代码成员只勾他本人）；③ 更新 [.agents/branch-registry.md](.agents/branch-registry.md) 的账号表。**没有对应保护规则的前缀不许新建分支。**
+新成员进来时按顺序做三件事：① 在 GitHub 仓库「Settings → Collaborators」邀请成员；
+② 在「Settings → Rules → Rulesets」（或 Branches 保护规则）里补一条 `<用户名>-*` 规则；
+③ 更新 [.agents/branch-registry.md](.agents/branch-registry.md) 的账号表。**没有对应保护规则的前缀不许新建分支。**
 
 ### 2.2 电脑段怎么取
 
@@ -59,8 +60,8 @@
 
 ### 2.3 第一次在某台电脑上工作
 
-1. `git fetch gitee && git switch -c <账号段>-<电脑段>-Main gitee/develop`（从最新 `develop` 切出）。
-2. `git push -u gitee <账号段>-<电脑段>-Main`。
+1. `git fetch origin && git switch -c <账号段>-<电脑段>-Main origin/develop`（从最新 `develop` 切出）。
+2. `git push -u origin <账号段>-<电脑段>-Main`。
 3. 之后按 2.4 切子分支。
 
 ### 2.4 父子关系与多分支
@@ -84,11 +85,11 @@
 
 | # | 时机 | 动作 |
 | --- | --- | --- |
-| 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push gitee HEAD` |
-| 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push gitee HEAD` |
-| 3 | `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only gitee develop && git merge --no-ff <账号段>-<电脑段>-Main && git push gitee develop` |
-| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.workflow/release.yml` 在 Gitee Go 上合并（见第 8 节） |
-| 5 | 推送冲突 / 被拒绝 | 先 `git fetch gitee` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+| 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push origin HEAD` |
+| 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push origin HEAD` |
+| 3 | `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only origin develop && git merge --no-ff <账号段>-<电脑段>-Main && git push origin develop` |
+| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.github/workflows/release.yml` 在 GitHub Actions 上合并（见第 8 节） |
+| 5 | 推送冲突 / 被拒绝 | 先 `git fetch origin` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
 
 #### 冲突处理（硬性）
 
@@ -104,25 +105,29 @@
 - 第二层与第一层不接受第三层的直接推送；`master` 更不接受任何直接推送。
 - 以上 push 属于用户预先授权，不需要逐次确认；`--force`、删除远端分支、改写历史仍然需要先问。
 
-#### 2.5.1 远端强制（已在 Gitee 配置，不是口头约定）
+#### 2.5.1 远端强制（已在 GitHub 配置，不是口头约定）
 
-Gitee 侧已经把这些规则落成机器的检查，agent 只读不绕：
+GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕：
 
 | 位置 | 配置 | 效果 |
 | --- | --- | --- |
-| 保护分支设置 | 每个账号一条 `<登录名>-*`，另加 `master`、`develop` 两条 | 每个 `<登录名>-*` 只允许本人推送；`develop` / `master` 只允许仓库管理员推送，PR 合并开放给开发者 |
-| 推送规则设置 | 「只能推送自己的提交」+「仓库管理员不受上述规则限制」 | 非管理员的提交邮箱与账号不符会被拒；管理员（发布脚本、Gitee Go）不受影响，否则打标签会因历史提交的作者邮箱不一致而失败 |
-| 仓库设置 → 功能设置 | 「禁止强制推送」 | 该选项只在付费企业版可用；个人仓库无法开启，只能靠上面两条兜底 |
+| Settings → Rules → Rulesets（或 Branches） | 每个账号一条 `<用户名>-*`，另加 `master`、`develop` 两条 | 每个 `<用户名>-*` 只允许本人推送；`develop` / `master` 禁止直接推送，只收 Pull Request 合并 |
+| Settings → Collaborators | 只邀请账号表里的成员，仓库私有 | 没被邀请的账号连克隆权限都没有，`<用户名>-*` 天然只对自己可见 |
+| GitHub Actions | [.github/workflows/](.github/workflows/) | 推送后自动跑测试与打包，不需要手动「一键开启」 |
+
+> 注意：GitHub 的 Rulesets / 分支保护在**私有仓库**上属于付费功能。当前仓库是免费的私有仓库，
+> 规则开不了时以「只有拥有者能推 + 账号前缀约定」兜底，agent 不许因此绕开 2.1 的归属约束。
 
 被拒时的典型报错与处理：
 
 ```
-remote: Auth error: No permission to push this protected branch
-! [remote rejected] ... (pre-receive hook declined)
+remote: error: GH006: Protected branch update failed for refs/heads/master.
+remote: error: You're not allowed to push to this protected branch.
+! [remote rejected] ... (protected branch hook declined)
 ```
 
 1. 先确认分支前缀是不是自己的账号段；不是就别推，改推自己的分支或开 PR。
-2. 确认这条提交的 `user.email` 是不是本账号在 Gitee 上登记的邮箱（`git config user.email`）。
+2. 确认提交用的是 `git config user.email` 里 GitHub 账号已登记的邮箱，否则 GitHub 不认作者。
 3. 改不动就**停下来，告诉用户去提 OA**，不要尝试 force push、改名绕过或删除规则。
 
 ---
@@ -189,8 +194,8 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 - **本地**：`powershell -ExecutionPolicy Bypass -File scripts\release.ps1`（macOS / Linux：`scripts/release.sh`）。
   脚本依次执行：切到 `develop` 并 `pull --ff-only` → 跑测试 → `--no-ff` 合并进 `master` → push 两个分支
   → 给 `master` 打 `v<日期>` 标签。任何一步失败即中止，不留半成品。
-- **远端**：`.workflow/release.yml`（Gitee Go）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
-  Gitee Go 需在仓库里手动「一键开启」；未开启时以本地脚本为准。
+- **远端**：`.github/workflows/release.yml`（GitHub Actions）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
+  推送即触发，不需要手动开启；Actions 不可用时以本地脚本为准。
 - 自动推进只做 fast-forward / `--no-ff` 合并，**禁止强推**；冲突时停下来报告，由人决定。
 - 发布完成后把 `master` 的合并提交快速回合到 `develop`（`git switch develop && git merge --ff-only master`），
   否则每次 `--no-ff` 都会在两层之间留下永久偏移。
