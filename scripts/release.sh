@@ -111,7 +111,9 @@ git -C "$ROOT" push "$REMOTE" "$TAG"
 # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
 if ! git -C "$ROOT" merge-base --is-ancestor "$REMOTE/$REL_BRANCH" "$REMOTE/$DEV_BRANCH"; then
   BACK_BRANCH="release/$REL_BRANCH-to-$DEV_BRANCH-$TAG"
-  git -C "$ROOT" switch -c "$BACK_BRANCH" "$REMOTE/$REL_BRANCH"
+  git -C "$ROOT" switch -c "$BACK_BRANCH" "$DEV_BRANCH"
+  # 必须真的把 master 合进来，否则分支与 develop 无差异，PR 会因 No commits 失败。
+  git -C "$ROOT" merge --no-ff "$REMOTE/$REL_BRANCH" -m "release: 回合 $REL_BRANCH -> $DEV_BRANCH ($TAG)"
   git -C "$ROOT" push "$REMOTE" "$BACK_BRANCH"
   git -C "$ROOT" switch "$DEV_BRANCH"
   BACK_PR="$(open_and_merge_pr "$BACK_BRANCH" "$DEV_BRANCH" \
