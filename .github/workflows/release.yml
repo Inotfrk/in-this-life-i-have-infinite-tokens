@@ -87,7 +87,11 @@ jobs:
           fi
 
           BRANCH="release/master-to-develop-$TAG"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -c "$BRANCH" origin/develop
+          # 必须真的把 master 合进来，否则新分支与 develop 无差异，PR 会因 No commits 失败。
+          git merge --no-ff origin/master -m "release: 回合 master -> develop ($TAG)"
           git push origin "$BRANCH"
 
           gh pr create \

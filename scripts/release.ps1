@@ -101,7 +101,9 @@ try {
     # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
     if (-not (Test-Ancestor $relBranch $devBranch)) {
         $backBranch = "release/$relBranch-to-$devBranch-$tag"
-        Invoke-Git switch --create $backBranch "$remote/$relBranch"
+        Invoke-Git switch --create $backBranch $devBranch
+        # 必须真的把 master 合进来，否则分支与 develop 无差异，PR 会因 No commits 失败。
+        Invoke-Git merge --no-ff "$remote/$relBranch" -m "release: 回合 $relBranch -> $devBranch ($tag)"
         Invoke-Git push $remote $backBranch
         Invoke-Git switch $devBranch
         $backPr = Merge-ReleasePullRequest -Owner $owner -Repo $repoName -Head $backBranch -Base $devBranch `
