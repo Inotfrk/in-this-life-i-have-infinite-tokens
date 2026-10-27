@@ -102,7 +102,7 @@ flowchart BT
     C --> D["Layer 1: master<br/>(released version)"]
 ```
 
-1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `hello-world-tai-studiomac-ui`.
+1. **Work in layer 3**: name branches `<account>-<machine>-<suffix>`, e.g. `inotfrk-Fairy-ui`.
    The account segment is the **GitHub username** (lowercase, and it owns the branch); the machine segment is
    the local `hostname` with spaces and illegal characters stripped; the suffix is yours; each machine's base
    branch always uses the `Main` suffix. See [.agents/branch-registry.md](.agents/branch-registry.md).
