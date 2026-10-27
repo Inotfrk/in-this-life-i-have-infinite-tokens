@@ -29,7 +29,7 @@ function Invoke-ReleaseApi {
     }
 }
 
-# 开一个 head -> base 的 PR 并立即合并，然后删掉 head 分支。返回 PR 编号。
+# 开一个 head -> base 的 PR 并立即合并，然后删掉 head 分支。成功时返回 PR 编号。
 function Merge-ReleasePullRequest {
     param(
         [string]$Owner, [string]$Repo, [string]$Head, [string]$Base,
@@ -37,7 +37,20 @@ function Merge-ReleasePullRequest {
     )
     $api = "https://api.github.com/repos/$Owner/$Repo"
     $pr = Invoke-ReleaseApi POST "$api/pulls" @{ head = $Head; base = $Base; title = $Title; body = $BodyText }
-    Invoke-ReleaseApi PUT "$api/pulls/$($pr.number)/merge" @{ merge_method = 'merge' } | Out-Null
+    # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+    $merged = $false
+    for ($attempt = 1; $attempt -le 5; $attempt++) {
+        try {
+            Invoke-ReleaseApi PUT "$api/pulls/$($pr.number)/merge" @{ merge_method = 'merge' } | Out-Null
+            $merged = $true
+            break
+        }
+        catch {
+            Write-Warning "合并 PR #$($pr.number) 失败（第 $attempt 次）：$($_.Exception.Message)"
+            Start-Sleep -Seconds 5
+        }
+    }
+    if (-not $merged) { throw "PR #$($pr.number) 合并重试耗尽，请人工处理" }
     try { Invoke-ReleaseApi DELETE "$api/git/refs/heads/$Head" $null | Out-Null } catch { }
     return $pr.number
 }

@@ -64,7 +64,19 @@ jobs:
             --title "release: 自动发布 develop -> master ($TAG)" \
             --body "由 release workflow 自动创建。develop 已通过测试，合并到 master 后打标签 $TAG。"
 
-          gh pr merge "$BRANCH" --merge --delete-branch
+          # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$BRANCH" --merge --delete-branch; then
+              merged=1
+              break
+            fi
+            echo "合并失败（第 $attempt 次），5 秒后重试"
+            sleep 5
+          done
+          if [ "${merged:-0}" != "1" ]; then
+            echo 'PR 合并重试耗尽，请人工处理' >&2
+            exit 1
+          fi
           echo "TAG=$TAG" >> "$GITHUB_ENV"
 
       - name: Tag the release
@@ -100,4 +112,16 @@ jobs:
             --title "release: 回合 master -> develop ($TAG)" \
             --body "自动发布产生的合并提交只存在于 master，这里回合到 develop，避免两层永久偏移。"
 
-          gh pr merge "$BRANCH" --merge --delete-branch
+          # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$BRANCH" --merge --delete-branch; then
+              merged=1
+              break
+            fi
+            echo "回合 PR 合并失败（第 $attempt 次），5 秒后重试"
+            sleep 5
+          done
+          if [ "${merged:-0}" != "1" ]; then
+            echo '回合 PR 合并重试耗尽，请人工处理' >&2
+            exit 1
+          fi
