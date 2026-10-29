@@ -11,6 +11,10 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
+
+env:
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 # 同一条 develop 上的多次推送不并发发布，避免两个 run 同时改 master。
 concurrency:
@@ -36,11 +40,9 @@ jobs:
         # 构建机没有图形环境，界面测试会自动跳过。
         run: bash scripts/build.sh test
 
-      - name: Merge develop into master
+      - name: Open and merge release pull request
         run: |
           set -euo pipefail
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git fetch origin develop master
 
           if git merge-base --is-ancestor origin/develop origin/master; then
@@ -49,13 +51,77 @@ jobs:
           fi
 
           TAG="v$(date -u +%Y.%m.%d-%H%M)"
-          git checkout -B master origin/master
-          git merge --no-ff origin/develop -m "release: 自动发布 develop -> master ($TAG)"
-          git tag -a "$TAG" -m "release $TAG"
-          git push origin master
+          BRANCH="release/develop-to-master-$TAG"
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH" origin/develop
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base master \
+            --head "$BRANCH" \
+            --title "release: 自动发布 develop -> master ($TAG)" \
+            --body "由 release workflow 自动创建。develop 已通过测试，合并到 master 后打标签 $TAG。"
+
+          # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$BRANCH" --merge --delete-branch; then
+              merged=1
+              break
+            fi
+            echo "合并失败（第 $attempt 次），5 秒后重试"
+            sleep 5
+          done
+          if [ "${merged:-0}" != "1" ]; then
+            echo 'PR 合并重试耗尽，请人工处理' >&2
+            exit 1
+          fi
+          echo "TAG=$TAG" >> "$GITHUB_ENV"
+
+      - name: Tag the release
+        if: env.TAG != ''
+        run: |
+          set -euo pipefail
+          git fetch origin master
+          git tag -a "$TAG" -m "release $TAG" origin/master
           git push origin "$TAG"
 
+      - name: Back-merge master into develop
+        if: env.TAG != ''
+        run: |
+          set -euo pipefail
           # 合并提交只在 master 上，回合给 develop，否则下次比较会一直有偏移。
-          git checkout -B develop origin/develop
-          git merge --ff-only master
-          git push origin develop
+          git fetch origin develop master
+          if git merge-base --is-ancestor origin/master origin/develop; then
+            echo 'develop 已包含 master，无需回合'
+            exit 0
+          fi
+
+          BRANCH="release/master-to-develop-$TAG"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH" origin/develop
+          # 必须真的把 master 合进来，否则新分支与 develop 无差异，PR 会因 No commits 失败。
+          git merge --no-ff origin/master -m "release: 回合 master -> develop ($TAG)"
+          git push origin "$BRANCH"
+
+          gh pr create \
+            --base develop \
+            --head "$BRANCH" \
+            --title "release: 回合 master -> develop ($TAG)" \
+            --body "自动发布产生的合并提交只存在于 master，这里回合到 develop，避免两层永久偏移。"
+
+          # 并发推送时 GitHub 会以「Base branch was modified」拒绝合并，重试几次即可。
+          for attempt in 1 2 3 4 5; do
+            if gh pr merge "$BRANCH" --merge --delete-branch; then
+              merged=1
+              break
+            fi
+            echo "回合 PR 合并失败（第 $attempt 次），5 秒后重试"
+            sleep 5
+          done
+          if [ "${merged:-0}" != "1" ]; then
+            echo '回合 PR 合并重试耗尽，请人工处理' >&2
+            exit 1
+          fi

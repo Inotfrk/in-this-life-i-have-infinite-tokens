@@ -110,18 +110,21 @@ flowchart BT
    [.agents/branch-registry.md](.agents/branch-registry.md)。
 2. **做完合并回 `-Main`**：`-Main` 是该账号在该机器上的集成分支，子分支都从它切出、合并回它。
 3. **`-Main` 攒够一批就进 `develop`**：这是唯一的合流点，同机器的多次小改动在这里合成一批。
+   在 GitHub 上开一个 PR（base `develop`、compare 你的 `-Main`）再合并，**不能直接 push `develop`**。
    只提交自己账号段的内容；撞上别人的改动或主线冲突时**不要 force push**，保留现场并**去提 OA**。
 4. **`develop` 自动进 `master`**：跑 `scripts\release.ps1`（macOS / Linux：`scripts/release.sh`），
-   它先跑测试，再 `--no-ff` 合并到 `master` 并打 `v<日期>` 标签；[.github/workflows/release.yml](.github/workflows/release.yml)
+   它先跑测试，再开 PR 合并到 `master` 并打 `v<日期>` 标签；[.github/workflows/release.yml](.github/workflows/release.yml)
    也会在 `develop` 推送时自动做同一件事。
-5. **新成员接入**：GitHub 仓库邀请协作者 → 建一条 `<用户名>-*` 保护分支规则 → 更新
-   [.agents/branch-registry.md](.agents/branch-registry.md)。
+5. **新成员接入**：GitHub 仓库邀请协作者 → 跑一次 `scripts\github-rulesets.ps1` 补上
+   `<用户名>-*` 规则 → 更新 [.agents/branch-registry.md](.agents/branch-registry.md)。
 6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
 7. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
    不通过不得进入上一层。
 
-`master` 与 `develop` 都不接受直接提交：前者只收第二层的自动合并，后者只收第三层的合并。
+`master` 与 `develop` 都不接受直接推送：两者都设了「只接受 Pull Request」的规则，
+`develop` 只收第三层的 PR，`master` 只收 `develop` 的 PR（由发布脚本 / Actions 自动开）。
+只有第三层 `<账号段>-*` 能直接 push，而且只能推自己账号段的那一份。
 
 完整规则见 [AGENTS.md](AGENTS.md)（每次对话自动加载），agent 之间的留言在 [NOTE.md](NOTE.md)。
 
@@ -132,6 +135,7 @@ flowchart BT
 - 平台配置与本仓库文件免询问；仓库外的改动、破坏性 git 操作需要先取得同意
 - 分支三层：第三层 `<账号段>-<电脑段>-<后缀>` → 第二层 `develop` → 第一层 `master`，不越层、不倒流
 - 分支归账号段所有，每个账号只能推自己账号段的分支；跨账号 / 主线冲突不 force push，提示去提 OA
+- `develop` / `master` 只接受 Pull Request 合并，任何账号都不能直接 push
 - 电脑段取本机 `hostname` 规范化，只用于区分同一账号的不同机器，不参与权限
 - 每轮迭代验证通过后 push 本机分支，做完的功能合并进 `develop`，再由 `scripts/release` 自动发布到 `master`
 - 夜间 / 空闲 agent 按 [TODO.md](TODO.md) 的协议领取任务，不擅自扩大范围
@@ -142,3 +146,6 @@ flowchart BT
 2. 从你的 `-Main` 切出 `<账号段>-<电脑段>-<后缀>` 分支
 3. 提交代码并跑通测试，合并回你的 `-Main`
 4. 向 `develop` 提交 PR；`master` 由 `develop` 自动推进
+
+用到的分支规则由 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1) 创建并维护：
+每个账号段一条 `<前缀>-owner-only`（只有本人能推），`master` / `develop` 各一条只接受 PR 的规则。

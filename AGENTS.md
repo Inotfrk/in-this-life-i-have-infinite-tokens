@@ -77,8 +77,8 @@
 
 | 层次 | 分支 | 是什么 | 谁能写入 |
 | --- | --- | --- | --- |
-| 第一层 | `master` | **线上发布版本**，只能处于可发布状态 | 只接受第二层的自动合并 |
-| 第二层 | `develop` | **开发主线**，所有开发者汇聚在这里 | 只接受第三层合并（PR 或 fast-forward） |
+| 第一层 | `master` | **线上发布版本**，只能处于可发布状态 | 只接受来自 `develop` 的 **Pull Request** |
+| 第二层 | `develop` | **开发主线**，所有开发者汇聚在这里 | 只接受来自第三层 `-Main` 的 **Pull Request** |
 | 第三层 | `<账号段>-<电脑段>-<后缀>` | **账号自己的分支**，`-Main` 是该账号在该机器上的集成分支 | 只有该账号段的主人，且只能推自己账号段的分支 |
 
 推进动作，一步都不能跳：
@@ -87,8 +87,8 @@
 | --- | --- | --- |
 | 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push origin HEAD` |
 | 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push origin HEAD` |
-| 3 | `-Main` 攒够一批改动、测试全绿 | 合并进**第二层** `develop` 并 push：`git switch develop && git pull --ff-only origin develop && git merge --no-ff <账号段>-<电脑段>-Main && git push origin develop` |
-| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.github/workflows/release.yml` 在 GitHub Actions 上合并（见第 8 节） |
+| 3 | `-Main` 攒够一批改动、测试全绿 | **开 PR** 合并进**第二层** `develop`（不能直推，见 2.5.2） |
+| 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.github/workflows/release.yml` 开 PR 合并（见第 8 节） |
 | 5 | 推送冲突 / 被拒绝 | 先 `git fetch origin` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
 
 #### 冲突处理（硬性）
@@ -101,34 +101,57 @@
    由人工决定谁先合并；agent 只保留现场，不做 `--force`、不 `reset --hard`、不强行改主线。
 
 - 第三层分支**允许多个、允许随时 push**，它本来就是「账号自己那堆东西」，不进主线也不会影响别人。
-- 每个账号**只能推送 `<自己的账号段>-*` 分支**；对 `develop` / `master` 也只能按 2.5 的流提交自己从第三层合进来的内容。
-- 第二层与第一层不接受第三层的直接推送；`master` 更不接受任何直接推送。
+- 每个账号**只能推送 `<自己的账号段>-*` 分支**；`develop` / `master` 只能通过 Pull Request 合并。
+- 第二层与第一层不接受任何直接推送；`master` 更不接受第三层直接发起的 PR（必须先经 `develop`）。
 - 以上 push 属于用户预先授权，不需要逐次确认；`--force`、删除远端分支、改写历史仍然需要先问。
 
 #### 2.5.1 远端强制（已在 GitHub 配置，不是口头约定）
 
-GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕：
+GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕。配置文件是
+[scripts/github-rulesets.ps1](scripts/github-rulesets.ps1)，改规则时改脚本再跑一次，不要只在网页上点：
 
-| 位置 | 配置 | 效果 |
-| --- | --- | --- |
-| Settings → Rules → Rulesets（或 Branches） | 每个账号一条 `<用户名>-*`，另加 `master`、`develop` 两条 | 每个 `<用户名>-*` 只允许本人推送；`develop` / `master` 禁止直接推送，只收 Pull Request 合并 |
-| Settings → Collaborators | 只邀请账号表里的成员，仓库私有 | 没被邀请的账号连克隆权限都没有，`<用户名>-*` 天然只对自己可见 |
-| GitHub Actions | [.github/workflows/](.github/workflows/) | 推送后自动跑测试与打包，不需要手动「一键开启」 |
+| 规则名 | 目标分支 | 规则 | 效果 |
+| --- | --- | --- | --- |
+| `main-pr-only` | `master` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
+| `develop-pr-only` | `develop` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
+| `no-unowned-branches` | 除以下之外的所有分支 | `creation` | 只能新建 `master`、`develop`、`release/*`、`<账号段>-*` 这几种名字，杜绝乱命名 |
+| `<账号段>-owner-only` | `<账号段>-*` | `creation` + `update` + `deletion` | 只有该账号段本人能建、能推、能删这条前缀的分支 |
 
-> 注意：GitHub 的 Rulesets / 分支保护在**私有仓库**上属于付费功能。当前仓库是免费的私有仓库，
-> 规则开不了时以「只有拥有者能推 + 账号前缀约定」兜底，agent 不许因此绕开 2.1 的归属约束。
+PR 规则设的是 `required_approving_review_count = 0`：**不需要人工批准**，但必须走 PR 这个入口，
+所以合并记录、CI 结果都留在 PR 页面上；`require_extra_approval_for_unattributed_changes` 关掉了，
+避免 Gitee 时期没关联 GitHub 账号的老提交把自动发布卡住。
 
 被拒时的典型报错与处理：
 
 ```
-remote: error: GH006: Protected branch update failed for refs/heads/master.
-remote: error: You're not allowed to push to this protected branch.
-! [remote rejected] ... (protected branch hook declined)
+remote: error: GH013: Repository rule violations found for refs/heads/master.
+remote: - Changes must be made through a pull request.
+! [remote rejected] ... (push declined due to repository rule violations)
+```
+
+```
+remote: error: GH013: Repository rule violations found for refs/heads/lihaoyuan114-xxx.
+remote: - Cannot create ref due to creations being restricted.
 ```
 
 1. 先确认分支前缀是不是自己的账号段；不是就别推，改推自己的分支或开 PR。
-2. 确认提交用的是 `git config user.email` 里 GitHub 账号已登记的邮箱，否则 GitHub 不认作者。
+2. 主线被拒是正常的：`develop` / `master` 只能开 PR，见 2.5.2。
 3. 改不动就**停下来，告诉用户去提 OA**，不要尝试 force push、改名绕过或删除规则。
+
+#### 2.5.2 怎么开 PR（组员只需记这一条）
+
+在 GitHub 网页上：打开仓库 → **Pull requests** → **New pull request** →
+`base` 选 `develop`、`compare` 选自己的 `<账号段>-<电脑段>-Main` → **Create pull request** → **Merge pull request**。
+
+本地命令等价于（`gh` 未安装时用网页）：
+
+```bash
+gh pr create --base develop --head <账号段>-<电脑段>-Main
+gh pr merge --merge
+```
+
+> 仓库是 **public**，所以 Rulesets 在免费计划下可用。若将来改回 private（免费计划）
+> 规则会被平台禁用，届时靠「只有拥有者能推 + 账号前缀约定」兜底，agent 不许因此绕开 2.1 的归属约束。
 
 ---
 
@@ -175,8 +198,8 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 
 第 2.5 节的三层流是唯一通道，本节给出它对应的强制约束：
 
-1. **第一层 `master`**：禁止任何直接提交或直接推送，只接受来自 `develop` 的自动合并（见第 8 节）。
-2. **第二层 `develop`**：禁止直接提交；只接受第三层 `-Main` 的合并，合并方式为 PR 或已在本地验证过的 fast-forward。
+1. **第一层 `master`**：禁止任何直接提交或直接推送，只接受来自 `develop` 的 Pull Request 合并（见第 8 节）。
+2. **第二层 `develop`**：禁止直接提交；只接受第三层 `-Main` 的 Pull Request 合并。
 3. **第三层 `<账号段>-<电脑段>-<后缀>`**：唯一可自由提交、自由推送的层次；每项独立任务都在专用子分支上完成
    （如 `<账号段>-<电脑段>-ui`、`<账号段>-<电脑段>-fix`），完成后合并回该机器的 `-Main`。
    **每个账号只能推送自己账号段的分支**：`inotfrk` 只能动 `inotfrk-*`，
@@ -191,11 +214,15 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 
 `develop` 每收到一次通过测试的提交，就要自动推进到 `master`，保证第一层始终等于「最新可发布状态」。
 
+`master` 与 `develop` 都设了「只接受 Pull Request」的规则，所以两层都是**开 PR 再合并**，不再直接 push 主线。
+
 - **本地**：`powershell -ExecutionPolicy Bypass -File scripts\release.ps1`（macOS / Linux：`scripts/release.sh`）。
-  脚本依次执行：切到 `develop` 并 `pull --ff-only` → 跑测试 → `--no-ff` 合并进 `master` → push 两个分支
-  → 给 `master` 打 `v<日期>` 标签。任何一步失败即中止，不留半成品。
-- **远端**：`.github/workflows/release.yml`（GitHub Actions）在 `develop` 推送后跑测试并 `--no-ff` 合并 `master`。
+  脚本依次执行：切到 `develop` 并 `pull --ff-only` → 跑测试 → 推一个临时发布分支
+  `release/develop-to-master-<标签>` → 用 API 开 PR 并合并进 `master` → 打 `v<日期>` 标签 →
+  再开一条 `release/master-to-develop-<标签>` 的 PR 把合并提交回合给 `develop`。
+  任何一步失败即中止，不留半成品。令牌优先取 `GH_TOKEN`，否则用 git 已保存的 github.com 凭据。
+- **远端**：`.github/workflows/release.yml`（GitHub Actions）在 `develop` 推送后跑测试，
+  用 `GITHUB_TOKEN` 开 PR 合并 `master`、打标签、再开 PR 回合 `develop`。
   推送即触发，不需要手动开启；Actions 不可用时以本地脚本为准。
-- 自动推进只做 fast-forward / `--no-ff` 合并，**禁止强推**；冲突时停下来报告，由人决定。
-- 发布完成后把 `master` 的合并提交快速回合到 `develop`（`git switch develop && git merge --ff-only master`），
-  否则每次 `--no-ff` 都会在两层之间留下永久偏移。
+- 自动推进禁止强推；冲突时停下来报告，由人决定。
+- 发布完成后必须把 `master` 的合并提交回合到 `develop`，否则每次合并都会在两层之间留下永久偏移。
