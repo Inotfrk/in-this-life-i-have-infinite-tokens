@@ -169,7 +169,16 @@ gh pr merge --merge
 
 ## 4. 验证
 
-改代码前后都要跑对应平台的测试，不通过不得 commit / push：
+**默认在 Docker 沙箱里跑**，不在宿主机装 JDK；容器里 `UiTest` 靠 `xvfb` 提供虚拟显示，
+不会因为无图形环境被跳过。用法见 [docs/docker-sandbox.md](docs/docker-sandbox.md)：
+
+```bash
+docker build -t calculator-sandbox .
+docker run --rm -v "$(pwd):/workspace" calculator-sandbox            # 完整测试
+docker run --rm -v "$(pwd):/workspace" calculator-sandbox bash scripts/build.sh build   # 只编译
+```
+
+没有 Docker 或需要原生路径时，退回宿主机脚本（输出应与沙箱一致）：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test   # Windows

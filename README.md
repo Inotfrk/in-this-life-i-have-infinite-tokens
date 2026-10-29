@@ -40,6 +40,17 @@ double parsePrimary();      // 数字与括号
 
 #### 安装教程
 
+**默认沙箱（推荐，Docker）**：不装 JDK，构建和测试都在容器里跑。
+安装器说明、踩坑记录见 [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md)：
+
+```bash
+docker build -t calculator-sandbox .
+docker run --rm -v "$(pwd):/workspace" calculator-sandbox
+```
+
+Windows PowerShell 把 `"$(pwd):/workspace"` 换成 `"${PWD}:/workspace"`。
+细节见 [docs/docker-sandbox.md](docs/docker-sandbox.md)。
+
 **C++ 示例**（移植完成后可用）：只需要一个支持 C++17 的编译器（Windows 用 MSVC 或 MinGW-w64 的 `g++`，
 macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
 

@@ -1,0 +1,11 @@
+# 构建产物与本地环境不进镜像
+build/
+dist/
+.git/
+.idea/
+.vscode/
+*.class
+*.iml
+.DS_Store
+Thumbs.db
+hs_err_pid*.log
