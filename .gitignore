@@ -8,3 +8,5 @@ dist/
 .DS_Store
 Thumbs.db
 hs_err_pid*.log
+# 诊断/日志文件含本机环境（用户名、路径、代理地址），不入库
+*-diagnose.log

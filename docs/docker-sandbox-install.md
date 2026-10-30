@@ -281,6 +281,63 @@ Start-Process 'D:\Docker\Docker Desktop.exe'
 
 > 代理软件换了端口时要同步改这里，否则只有 Docker 拉不到镜像、其他工具却正常。
 
+### 8.1 git push 用哪个代理：与 Docker 无关的第二套配置
+
+Docker Desktop 的代理只在 `settings-store.json` 里，**git 不读它**。git 走的是自己的配置，两套要分别配：
+
+```powershell
+# git 侧：命令级临时生效，不污染全局配置
+git -c http.proxy=http://127.0.0.1:7890 push -u github HEAD
+```
+
+判断代理到底通没通，先只看「能不能读远端」，不要一上来就怪凭据：
+
+```powershell
+git -c http.proxy=http://127.0.0.1:7890 ls-remote --heads github
+```
+
+同一命令连跑 5 次，本机实测会出现 `OK / FAIL / FAIL / OK` 这种抖动，
+报错是 `schannel: failed to receive handshake, SSL/TLS connection failed`。
+这属于链路问题（代理出口被重置），不是仓库或账号问题；`git fetch` / `ls-remote` 偶然成功时，
+说明**凭据本身是好的**，只是握手时好时坏。此时重试即可，不要急着重新登录。
+
+换成 OpenSSL 后端**不能**解决握手抖动，只是把错误换了个说法：
+
+```
+-fatal: unable to access '...': TLS connect error: error:0A000126:
+ SSL routines::unexpected eof while reading
+```
+
+#### 凭据问题：`Cannot prompt because user interactivity has been disabled`
+
+在 agent / 非交互终端里，git 想弹窗要密码就会直接死：
+
+```
+fatal: Cannot prompt because user interactivity has been disabled.
+fatal: unable to get password from user
+```
+
+这不是凭据没存，是**根本没机会问**。排查顺序：
+
+```powershell
+# 1. 有没有非交互令牌（有就直接用，最省事）
+$env:GH_TOKEN; $env:GITHUB_TOKEN
+
+# 2. 本机凭证管理器里到底存了什么
+cmdkey /list | Select-String 'git:https://github.com'   # 本机曾只有 gitee 条目
+git config --show-origin --get credential.helper        # 本例是 manager
+
+# 3. 直接问 GCM 要 token，绕开 git 的交互判断
+$gcm = 'D:\Appofmy\VSC\Git\ucrt64\bin\git-credential-manager.exe'
+"protocol=https`nhost=github.com`n`n" | & $gcm get
+```
+
+`git-credential-manager diagnose` 也会给结论（`GitHub API` 一项 `FAIL` +
+`TaskCanceledException` 就说明 GCM 的出网没走代理，与仓库权限无关）。
+
+> 结论：**先修链路，再看凭据**。链路抖动时重试；真正没令牌时设 `GH_TOKEN`，
+> 不要在非交互环境里试图让 git 弹窗。
+
 ---
 
 ## 9. 沙箱跑起来后才会暴露的两个问题
