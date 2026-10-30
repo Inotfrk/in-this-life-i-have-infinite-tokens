@@ -7,9 +7,20 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_ALL=C.UTF-8 \
     JAVA_TOOL_OPTIONS="-Dfile.encoding=UTF-8"
 
-# xvfb 让 UiTest 有虚拟 DISPLAY；tzdata 保证时区正常，不装额外依赖。
+# AWT/Swing 需要 X11 客户端库（libXrender 等），xvfb 只提供虚拟显示，不含这些库；
+# 缺了会在 Toolkit 初始化时抛 UnsatisfiedLinkError: libXrender.so.1。
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends xvfb tzdata ca-certificates \
+    && apt-get install -y --no-install-recommends \
+        xvfb \
+        libxrender1 \
+        libxtst6 \
+        libxi6 \
+        libxext6 \
+        libx11-6 \
+        fontconfig \
+        fonts-dejavu-core \
+        tzdata \
+        ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # 沙箱内不用 root 跑构建。
