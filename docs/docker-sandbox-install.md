@@ -317,7 +317,19 @@ fatal: Cannot prompt because user interactivity has been disabled.
 fatal: unable to get password from user
 ```
 
-这不是凭据没存，是**根本没机会问**。排查顺序：
+这不是凭据没存，是**根本没机会问**。`gcm-diagnose.log` 里能直接看到是谁把交互关掉的：
+
+```
+GCM_INTERACTIVE=Never
+GIT_TERMINAL_PROMPT=0
+command line:	credential.interactive=never
+GIT_ASKPASS=            ← 空值，没有备用取密码通道
+SSH_ASKPASS=            ← 同上
+```
+
+`GIT_ASKPASS` / `SSH_ASKPASS` 都是空的，所以一旦需要密码就无路可走。
+
+排查顺序：
 
 ```powershell
 # 1. 有没有非交互令牌（有就直接用，最省事）
@@ -332,11 +344,47 @@ $gcm = 'D:\Appofmy\VSC\Git\ucrt64\bin\git-credential-manager.exe'
 "protocol=https`nhost=github.com`n`n" | & $gcm get
 ```
 
-`git-credential-manager diagnose` 也会给结论（`GitHub API` 一项 `FAIL` +
-`TaskCanceledException` 就说明 GCM 的出网没走代理，与仓库权限无关）。
+#### 用 diagnose 区分「没网」还是「只有 github 不通」
 
-> 结论：**先修链路，再看凭据**。链路抖动时重试；真正没令牌时设 `GH_TOKEN`，
-> 不要在非交互环境里试图让 git 弹窗。
+`git-credential-manager diagnose` 会逐项自检，把结论摊开看，别猜：
+
+| 诊断项 | 本机结果 | 说明 |
+| --- | --- | --- |
+| File system | `Success: True` | 临时目录可读写 |
+| Networking | `Success: True` | `HEAD https://example.com` **成功** |
+| Git | `Success: True` | `git 2.56.0.windows.3` 正常 |
+| Credential storage | `Success: True` | 写/读/删测试凭据全部 OK |
+| Microsoft authentication | `Success: True` | MSAL 缓存可持久化 |
+| **GitHub API** | **`Success: False`** | `TaskCanceledException: 已取消一个任务` |
+
+关键组合是**「Networking 通、GitHub API 不通」**：
+
+```
+Using 'https://github.com/' as API target.
+Querying '/meta' endpoint...
+System.Threading.Tasks.TaskCanceledException: 已取消一个任务。
+```
+
+`example.com` 能通说明本机出网没问题；只有 `github.com` 的 `/meta` 超时。
+同时 `Credential storage: True` 说明**凭据库本身是好的**，不是存不进去。
+两者合起来就把「凭据坏了」排除掉了，问题只在到 github.com 的这条链路上。
+
+> 所以排查顺序是：先看 `Networking` 与 `GitHub API` 两项的组合，
+> 再决定是修代理还是查凭据。像本例这种「能上网、就是 github 超时」，
+> 直接给 git 指定能用的代理即可，不要浪费时间重登账号。
+
+#### 顺带确认：`core.autocrlf=true` 会让 `.sh` 变 CRLF
+
+日志里全局配置是：
+
+```
+file:D:/Appofmy/VSC/Git/etc/gitconfig	core.autocrlf=true
+file:D:/Appofmy/VSC/Git/etc/gitconfig	http.sslbackend=schannel
+```
+
+这正是第 9.1 节「CRLF 让 `pipefail` 变成非法选项」的根因来源。
+仓库用 [.gitattributes](../.gitattributes) 强制 `*.sh` 走 `eol=lf` 才能压住它；
+`http.sslbackend=schannel` 则解释了为什么报错都是 `schannel: failed to receive handshake`。
 
 ---
 
