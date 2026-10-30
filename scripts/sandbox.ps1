@@ -7,18 +7,24 @@
 # with no reliable way back.
 #
 # Usage (Windows):
-#   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
+#   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build          # 轻量版镜像
+#   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build -Target view
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 start
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
+#   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view           # 可视桌面 + 截图
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 shell
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 runs
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 logs
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 stop
 #   powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 clean
 param(
-    [ValidateSet('build', 'start', 'test', 'shell', 'runs', 'logs', 'stop', 'clean')]
+    [ValidateSet('build', 'start', 'test', 'view', 'shell', 'runs', 'logs', 'stop', 'clean')]
     [string]$Task = 'test',
+    # test = 只跑测试的轻量镜像；view = 额外带 noVNC 桌面的可视镜像
+    [ValidateSet('test', 'view')]
+    [string]$Target = 'test',
     [string]$Image = 'calculator-sandbox:local',
+    [string]$ViewImage = 'calculator-sandbox:view',
     [string]$Container = 'calculator-sandbox',
     [string]$Command = 'xvfb-run -a bash scripts/build.sh test',
     # Hard cap so a runaway build cannot take the whole host down (16 GB host,
@@ -26,7 +32,8 @@ param(
     [string]$Memory = '2g',
     [string]$Cpus = '2',
     # Outer guard against a hung test run; 0 disables it.
-    [int]$Timeout = 600
+    [int]$Timeout = 600,
+    [int]$ViewPort = 6080
 )
 
 $ErrorActionPreference = 'Stop'
@@ -58,19 +65,40 @@ function Test-ContainerExists {
     return [bool]($out -and $out.Trim() -eq $Container)
 }
 
+function Test-ViewPortMapped {
+    # 用 inspect 的 JSON 判断，避免 docker port 文本输出带 \r 或换行导致匹配失败。
+    $json = & $docker container inspect -f '{{json .HostConfig.PortBindings}}' $Container 2>$null
+    if (-not $json) { return $false }
+    try {
+        $bindings = $json.ToString().Trim() | ConvertFrom-Json
+        $entry = $bindings.'6080/tcp'
+        if (-not $entry) { return $false }
+        return [bool]($entry | Where-Object { $_.HostPort -eq "$ViewPort" })
+    } catch {
+        return $false
+    }
+}
+
 function Invoke-BuildImage {
-    # Image id is recorded in every run manifest, so a failed run can be traced
-    # back to the exact environment it used.
-    Invoke-Docker @('build', '--pull', '-t', $Image, '-f', (Join-Path $root 'Dockerfile'), $root) | Out-Null
-    Write-Host "Image built -> $Image"
+    # 按 target 构建：test 是轻量版，view 额外带 noVNC 桌面。
+    # 镜像 id 会写进每次运行的 meta.json，失败时可以追溯到具体环境。
+    $tag = if ($Target -eq 'view') { $ViewImage } else { $Image }
+    Invoke-Docker @(
+        'build', '--pull', '--target', $Target, '-t', $tag,
+        '-f', (Join-Path $root 'Dockerfile'), $root
+    ) | Out-Null
+    Write-Host "Image built -> $tag (target=$Target)"
 }
 
 function Invoke-Start {
+    param([string]$UseImage = $Image)
     if (-not (Test-ContainerExists)) {
-        Write-Host "Creating container $Container (memory=$Memory cpus=$Cpus) ..."
+        Write-Host "Creating container $Container from $UseImage (memory=$Memory cpus=$Cpus) ..."
+        # noVNC 端口固定映射，view 子命令才能在浏览器里打开虚拟桌面。
         Invoke-Docker @(
             'run', '-d',
             '--name', $Container,
+            '-p', "${ViewPort}:6080",
             '-v', "$($root):/workspace",
             '-w', '/workspace',
             '--init',
@@ -79,7 +107,7 @@ function Invoke-Start {
             '--memory', $Memory,
             '--memory-swap', $Memory,
             '--cpus', $Cpus,
-            $Image,
+            $UseImage,
             'sleep', 'infinity'
         ) | Out-Null
     } elseif (-not (& $docker container inspect -f '{{.State.Running}}' $Container)) {
@@ -91,8 +119,67 @@ function Invoke-Start {
         if ($current -eq '0') {
             Write-Host "Warning: $Container has no memory limit; run 'clean' then 'start' to apply -Memory $Memory"
         }
+        if (-not (Test-ViewPortMapped)) {
+            Write-Warning "Container $Container was created without -p ${ViewPort}:6080; run 'clean' then 'start' to enable view."
+        }
     }
     Write-Host "Container $Container is running"
+}
+
+function Get-ContainerImage {
+    if (-not (Test-ContainerExists)) { return $null }
+    return (& $docker container inspect -f '{{.Config.Image}}' $Container 2>$null).Trim()
+}
+
+function Invoke-View {
+    # 可视版需要 VNC 那套组件，所以固定用 ViewImage；容器若建自轻量镜像则重建。
+    if (Test-ContainerExists) {
+        $current = Get-ContainerImage
+        if ($current -ne $ViewImage) {
+            Write-Host "Container was built from '$current'; recreating from '$ViewImage' ..."
+            Invoke-Docker @('rm', '-f', $Container) -AllowFail | Out-Null
+        }
+    }
+    Invoke-Docker @('image', 'inspect', $ViewImage) -AllowFail | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "View image missing, building it (this pulls the VNC layer once) ..."
+        $script:Target = 'view'
+        Invoke-BuildImage
+    }
+    Invoke-Start -UseImage $ViewImage
+    if (-not (Test-ViewPortMapped)) {
+        throw "Container $Container has no noVNC port mapping. Run: sandbox.ps1 clean; sandbox.ps1 view"
+    }
+    Invoke-Docker @('exec', $Container, 'bash', '-lc', 'bash scripts/desktop.sh') -AllowFail | Out-Null
+    # 给 Xvfb / fluxbox / x11vnc / websockify 起来的时间
+    $ready = $false
+    for ($i = 0; $i -lt 20; $i++) {
+        Start-Sleep -Seconds 2
+        $code = & $docker exec $Container bash -lc "curl -s -o /dev/null -w '%{http_code}' http://localhost:$ViewPort/vnc.html" 2>$null
+        if ($code -eq '200') { $ready = $true; break }
+    }
+    if (-not $ready) {
+        Invoke-Docker @('exec', $Container, 'bash', '-lc', 'tail -n 20 /tmp/websockify.log /tmp/x11vnc.log /tmp/xvfb.log') -AllowFail | Out-Null
+        throw 'noVNC did not become ready'
+    }
+    Write-Host "noVNC ready -> http://localhost:$ViewPort/vnc.html?autoconnect=1&resize=scale"
+    Save-Screenshot
+}
+
+function Save-Screenshot {
+    # 抓虚拟屏当前画面，直接落进 .sandbox-runs，方便复盘与贴进报告。
+    New-Item -ItemType Directory -Force -Path $runsDir | Out-Null
+    $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+    $target = Join-Path $runsDir "screen-$stamp.png"
+    $inside = "/tmp/screen-$stamp.png"
+    & $docker exec $Container bash -lc "DISPLAY=:99 import -window root $inside" 2>$null
+    if ($LASTEXITCODE -ne 0) {
+        Write-Warning 'screenshot failed (imagemagick import); is Invoke-View running?'
+        return
+    }
+    Invoke-Docker @('cp', "${Container}:$inside", $target) | Out-Null
+    Invoke-Docker @('exec', $Container, 'rm', '-f', $inside) -AllowFail | Out-Null
+    Write-Host "screenshot -> $target"
 }
 
 function Invoke-Test {
@@ -167,6 +254,7 @@ switch ($Task) {
     'build' { Invoke-BuildImage }
     'start' { Invoke-Start }
     'test' { Invoke-Test }
+    'view' { Invoke-View }
     'shell' { Invoke-Shell }
     'runs' { Show-Runs }
     'logs' { & $docker logs --tail 200 $Container }
