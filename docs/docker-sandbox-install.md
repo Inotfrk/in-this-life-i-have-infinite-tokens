@@ -20,6 +20,7 @@
 | WSL 包 | 2.7.14.0 |
 | 代理 | `127.0.0.1:7890`（Docker Desktop 需手动配置，不读系统代理） |
 | 沙箱实测 | 25 项求值 + 6 项界面测试全部通过 |
+| 资源上限 | 容器默认 `--memory 2g --memory-swap 2g --cpus 2`，另套 `timeout`（见第 10 节） |
 | **状态** | ✅ 已重启、引擎已启动、镜像已构建、测试全绿 |
 
 ---
@@ -341,7 +342,68 @@ RUN apt-get update \
 
 ---
 
-## 10. 复查用命令清单
+## 10. 2026-10-30 复现并修掉的三个坑
+
+这一节是第二天实际使用时暴露的，机器**整机卡死重启过一次**，所以单独记下来。
+
+### 10.1 整机卡死：没有内存上限
+
+| 现象 | 原因 | 处理 |
+| --- | --- | --- |
+| 跑 `docker run` 之后整机失去响应，只能强制重启 | 本机 16 GB，Docker Desktop 默认上限约 8 GB，且不封 swap；构建异常时一路换页 | 每次运行都带 `--memory 2g --memory-swap 2g --cpus 2` |
+
+`--memory-swap` **必须显式等于** `--memory`。只写 `--memory` 时容器仍可用一整块 swap，
+表面上有上限，实际上照样能把机器拖死。
+
+验证上限真的生效：
+
+```powershell
+docker container inspect calculator-sandbox -f 'mem={{.HostConfig.Memory}} swap={{.HostConfig.MemorySwap}}'
+# 期望输出 mem=2147483648 swap=2147483648
+```
+
+runner 脚本已默认带上，并且 `meta.json` 里会记录当次运行的 `memory_limit`，
+`memory_limit` 为 `0` 就说明这个容器没上限（下限只在创建时生效，要 `clean` 后重建）。
+
+### 10.2 测试打完不退出：`xvfb-run` 挂在 PID 1
+
+| 现象 | 原因 |
+| --- | --- |
+| 日志已经把 25 + 6 项全 `[PASS]` 打完，`docker run` 却一直不返回；`ps -ef` 里只剩 `xvfb-run` 和 `Xvfb` | 镜像的 `CMD` 直接是 `xvfb-run`，它成了 PID 1。`xvfb-run` 内部用 `trap clean_up EXIT` + `wait`，当它是 PID 1 又没 init 回收时，`wait` 永远等不到 |
+
+对照实验（同一镜像、同一命令）：
+
+| 条件 | 结果 |
+| --- | --- |
+| `docker run --memory 2g ... calculator-sandbox`（无 `--init`） | 挂住，2 分钟后仍在 `Up`，CPU 0%，内存 21 MB |
+| `docker run --init --memory 2g ... calculator-sandbox` | 3 秒跑完，`exit=0` |
+
+最终修法不是让每个人记得加 `--init`，而是把 init 写进镜像：
+
+```dockerfile
+RUN apt-get install -y ... tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["xvfb-run", "-a", "bash", "scripts/build.sh", "test"]
+```
+
+改完实测：**不带 `--init` 也是 3 秒退出、`exit=0`**。改 `CMD` 时顺手去掉了 `bash -lc`，
+改为 exec 形式数组，这样 `xvfb-run` 能直接收到信号，不会被中间那层 shell 吞掉。
+
+### 10.3 顺带修的：`/workspace` 属主是 root
+
+`WORKDIR /workspace` 会以 root 建出目录，只写 `COPY --chown=dev:dev` 是不够的——
+目录本身仍属 root，`dev` 用户执行 `mkdir build/` 直接 `Permission denied`。
+只有 bind mount（宿主目录权限 777）时看不出问题，用镜像自带的代码跑才会踩到：
+
+```
+mkdir: cannot create directory '/workspace/build': Permission denied
+```
+
+修法是建完 `WORKDIR` 后补一行 `RUN chown dev:dev /workspace`。
+
+---
+
+## 11. 复查用命令清单
 
 ```powershell
 # 已安装版本
@@ -365,7 +427,7 @@ Test-Path 'D:\Docker\Docker Desktop.exe'
 
 ---
 
-## 11. 卸载（万一要重来）
+## 12. 卸载（万一要重来）
 
 ```powershell
 Start-Process winget.exe -Verb RunAs -PassThru -Wait -ArgumentList

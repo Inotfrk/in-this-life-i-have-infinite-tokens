@@ -21,14 +21,22 @@ RUN apt-get update \
         fonts-dejavu-core \
         tzdata \
         ca-certificates \
+        tini \
     && rm -rf /var/lib/apt/lists/*
 
 # 沙箱内不用 root 跑构建。
 RUN useradd --create-home --uid 1000 dev
 WORKDIR /workspace
+# WORKDIR 会以 root 建出 /workspace，只 COPY --chown 文件不够：
+# 目录本身仍属 root，dev 用户 mkdir build/ 会 Permission denied。
+RUN chown dev:dev /workspace
 COPY --chown=dev:dev . .
 RUN chmod +x scripts/build.sh
 USER dev
 
+# tini 作为 PID 1 回收僵尸进程。没有 init 时 Xvfb 会挂在 wait 上、容器永不退出，
+# 所以这里写进镜像，`docker run` 不带 --init 也不会卡住。
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
 # xvfb-run 提供 DISPLAY，UiTest 才会真正执行而不是跳过。
-CMD ["bash", "-lc", "xvfb-run -a bash scripts/build.sh test"]
+CMD ["xvfb-run", "-a", "bash", "scripts/build.sh", "test"]

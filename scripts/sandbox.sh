@@ -10,6 +10,11 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 IMAGE="${IMAGE:-calculator-sandbox:local}"
 CONTAINER="${CONTAINER:-calculator-sandbox}"
 COMMAND="${COMMAND:-xvfb-run -a bash scripts/build.sh test}"
+# Hard cap so a runaway build cannot take the whole host down.
+MEMORY="${MEMORY:-2g}"
+CPUS="${CPUS:-2}"
+# Outer guard against a hung test run; 0 disables it.
+TIMEOUT="${TIMEOUT:-600}"
 RUNS="$ROOT/.sandbox-runs"
 TASK="${1:-test}"
 
@@ -23,9 +28,13 @@ build_image() {
 
 start_container() {
   if ! container_exists; then
-    docker run -d --name "$CONTAINER" -v "$ROOT:/workspace" -w /workspace --init "$IMAGE" sleep infinity
+    docker run -d --name "$CONTAINER" -v "$ROOT:/workspace" -w /workspace --init \
+      --memory "$MEMORY" --memory-swap "$MEMORY" --cpus "$CPUS" "$IMAGE" sleep infinity
   elif [ "$(docker container inspect -f '{{.State.Running}}' "$CONTAINER")" != "true" ]; then
     docker start "$CONTAINER" >/dev/null
+  elif [ "$(docker container inspect -f '{{.HostConfig.Memory}}' "$CONTAINER")" = "0" ]; then
+    # Limits are frozen at creation time; -Memory on an existing container is ignored.
+    echo "Warning: $CONTAINER has no memory limit; run 'clean' then 'start' to apply MEMORY=$MEMORY" >&2
   fi
 }
 
@@ -39,10 +48,14 @@ run_test() {
 
   echo "Running: $COMMAND"
   set +e
-  docker exec "$CONTAINER" bash -lc "$COMMAND" 2>&1 | tee "$run_dir/stdout.log"
+  # A hang inside the container must not hang the host.
+  docker exec "$CONTAINER" bash -lc "timeout $TIMEOUT $COMMAND" 2>&1 | tee "$run_dir/stdout.log"
   exit_code="${PIPESTATUS[0]}"
   set -e
   finished="$(date -Iseconds)"
+  if [ "$exit_code" -eq 124 ]; then
+    echo "timeout: $COMMAND still running after ${TIMEOUT}s and was killed" >&2
+  fi
 
   {
     printf '{\n'
@@ -50,6 +63,8 @@ run_test() {
     printf '  "finished_at": "%s",\n' "$finished"
     printf '  "exit_code": %s,\n' "$exit_code"
     printf '  "command": "%s",\n' "$COMMAND"
+    printf '  "timeout_sec": %s,\n' "$TIMEOUT"
+    printf '  "memory_limit": "%s",\n' "$(docker container inspect -f '{{.HostConfig.Memory}}' "$CONTAINER")"
     printf '  "image": "%s",\n' "$IMAGE"
     printf '  "image_id": "%s",\n' "$(docker image inspect -f '{{.Id}}' "$IMAGE")"
     printf '  "container": "%s",\n' "$CONTAINER"

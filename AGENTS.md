@@ -171,6 +171,8 @@ gh pr merge --merge
 
 **默认在 Docker 沙箱里跑**，不在宿主机装 JDK；容器里 `UiTest` 靠 `xvfb` 提供虚拟显示，
 不会因为无图形环境被跳过。用长驻容器 runner，每次运行都会留档，失败可以回溯现场。
+容器默认限 `2g` 内存（`--memory-swap` 同步封顶）与 2 CPU，并套一层 `timeout`——
+**不要绕过这些上限**，本机曾因无上限构建整机卡死；确实需要更多资源时用 `-Memory` / `-Cpus` 显式调。
 用法见 [docs/docker-sandbox.md](docs/docker-sandbox.md)：
 
 ```powershell

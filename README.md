@@ -49,8 +49,9 @@ powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
 ```
 
 macOS / Linux 用 `scripts/sandbox.sh build` 与 `scripts/sandbox.sh test`。
-容器常驻、每次运行留档到 `.sandbox-runs/`，失败可回溯现场。细节见
-[docs/docker-sandbox.md](docs/docker-sandbox.md)。
+容器常驻、每次运行留档到 `.sandbox-runs/`，失败可回溯现场。容器默认限 `2g` 内存 / 2 CPU
+（`--memory-swap` 同步封顶），避免构建异常时把整台机器拖死；可用 `-Memory`、`-Cpus` 调整。
+细节见 [docs/docker-sandbox.md](docs/docker-sandbox.md)。
 
 **C++ 示例**（移植完成后可用）：只需要一个支持 C++17 的编译器（Windows 用 MSVC 或 MinGW-w64 的 `g++`，
 macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。

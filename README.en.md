@@ -52,7 +52,9 @@ powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
 
 On macOS / Linux use `scripts/sandbox.sh build` and `scripts/sandbox.sh test`.
 The container stays alive and every run is recorded under `.sandbox-runs/`, so a failure can be
-inspected after the fact. Details in [docs/docker-sandbox.md](docs/docker-sandbox.md).
+inspected after the fact. It is capped at 2 GB RAM / 2 CPUs (`--memory-swap` capped too) so a
+runaway build cannot freeze the host; override with `-Memory` / `-Cpus`.
+Details in [docs/docker-sandbox.md](docs/docker-sandbox.md).
 
 **C++ sample** (available after the port): only a C++17 compiler is needed (MSVC or MinGW-w64 `g++` on
 Windows, `clang++` or `g++` on macOS / Linux). No libraries to install.
