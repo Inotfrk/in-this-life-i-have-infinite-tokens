@@ -1,0 +1,21 @@
+# 换行符策略：Windows 上 core.autocrlf=true 会把 .sh 转成 CRLF，
+# 导致 Linux 容器里 `set -euo pipefail` 变成 `pipefail\r` 而报 invalid option name。
+# 这里强制脚本类文件在仓库与检出时都保持 LF。
+* text=auto
+
+*.sh        text eol=lf
+*.bash      text eol=lf
+Dockerfile  text eol=lf
+*.yml       text eol=lf
+*.yaml      text eol=lf
+
+# Windows 批处理必须保留 CRLF
+*.bat       text eol=crlf
+*.cmd       text eol=crlf
+
+# 二进制文件不做转换
+*.jar       binary
+*.png       binary
+*.jpg       binary
+*.ico       binary
+*.icns      binary
