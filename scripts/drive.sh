@@ -1,32 +1,40 @@
 #!/usr/bin/env bash
-# 沙箱内驱动计算器：模拟按键并截图，用来确认中文提示与交互是否正常。
-# 用法: bash scripts/drive.sh "12*3+4=" 或 bash scripts/drive.sh "1/0="
+# 在沙箱里「点」计算器并截图，用来确认界面与中文提示。
+# 用法: bash scripts/drive.sh "1/0="
+#   × ÷ 会自动换成 * /
+#
+# 不按像素坐标点按钮：布局随字体与窗口尺寸浮动，坐标极易点偏（实测会把 1/0=
+# 点成 41%）。这里改用 VisualDrive，它直接调用 CalculatorFrame.press()，
+# 走的是按钮 ActionListener 的同一条路径，结果与真实点击一致。
 set -uo pipefail
 export DISPLAY="${DISPLAY:-:99}"
 KEYS="${1:-12*3+4=}"
+HOLD="${2:-25}"
 
-WIN=$(xdotool search --onlyvisible --name '计算器' 2>/dev/null | head -1)
-if [ -z "$WIN" ]; then
-    WIN=$(xdotool search --onlyvisible --class Calc 2>/dev/null | head -1)
+calc_pids() { pgrep -f 'CalculatorFrame|VisualDrive' || true; }
+
+# 关掉已有的计算器窗口，保证截图里只有本次结果
+for pid in $(calc_pids); do kill "$pid" 2>/dev/null || true; done
+sleep 0.5
+
+# VisualDrive 在 src/test 下，先确保测试类已编译（scripts/build.sh test 会编）
+if [ ! -f /workspace/build/test-classes/com/helloworld/taiin/calculator/VisualDrive.class ]; then
+    (cd /workspace && javac --release 21 -encoding UTF-8 -cp build/classes \
+        -d build/test-classes $(find src/test -name '*.java'))
 fi
-if [ -z "$WIN" ]; then
-    echo 'calculator window not found' >&2
-    exit 1
-fi
 
-xdotool windowactivate --sync "$WIN" 2>/dev/null
-sleep 0.3
+CP="/workspace/build/classes:/workspace/build/test-classes"
+java -Dfile.encoding=UTF-8 -cp "$CP" \
+    com.helloworld.taiin.calculator.VisualDrive "$KEYS" "$HOLD" >/tmp/visualdrive.log 2>&1 &
 
-# 把 × ÷ 之类换成程序认识的字符，便于命令行输入
-KEYS="${KEYS//×/*}"
-KEYS="${KEYS//÷//}"
-
-for ((i = 0; i < ${#KEYS}; i++)); do
-    ch="${KEYS:$i:1}"
-    xdotool type --window "$WIN" --delay 60 "$ch"
+# 等窗口出现并完成按键
+for _ in $(seq 1 30); do
+    sleep 0.4
+    if grep -q '^display=' /tmp/visualdrive.log 2>/dev/null; then break; fi
 done
 
-sleep 1
+grep -E '^display=|^status=' /tmp/visualdrive.log || true
+
 OUT="/tmp/drive-$(date +%Y%m%d-%H%M%S).png"
 import -window root "$OUT"
 echo "$OUT"

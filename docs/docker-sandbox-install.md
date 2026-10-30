@@ -19,9 +19,9 @@
 | Docker CLI | 29.9.2 |
 | WSL 包 | 2.7.14.0 |
 | 代理 | `127.0.0.1:7890`（Docker Desktop 需手动配置，不读系统代理） |
-| 沙箱实测 | 25 项求值 + 6 项界面测试全部通过（镜像 target=test） |
-| 可视沙箱 | `view` target + noVNC，浏览器可见真实界面，标题栏中文正常 |
-| **状态** | ✅ 已重启、引擎已启动、镜像已构建、测试全绿、界面可见 |
+| 沙箱实测 | 25 项求值 + 6 项界面测试全部通过（镜像 target=test，974 MB） |
+| 可视沙箱 | target=view（1.32 GB）+ noVNC，标题栏与错误提示中文正常 |
+| **状态** | ✅ 已重启、引擎已启动、两个 target 均已构建、测试全绿、界面可见可驱动 |
 
 ---
 
@@ -351,15 +351,39 @@ Xvfb :99  ->  fluxbox（标题栏）  ->  x11vnc（5900）  ->  noVNC/websockify
 实现见 [scripts/desktop.sh](../scripts/desktop.sh)，用 `scripts/sandbox.ps1 view` 一条命令拉起，
 浏览器访问 `http://localhost:6080/vnc.html?autoconnect=1&resize=scale`。
 
-三个必须注意的点：
+四个必须注意的点：
 
 1. **标题栏中文变方块**：fluxbox 默认字体没有汉字，标题「计算器」显示成 □□□。
    `~/.fluxbox/init` 里的 `window.font` **会被样式文件覆盖**，必须写进 `~/.fluxbox/overlay` 才生效。
 2. **应用内中文也变方块**：`fc-match "sans-serif:lang=zh"` 若返回 `DejaVuSans.ttf`，说明 fontconfig
    没把中文交给文泉驿。需要 [.devcontainer/99-cjk-preference.conf](../.devcontainer/99-cjk-preference.conf)
    这类规则把 `WenQuanYi Zen Hei` 提为中文首选，再 `fc-cache -f`。
-3. **别让可视化组件拖累日常测试**：VNC 那套约 208 MB 镜像 + 构建缓存 2.8 GB。
+3. **别让可视化组件拖累日常测试**：VNC 那套约 350 MB 镜像 + 大量构建缓存。
    Dockerfile 拆成 `test` / `view` 两个 target，日常 `test` 不拉这些。
+   实测：`test` 974 MB、`view` 1.32 GB。
+4. **fluxbox 弹窗挡住截图**：样式文件会触发 `fbsetbg` 设壁纸，容器里没有壁纸工具，
+   于是弹出 `fbsetbg: Something went wrong` 的 xmessage。overlay 里加 `background: none`，
+   并在启动后 `pkill -f xmessage` 兜底。
+
+### 9.4.1 驱动界面：别按像素点按钮
+
+想验证「12×3+4=40」「1/0 提示中文错误」，最初用 `xdotool` 算坐标点击，
+结果 `1/0=` 被点成了 `41%` —— 按钮布局随字体与窗口尺寸浮动，坐标法很脆。
+
+根因是 [CalculatorFrame](../src/main/java/com/helloworld/taiin/calculator/CalculatorFrame.java)
+只给按钮绑了 `ActionListener`，数字与运算符**没有键盘监听**
+（只有 Enter / Esc / Backspace / Ctrl+C / Ctrl+A 这几个快捷键），
+所以 `xdotool key` 和 `xdotool type` 都不会进入表达式。
+
+正确做法是用 [VisualDrive](../src/test/java/com/helloworld/taiin/calculator/VisualDrive.java)
+调用包级方法 `press()`，和按钮走同一条代码路径，并打印结果便于断言：
+
+```
+display=1/0
+status=错误：除数不能为零
+```
+
+`scripts/drive.sh` 封装了这套流程（自动编译测试类 → 启动 → 注入 → 截图）。
 
 ### 9.5 构建时 apt 报 502 Bad Gateway
 

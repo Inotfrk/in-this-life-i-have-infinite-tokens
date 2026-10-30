@@ -42,10 +42,18 @@ if command -v fluxbox >/dev/null 2>&1; then
         printf 'session.screen0.menu.font: WenQuanYi Zen Hei-10\n' >> "$FLUXBOX_DIR/init"
     # 样式文件（如 ubuntu-light）里自带的 window.font 会覆盖 init 的设置，
     # 只有 overlay 能压过样式，标题栏才会真正用上中文字体。
-    printf 'window.font: WenQuanYi Zen Hei-10\ntoolbar.font: WenQuanYi Zen Hei-10\nmenu.title.font: WenQuanYi Zen Hei-10\nmenu.frame.font: WenQuanYi Zen Hei-10\n' > "$FLUXBOX_DIR/overlay"
+    # background: none 阻止样式触发 fbsetbg——容器里没有壁纸工具，
+    # 它会弹出 "fbsetbg: Something went wrong" 的 xmessage 挡住截图。
+    printf 'window.font: WenQuanYi Zen Hei-10\ntoolbar.font: WenQuanYi Zen Hei-10\nmenu.title.font: WenQuanYi Zen Hei-10\nmenu.frame.font: WenQuanYi Zen Hei-10\nbackground: none\n' > "$FLUXBOX_DIR/overlay"
+    grep -q 'session.screen0.rootCommand' "$FLUXBOX_DIR/init" 2>/dev/null || \
+        printf '\nsession.screen0.rootCommand: /bin/true\n' >> "$FLUXBOX_DIR/init"
     fluxbox >/tmp/fluxbox.log 2>&1 &
-    sleep 1
+    sleep 1.5
 fi
+
+# 万一仍有 fbsetbg 失败弹窗，清掉它，避免遮挡界面截图。
+pkill -f 'xmessage' 2>/dev/null
+sleep 0.3
 
 log "starting x11vnc on $VNC_PORT"
 x11vnc -display "$DISPLAY" -rfbport "$VNC_PORT" -forever -shared -nopw -quiet >/tmp/x11vnc.log 2>&1 &

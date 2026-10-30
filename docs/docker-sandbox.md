@@ -75,6 +75,17 @@ powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view
 
 ```bash
 docker exec calculator-sandbox bash scripts/drive.sh "1/0="   # 触发除零提示并截图
+docker exec calculator-sandbox bash scripts/drive.sh "12*3+4=" # 正常计算
+```
+
+`drive.sh` 不按像素点按钮——布局随字体与窗口尺寸浮动，按坐标点击实测会把 `1/0=` 点成 `41%`。
+它改用 [VisualDrive](../src/test/java/com/helloworld/taiin/calculator/VisualDrive.java)，
+直接调用 `CalculatorFrame.press()`，与按钮 ActionListener 是同一条代码路径，
+并且会打印 `display=` / `status=` 便于断言：
+
+```
+display=1/0
+status=错误：除数不能为零
 ```
 
 > `view` 这套运行起来只占约 130 MB 内存，**主要成本是镜像与构建缓存**。
@@ -110,7 +121,8 @@ docker run --rm -v "${PWD}:/workspace" calculator-sandbox
 | [scripts/sandbox.ps1](../scripts/sandbox.ps1) | Windows 长驻容器 runner，带运行留档与 view |
 | [scripts/sandbox.sh](../scripts/sandbox.sh) | macOS / Linux 同款 runner |
 | [scripts/desktop.sh](../scripts/desktop.sh) | 容器内起 Xvfb + fluxbox + x11vnc + noVNC |
-| [scripts/drive.sh](../scripts/drive.sh) | 向计算器窗口注入按键并截图 |
+| [scripts/drive.sh](../scripts/drive.sh) | 调 VisualDrive 驱动界面并截图 |
+| [VisualDrive.java](../src/test/java/com/helloworld/taiin/calculator/VisualDrive.java) | 通过 `press()` 注入按键，绕过像素坐标 |
 
 ## 注意
 
