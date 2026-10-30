@@ -45,13 +45,14 @@ double parsePrimary();      // numbers and parentheses
 **Default sandbox (recommended, Docker)**: no JDK on the host; build and test run inside the container.
 Install notes and pitfalls: [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md).
 
-```bash
-docker build -t calculator-sandbox .
-docker run --rm -v "$(pwd):/workspace" calculator-sandbox
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
 ```
 
-On Windows PowerShell use `"${PWD}:/workspace"` instead of `"$(pwd):/workspace"`.
-Details in [docs/docker-sandbox.md](docs/docker-sandbox.md).
+On macOS / Linux use `scripts/sandbox.sh build` and `scripts/sandbox.sh test`.
+The container stays alive and every run is recorded under `.sandbox-runs/`, so a failure can be
+inspected after the fact. Details in [docs/docker-sandbox.md](docs/docker-sandbox.md).
 
 **C++ sample** (available after the port): only a C++17 compiler is needed (MSVC or MinGW-w64 `g++` on
 Windows, `clang++` or `g++` on macOS / Linux). No libraries to install.

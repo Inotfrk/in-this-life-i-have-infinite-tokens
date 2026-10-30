@@ -170,12 +170,17 @@ gh pr merge --merge
 ## 4. 验证
 
 **默认在 Docker 沙箱里跑**，不在宿主机装 JDK；容器里 `UiTest` 靠 `xvfb` 提供虚拟显示，
-不会因为无图形环境被跳过。用法见 [docs/docker-sandbox.md](docs/docker-sandbox.md)：
+不会因为无图形环境被跳过。用长驻容器 runner，每次运行都会留档，失败可以回溯现场。
+用法见 [docs/docker-sandbox.md](docs/docker-sandbox.md)：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build   # 首次或基础镜像更新后
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test    # 跑测试，留档到 .sandbox-runs/
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 runs    # 回溯历史运行
+```
 
 ```bash
-docker build -t calculator-sandbox .
-docker run --rm -v "$(pwd):/workspace" calculator-sandbox            # 完整测试
-docker run --rm -v "$(pwd):/workspace" calculator-sandbox bash scripts/build.sh build   # 只编译
+scripts/sandbox.sh build && scripts/sandbox.sh test    # macOS / Linux
 ```
 
 没有 Docker 或需要原生路径时，退回宿主机脚本（输出应与沙箱一致）：
