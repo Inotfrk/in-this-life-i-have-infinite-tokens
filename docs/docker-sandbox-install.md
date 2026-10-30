@@ -1,4 +1,4 @@
-# Windows 上安装 Docker 沙箱的踩坑记录
+﻿# Windows 上安装 Docker 沙箱的踩坑记录
 
 本文件记录 **2026-10-29 在 `FAIRY` 这台 Windows 11 机器上装 Docker 沙箱的完整过程**，
 包括每一项检查、每条命令的实际输出、失败原因和最终绕法。换机器时照着走一遍即可。
@@ -16,9 +16,11 @@
 | WSL | 初始完全未安装（`wsl.exe` 报「未安装用于 Linux 的 Windows 子系统」） |
 | Docker Desktop | **4.97.0**，装到 `D:\Docker` |
 | Docker 数据根 | `D:\DockerData\wsl`（**不能**放在安装目录下，见第 4 节） |
-| docker CLI | 29.9.2 |
+| Docker CLI | 29.9.2 |
 | WSL 包 | 2.7.14.0 |
-| **待办** | 必须**重启一次**，WSL2 才能启动，引擎才会出现 |
+| 代理 | `127.0.0.1:7890`（Docker Desktop 需手动配置，不读系统代理） |
+| 沙箱实测 | 25 项求值 + 6 项界面测试全部通过 |
+| **状态** | ✅ 已重启、引擎已启动、镜像已构建、测试全绿 |
 
 ---
 
@@ -214,7 +216,6 @@ docker run --rm hello-world                      # 打印 Hello from Docker!
 ---
 
 ## 6. 把 PATH 弄好
-
 安装器会把 `D:\Docker\resources\bin` 写进系统 PATH，但**当前已开的终端不会刷新**。
 新开一个终端，或者临时补一次：
 
@@ -236,10 +237,111 @@ docker --version      # Docker version 29.9.2, build a82e528
 | `WSL_E_DISTRO_NOT_FOUND`（`-d docker-desktop`） | 该发行版尚未创建 | 先重启并启动 Docker Desktop |
 | `500 Internal Server Error ... /LinuxEngine/...` | 引擎未就绪（多半是 WSL2 没起来） | 重启 → 启动 Docker Desktop → 再查 |
 | 安装成功但 C 盘还是少了好几个 G | 程序在 D，但 `cli-plugins` 固定写 C | 属正常现象，见 4.4 |
+| `failed to resolve reference ... dialing registry-1.docker.io:443 ... timeout` | Docker Desktop 没走本机代理 | 配代理，见第 8 节 |
+| `scripts/build.sh: line 3: set: pipefail: invalid option name` | `.sh` 被检出成 CRLF | 加 `.gitattributes` 强制 LF，见第 9 节 |
+| `UnsatisfiedLinkError: libXrender.so.1` | 基础镜像缺 X11 客户端库 | 装 `libxrender1` 等，见第 9 节 |
 
 ---
 
-## 8. 复查用命令清单
+## 8. 代理：国内网络必配
+
+本机通过本地代理（Clash 系，`127.0.0.1:7890`）访问外网，但 **Docker Desktop 不读系统代理**，
+直接连 `registry-1.docker.io:443` 会超时：
+
+```
+failed to resolve reference "docker.io/library/hello-world:latest":
+dialing registry-1.docker.io:443 ... A connection attempt failed ...
+```
+
+确认代理本身是通的（返回 `401` 就是正常的未认证响应，代表能连通）：
+
+```powershell
+curl.exe -sS -o NUL -w "%{http_code}`n" --max-time 20 https://registry-1.docker.io/v2/
+Test-NetConnection 127.0.0.1 -Port 7890 -InformationLevel Quiet    # True
+```
+
+给 Docker Desktop 配代理：改 `%APPDATA%\Docker\settings-store.json`（先停掉 Docker）：
+
+```powershell
+docker desktop stop
+$f = "$env:APPDATA\Docker\settings-store.json"
+Copy-Item $f "$f.bak" -Force
+$cfg = Get-Content $f -Raw -Encoding UTF8 | ConvertFrom-Json
+$cfg | Add-Member ProxyHttpMode manual -Force
+$cfg | Add-Member OverrideProxyHTTP  'http://127.0.0.1:7890' -Force
+$cfg | Add-Member OverrideProxyHTTPS 'http://127.0.0.1:7890' -Force
+$cfg | Add-Member OverrideProxyExclude 'localhost,127.0.0.1,*.local' -Force
+$cfg | ConvertTo-Json -Depth 10 | Set-Content $f -Encoding UTF8
+Start-Process 'D:\Docker\Docker Desktop.exe'
+```
+
+也可以走图形界面：`Settings → Resources → Proxies → Manual`，填同样的地址。
+配好后 `docker pull hello-world` 立即成功。
+
+> 代理软件换了端口时要同步改这里，否则只有 Docker 拉不到镜像、其他工具却正常。
+
+---
+
+## 9. 沙箱跑起来后才会暴露的两个问题
+
+这两个问题在宿主机上永远看不到，只有真正进容器才出现，属于「沙箱的价值」：
+
+### 9.1 `.sh` 换行符：CRLF 让 `pipefail` 变成非法选项
+
+```
+scripts/build.sh: line 3: set: pipefail: invalid option name
+```
+
+Windows 上 `git config core.autocrlf` 为 `true`，仓库里又没有 `.gitattributes`，
+于是 `scripts/*.sh` 全被检出成 CRLF。Linux 里读到的是 `pipefail\r`，`set -o` 不认，脚本退出码 2。
+
+修复：加 [.gitattributes](../.gitattributes) 强制 `*.sh`、`Dockerfile`、`*.yml` 用 LF，
+再让索引与工作区重算一次：
+
+```powershell
+git add .gitattributes
+git rm --cached -r . --quiet
+git add -A          # 重新按 .gitattributes 写入索引与工作区
+```
+
+验证（`CRLF=False` 才算对）：
+
+```powershell
+foreach ($f in Get-ChildItem scripts -Filter *.sh) {
+  $b = [System.IO.File]::ReadAllBytes($f.FullName); "$($f.Name): CRLF=$($b -contains 13)"
+}
+```
+
+### 9.2 缺 X11 库：Swing 初始化直接崩
+
+```
+Exception in thread "main" java.lang.UnsatisfiedLinkError:
+  /opt/java/openjdk/lib/libawt_xawt.so: libXrender.so.1: cannot open shared object file
+  at java.desktop/java.awt.Toolkit.<clinit>(Toolkit.java:1393)
+```
+
+`xvfb` 只提供虚拟显示，**不含 X11 客户端库**。`eclipse-temurin:21-jdk-jammy` 是精简镜像，
+缺少 AWT/Swing 依赖的 `.so`。要在 Dockerfile 里补：
+
+```dockerfile
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        xvfb libxrender1 libxtst6 libxi6 libxext6 libx11-6 \
+        fontconfig fonts-dejavu-core tzdata ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+```
+
+`fontconfig` + `fonts-dejavu-core` 是为了让 Swing 有中文字体可用；
+缺了不报错但会显示方块。
+
+### 9.3 顺带确认：UiTest 在容器里是真跑而不是跳过
+
+`UiTest` 开头有 `GraphicsEnvironment.isHeadless()` 判断，无显示就打印 `[SKIP]` 后退出。
+沙箱日志里出现 6 条 `[PASS] 按键 ...` 才是真正执行过；看到 `[SKIP]` 说明 `xvfb-run` 没生效。
+
+---
+
+## 10. 复查用命令清单
 
 ```powershell
 # 已安装版本
@@ -263,7 +365,7 @@ Test-Path 'D:\Docker\Docker Desktop.exe'
 
 ---
 
-## 9. 卸载（万一要重来）
+## 11. 卸载（万一要重来）
 
 ```powershell
 Start-Process winget.exe -Verb RunAs -PassThru -Wait -ArgumentList
