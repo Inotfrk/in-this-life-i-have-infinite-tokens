@@ -1,0 +1,23 @@
+{
+  // 默认沙箱：JDK 21 + 图形库，构建与测试都在容器里跑，不污染宿主机。
+  "name": "Calculator Sandbox (JDK 21)",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "dev",
+  "workspaceFolder": "/workspace",
+  // 容器里没有真实显示器，UiTest 用 xvfb 跑；这里只装编辑器需要的 Java 扩展。
+  "customizations": {
+    "vscode": {
+      "extensions": ["vscjava.vscode-java-pack"],
+      "settings": {
+        "java.configuration.runtimes": [
+          { "name": "JavaSE-21", "path": "/opt/java/openjdk", "default": true }
+        ]
+      }
+    }
+  },
+  "postCreateCommand": "bash scripts/build.sh test",
+  "runArgs": ["--init"]
+}
