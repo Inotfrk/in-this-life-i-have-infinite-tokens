@@ -19,8 +19,9 @@
 | Docker CLI | 29.9.2 |
 | WSL 包 | 2.7.14.0 |
 | 代理 | `127.0.0.1:7890`（Docker Desktop 需手动配置，不读系统代理） |
-| 沙箱实测 | 25 项求值 + 6 项界面测试全部通过 |
-| **状态** | ✅ 已重启、引擎已启动、镜像已构建、测试全绿 |
+| 沙箱实测 | 25 项求值 + 6 项界面测试全部通过（镜像 target=test） |
+| 可视沙箱 | `view` target + noVNC，浏览器可见真实界面，标题栏中文正常 |
+| **状态** | ✅ 已重启、引擎已启动、镜像已构建、测试全绿、界面可见 |
 
 ---
 
@@ -282,7 +283,7 @@ Start-Process 'D:\Docker\Docker Desktop.exe'
 
 ---
 
-## 9. 沙箱跑起来后才会暴露的两个问题
+## 9. 沙箱跑起来后才暴露的问题
 
 这两个问题在宿主机上永远看不到，只有真正进容器才出现，属于「沙箱的价值」：
 
@@ -338,6 +339,79 @@ RUN apt-get update \
 
 `UiTest` 开头有 `GraphicsEnvironment.isHeadless()` 判断，无显示就打印 `[SKIP]` 后退出。
 沙箱日志里出现 6 条 `[PASS] 按键 ...` 才是真正执行过；看到 `[SKIP]` 说明 `xvfb-run` 没生效。
+
+### 9.4 看不到画面：Xvfb 本来就没有画面
+
+`xvfb` 是无头虚拟屏，界面测试能跑，但**没有任何窗口可看**。要看真实界面必须再叠一层：
+
+```
+Xvfb :99  ->  fluxbox（标题栏）  ->  x11vnc（5900）  ->  noVNC/websockify（6080）
+```
+
+实现见 [scripts/desktop.sh](../scripts/desktop.sh)，用 `scripts/sandbox.ps1 view` 一条命令拉起，
+浏览器访问 `http://localhost:6080/vnc.html?autoconnect=1&resize=scale`。
+
+三个必须注意的点：
+
+1. **标题栏中文变方块**：fluxbox 默认字体没有汉字，标题「计算器」显示成 □□□。
+   `~/.fluxbox/init` 里的 `window.font` **会被样式文件覆盖**，必须写进 `~/.fluxbox/overlay` 才生效。
+2. **应用内中文也变方块**：`fc-match "sans-serif:lang=zh"` 若返回 `DejaVuSans.ttf`，说明 fontconfig
+   没把中文交给文泉驿。需要 [.devcontainer/99-cjk-preference.conf](../.devcontainer/99-cjk-preference.conf)
+   这类规则把 `WenQuanYi Zen Hei` 提为中文首选，再 `fc-cache -f`。
+3. **别让可视化组件拖累日常测试**：VNC 那套约 208 MB 镜像 + 构建缓存 2.8 GB。
+   Dockerfile 拆成 `test` / `view` 两个 target，日常 `test` 不拉这些。
+
+### 9.5 构建时 apt 报 502 Bad Gateway
+
+```
+E: Failed to fetch http://archive.ubuntu.com/ubuntu/dists/jammy-updates/InRelease  502  Bad Gateway
+```
+
+本机经代理访问 `archive.ubuntu.com` 不稳定（`curl` 实测同样 502），而 Docker Hub 正常。
+Dockerfile 里把源换成中科大镜像即可（海外机器可删掉这段）：
+
+```dockerfile
+RUN if [ -f /etc/apt/sources.list ]; then \
+        sed -i 's|http://archive.ubuntu.com/ubuntu|https://mirrors.ustc.edu.cn/ubuntu|g; \
+                s|http://security.ubuntu.com/ubuntu|https://mirrors.ustc.edu.cn/ubuntu|g' /etc/apt/sources.list; \
+    fi \
+    && apt-get update && apt-get install -y --no-install-recommends ...
+```
+
+镜像源可用性实测（2026-10-30）：`mirrors.ustc.edu.cn` 0.37s / `mirrors.aliyun.com` 0.64s /
+`mirrors.tuna.tsinghua.edu.cn` 5.2s，均返回 200。
+
+### 9.6 `auth.docker.io` TLS handshake timeout
+
+```
+ERROR: failed to authorize: failed to fetch oauth token:
+Post "https://auth.docker.io/token": net/http: TLS handshake timeout
+```
+
+同样是代理链路波动。基础镜像已在本地时可以加 `--no-cache` 之外的方式重试，
+或用 `docker pull` 单独先把基础镜像拉好；反复失败就换代理节点，**不是 Dockerfile 的问题**。
+
+### 9.7 内存吃紧会把容器和系统一起拖死
+
+本机 15.73 GB 物理内存，实测出现过「可用物理内存 0 MB、提交 20.2 GB / 上限 28.4 GB」，
+容器随之消失，系统卡死重启。WSL2 默认可占用宿主机一半内存，需要在用户目录加
+`%USERPROFILE%\.wslconfig` 限流（**仓库外文件，改动前要先征得同意**）：
+
+```ini
+[wsl2]
+memory=6GB
+processors=4
+swap=2GB
+```
+
+改完要 `wsl --shutdown` 或重启才生效。排查用：
+
+```powershell
+Get-Process | Group-Object ProcessName | ForEach-Object {
+  [pscustomobject]@{ Name=$_.Name; Count=$_.Count
+    MemGB=[math]::Round(($_.Group | Measure-Object WorkingSet64 -Sum).Sum/1GB, 2) }
+} | Sort-Object MemGB -Descending | Select-Object -First 12
+```
 
 ---
 
