@@ -1,8 +1,12 @@
 # In this life I have infinite tokens.
 
-一个用 **C++17** 写的跨平台计算器：核心逻辑收在一个源文件里，**零第三方依赖**，
-不需要 CMake 之类的构建系统，一条编译命令就能跑起来。这个仓库同时是「一个小项目该怎么用分支、
-任务队列和 agent 协作来维护」的样板——看懂这份说明，就明白这个仓库怎么用。
+一个用 **C++17 + Qt 6（Qt Quick/QML）** 写的跨平台计算器，目标覆盖 Windows、macOS、Linux、
+iPadOS 与 Android。这个仓库同时是「一个小项目该怎么用分支、任务队列和 agent 协作来维护」的
+样板——看懂这份说明，就明白这个仓库怎么用。
+
+> **当前状态**：处于**设计阶段**。完整设计见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md)。
+> 早期的 Java 实现（`src/main/java`、`src/test/java`）已删除，C++ / Qt 代码尚未入库，
+> 实现任务按 [TODO.md](TODO.md) 的 T-006~T-009 排队推进。
 
 #### 功能
 
@@ -11,22 +15,30 @@
 - 交互命令：直接输入表达式回车计算，`clear` 清空、`del` 退格、`copy` 输出上次结果、`recall` 取回上次表达式
 - 计算后可直接接运算符，继续用上一次结果计算
 - 除零、括号不匹配等错误给出中文提示
-- 单文件、无全局状态，`std::string` 切片 + 递归下降解析，整个程序可以塞进一个 `.cpp`
+- 逻辑层（纯 C++ 求值器）与 UI 层（QML）分离，桌面与触屏两套外壳
 
 #### 软件架构
 
 ```
-calculator.cpp        单文件示例：递归下降求值器 + 交互循环，整个程序就是这一个文件（规划中）
+src/
+    core/               纯 C++ 核心（无 Qt GUI 依赖）
+        expression_evaluator.*   递归下降求值器
+        calculator_engine.*      会话状态（上次结果、recall）
+    ui/                 QML 界面
+        main.cpp               入口
+        qml/desktop/           桌面外壳（鼠标键盘 + 快捷键）
+        qml/touch/             触屏外壳（iPadOS / Android，大按钮 + 手势）
+CMakeLists.txt         顶层 CMake 工程（Qt 6）
 scripts/
-    build.ps1         Windows 构建脚本（build / test / run / jar / package / clean）
-    build.sh          macOS / Linux 构建脚本
-src/                  早期 Java 实现（历史示例，构建脚本仍可直接编译运行）
+    build.ps1           Windows 构建脚本（实现阶段切换为 CMake + Qt）
+    build.sh            macOS / Linux 构建脚本
+docs/design-cpp-qt.md  设计文档
 ```
 
-单文件示例的分层就是几个函数，从上往下读即可：
+核心分层（自顶向下）：
 
 ```cpp
-// calculator.cpp —— 结构示意
+// 逻辑层 —— 移植自早期 Java ExpressionEvaluator，行为一致
 double parseExpression();   // 顶层：加减
 double parseTerm();         // 乘除取模
 double parsePower();        // 乘方，右结合
@@ -34,71 +46,28 @@ double parseUnary();        // 一元正负号
 double parsePrimary();      // 数字与括号
 ```
 
-> **当前状态**：仓库里目前真正可运行、被 `scripts/` 构建与测试覆盖的仍是早期的 Java 实现
-> （`src/main/java`）；C++ 单文件形态是本仓库的目标，`calculator.cpp` 尚未入库，
-> 移植工作按 [TODO.md](TODO.md) 排队推进。下面标「C++ 示例」的步骤在移植完成后即可使用。
+#### 安装教程（实现阶段完成后可用）
 
-#### 安装教程
-
-**默认沙箱（推荐，Docker）**：不装 JDK，构建和测试都在容器里跑。
-安装器说明、踩坑记录见 [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md)：
+需要 **Qt 6**（推荐 6.5 LTS 及以上）与一个支持 C++17 的编译器（MSVC / MinGW-w64 / clang++ / g++），
+以及 **CMake 3.21+**。iPadOS 构建还需 macOS + Xcode（Apple 硬性要求）。
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 ```
 
-macOS / Linux 用 `scripts/sandbox.sh build` 与 `scripts/sandbox.sh test`。
-容器常驻、每次运行留档到 `.sandbox-runs/`，失败可回溯现场。容器默认限 `2g` 内存 / 2 CPU
-（`--memory-swap` 同步封顶），避免构建异常时把整台机器拖死；可用 `-Memory`、`-Cpus` 调整。
-细节见 [docs/docker-sandbox.md](docs/docker-sandbox.md)。
+> 上述命令在 C++ / Qt 代码入库（T-006~T-008）后生效。本阶段暂无可直接编译的源码。
 
-**C++ 示例**（移植完成后可用）：只需要一个支持 C++17 的编译器（Windows 用 MSVC 或 MinGW-w64 的 `g++`，
-macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
+#### 使用说明（规划，实现阶段落地）
 
-1. 检查环境：`g++ --version`（Windows 也可用 `cl` / `clang++`）
-2. 克隆本仓库
-3. 编译：`g++ -std=c++17 -O2 calculator.cpp -o calculator`
+| 操作 | 说明 |
+| --- | --- |
+| 运行桌面版 | 构建产物 `Calculator`（Windows 为 `Calculator.exe`） |
+| 运行触屏版 | 同一套 QML，在 iPadOS / Android 上自适应大按钮布局 |
+| 运行全部测试 | Qt Test（对应早期 Java `EvaluatorTest` 的 25 项） |
 
-**现有 Java 实现**（`scripts/` 覆盖的那一套）：需要 **JDK 21 或更高版本**
-（必须是完整 JDK，JRE 里没有 `javac` / `jar` / `jpackage`）。
-
-1. 检查环境：`java -version`
-2. 编译：`scripts\build.ps1 -Task build`（macOS / Linux：`scripts/build.sh build`）
-
-#### 使用说明
-
-| 操作 | Windows | macOS / Linux |
-| --- | --- | --- |
-| 运行 C++ 示例（编译后） | `calculator.exe` | `./calculator` |
-| 运行 Java 版界面 | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
-| 运行全部测试 | `scripts\build.ps1 -Task test` | `scripts/build.sh test` |
-| 生成可执行 jar | `scripts\build.ps1 -Task jar` → `dist\Calculator.jar` | `scripts/build.sh jar` |
-| 打安装包 | `scripts\build.ps1 -Task package` | `scripts/build.sh package` |
-| 清理产物 | `scripts\build.ps1 -Task clean` | `scripts/build.sh clean` |
-
-安装包说明：
-
-- **Windows**：一次打包同时产出两个结果
-  - `dist\Calculator\Calculator.exe`：免安装绿色版，双击即用；同时压成
-    `dist\Calculator-<版本>-windows-x64-portable.zip` 方便分发
-  - `dist\Calculator-<版本>.msi`：安装包，需要 [WiX Toolset 3](https://wixtoolset.org/) 在 PATH 上；
-    没有 WiX 时只跳过 msi，绿色版照常生成，脚本仍以成功退出
-- **macOS**：一次打包产出 `dist/Calculator.app`（便携）与 `dist/Calculator-<版本>.dmg`（安装包）
-- **版本号**：`-Task package -Version 1.2.0`（Windows）或 `APP_VERSION=1.2.0 scripts/build.sh package`
-
-打包脚本按平台各跑一次，交给 GitHub Actions 在原生 runner 上执行：
-
-| 平台 | 位置 | 产物 |
-| --- | --- | --- |
-| GitHub Actions（测试） | [.github/workflows/package.yml](.github/workflows/package.yml) | 三平台跑测试 |
-| GitHub Actions（打包） | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
-
-> 仓库已迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），推送即触发 Actions，
-> 不需要手动开启。想在本机出安装包也可以跑 `scripts\build.ps1 -Task package`
-> 或 `scripts/build.sh package`。
-
-已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
+各平台打包（`windeployqt` / `macdeployqt` / `linuxdeployqt` / `androiddeployqt` / Xcode）见
+[docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 5 节。
 
 #### 仓库怎么用（同学先看这段）
 

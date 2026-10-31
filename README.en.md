@@ -1,9 +1,14 @@
 # In this life I have infinite tokens.
 
-A cross-platform calculator written in **C++17**: the whole program lives in a single source file,
-with **no third-party dependencies** and no build system beyond one compiler command. The repository
-doubles as a sample of how a small project is kept with branches, a task queue and agent collaboration —
-read this page and you know how the repo is meant to be used.
+A cross-platform calculator written in **C++17 + Qt 6 (Qt Quick/QML)**, targeting Windows, macOS,
+Linux, iPadOS and Android. The repository doubles as a sample of how a small project is kept with
+branches, a task queue and agent collaboration — read this page and you know how the repo is meant
+to be used.
+
+> **Current state:** in the **design phase**. See [docs/design-cpp-qt.md](docs/design-cpp-qt.md) for the
+> full design. The earlier Java implementation (`src/main/java`, `src/test/java`) has been removed; the
+> C++ / Qt code is not in the repository yet and the implementation is queued in [TODO.md](TODO.md)
+> (T-006 ~ T-009).
 
 #### Features
 
@@ -12,22 +17,30 @@ read this page and you know how the repo is meant to be used.
 - Commands: type an expression and press Enter to evaluate, `clear`, `del`, `copy` (print last result), `recall`
 - Operators typed after a result continue from that result
 - Chinese error messages for divide-by-zero and mismatched parentheses
-- Single file, no global state: `std::string` slices plus a recursive-descent parser
+- Logic layer (pure C++ evaluator) separated from the QML UI; desktop and touch shells
 
 #### Software Architecture
 
 ```
-calculator.cpp        The single-file sample once ported: parser + REPL (planned)
+src/
+    core/               Pure C++ core (no Qt GUI dependency)
+        expression_evaluator.*   Recursive-descent evaluator
+        calculator_engine.*      Session state (last result, recall)
+    ui/                 QML UI
+        main.cpp                Entry point
+        qml/desktop/            Desktop shell (mouse + keyboard, shortcuts)
+        qml/touch/              Touch shell (iPadOS / Android, large buttons + gestures)
+CMakeLists.txt         Top-level CMake project (Qt 6)
 scripts/
-    build.ps1         Windows build script (build / test / run / jar / package / clean)
-    build.sh          macOS / Linux build script
-src/                  Earlier Java implementation (historical sample, still built by scripts/)
+    build.ps1           Windows build script (switches to CMake + Qt in implementation phase)
+    build.sh            macOS / Linux build script
+docs/design-cpp-qt.md  Design document
 ```
 
-The single-file layout is just a handful of functions, read top to bottom:
+The core layout is a handful of functions, ported from the earlier Java `ExpressionEvaluator`:
 
 ```cpp
-// calculator.cpp — structure sketch
+// core layer — behaviour identical to the earlier Java implementation
 double parseExpression();   // top level: + and -
 double parseTerm();         // * / %
 double parsePower();        // ^, right-associative
@@ -35,68 +48,29 @@ double parseUnary();        // unary +/-
 double parsePrimary();      // numbers and parentheses
 ```
 
-> **Current state:** the implementation that actually runs and is covered by `scripts/` is still the
-> earlier Java one under `src/main/java`. The C++ single-file form is the target; `calculator.cpp` is not
-> in the repository yet and the port is queued in [TODO.md](TODO.md). Steps marked "C++ sample" below
-> work once the port lands.
+#### Installation (available after implementation)
 
-#### Installation
-
-**Default sandbox (recommended, Docker)**: no JDK on the host; build and test run inside the container.
-Install notes and pitfalls: [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md).
+Requires **Qt 6** (6.5 LTS or newer recommended), a C++17 compiler (MSVC / MinGW-w64 / clang++ / g++)
+and **CMake 3.21+**. Building for iPadOS additionally requires macOS + Xcode (Apple requirement).
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
+cmake -B build -DCMAKE_BUILD_TYPE=Release
+cmake --build build
 ```
 
-On macOS / Linux use `scripts/sandbox.sh build` and `scripts/sandbox.sh test`.
-The container stays alive and every run is recorded under `.sandbox-runs/`, so a failure can be
-inspected after the fact. It is capped at 2 GB RAM / 2 CPUs (`--memory-swap` capped too) so a
-runaway build cannot freeze the host; override with `-Memory` / `-Cpus`.
-Details in [docs/docker-sandbox.md](docs/docker-sandbox.md).
+> These commands take effect once the C++ / Qt code lands (T-006 ~ T-008). No directly compilable
+> source exists in this phase.
 
-**C++ sample** (available after the port): only a C++17 compiler is needed (MSVC or MinGW-w64 `g++` on
-Windows, `clang++` or `g++` on macOS / Linux). No libraries to install.
+#### Instructions (planned, lands in implementation phase)
 
-1. `g++ --version` (Windows: `cl` / `clang++` also work)
-2. Clone the repository
-3. `g++ -std=c++17 -O2 calculator.cpp -o calculator`
+| Action | Notes |
+| --- | --- |
+| Run desktop build | Build output `Calculator` (`Calculator.exe` on Windows) |
+| Run touch build | Same QML, adaptive large-button layout on iPadOS / Android |
+| Run all tests | Qt Test (matching the 25 cases of the earlier Java `EvaluatorTest`) |
 
-**Existing Java implementation** (the one `scripts/` covers): requires **JDK 21 or newer**
-(a full JDK — a JRE has no `javac`, `jar` or `jpackage`).
-
-1. `java -version`
-2. `scripts\build.ps1 -Task build` (macOS / Linux: `scripts/build.sh build`)
-
-#### Instructions
-
-| Action | Windows | macOS / Linux |
-| --- | --- | --- |
-| Run the C++ sample (after compiling) | `calculator.exe` | `./calculator` |
-| Run the Java UI | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
-| Run all tests | `scripts\build.ps1 -Task test` | `scripts/build.sh test` |
-| Build runnable jar | `scripts\build.ps1 -Task jar` → `dist\Calculator.jar` | `scripts/build.sh jar` |
-| Build installer | `scripts\build.ps1 -Task package` | `scripts/build.sh package` |
-| Clean | `scripts\build.ps1 -Task clean` | `scripts/build.sh clean` |
-
-Packaging notes:
-
-- **Windows**: one run produces both
-  - `dist\Calculator\Calculator.exe` — portable app, no install needed; zipped into
-    `dist\Calculator-<version>-windows-x64-portable.zip`
-  - `dist\Calculator-<version>.msi` — installer, requires [WiX Toolset 3](https://wixtoolset.org/)
-    on `PATH`. Without WiX only the msi step is skipped; the portable build still succeeds
-- **macOS**: one run produces `dist/Calculator.app` (portable) and `dist/Calculator-<version>.dmg`
-- **Version**: `-Task package -Version 1.2.0` (Windows) or `APP_VERSION=1.2.0 scripts/build.sh package`
-
-Cross-platform packaging runs on GitHub Actions: [.github/workflows/package.yml](.github/workflows/package.yml)
-tests on all three platforms and uploads the macOS `dmg` plus the Windows `zip` / `msi` as artifacts.
-The repository now lives on GitHub (`Inotfrk/in-this-life-i-have-infinite-tokens`), so a push triggers the
-workflow without any manual switch-on. Build installers locally with `scripts\build.ps1 -Task package` or
-`scripts/build.sh package`.
-
-You can also run the jar directly: `java -jar dist\Calculator.jar`.
+Per-platform packaging (`windeployqt` / `macdeployqt` / `linuxdeployqt` / `androiddeployqt` / Xcode)
+is covered in [docs/design-cpp-qt.md](docs/design-cpp-qt.md) §5.
 
 #### How to use this repository (read this first)
 
