@@ -46,16 +46,66 @@
 
 ### T-001 把计算器核心移植为单文件 C++
 
-- 状态：queued
+- 状态：done
 - 目标分支：`<账号段>-<电脑段>-cpp`
 - 优先级：P1
 - 依赖：无
 - 涉及文件：新增 `calculator.cpp`；`README.md` / `README.en.md` 的 C++ 段落
 - 验收：`g++ -std=c++17 -O2 calculator.cpp -o calculator` 编译通过，示例表达式结果与
   `EvaluatorTest` 的 25 项一致；`scripts\build.ps1 -Task test` 仍全绿
-- 说明：README 已把 C++17 单文件计算器作为主线描述，但仓库里尚无 `calculator.cpp`。
-  需要把 `ExpressionEvaluator` 的递归下降逻辑（`+ - * / % ^`、括号、一元正负号、右结合乘方）
-  转成单个 C++ 源文件，错误提示保持中文；Java 实现保留为历史示例，不删除。
+- 说明：已由 T-006 取代。原「单文件 C++、Java 保留为历史示例」的思路被整体替换为
+  **C++ / Qt Quick 架构**（见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md)），
+  Java 计算器源码、测试与构建产物已按用户要求删除。
+
+### T-006 移植核心求值器为 C++（Qt Test 单测）
+
+- 状态：queued
+- 目标分支：`<账号段>-<电脑段>-qt-core`
+- 优先级：P0
+- 依赖：无
+- 涉及文件：新增 `src/core/expression_evaluator.h/.cpp`、`src/core/calculator_engine.h/.cpp`、
+  `src/core/expression_evaluator_test.cpp`、顶层 `CMakeLists.txt`
+- 验收：CMake + Qt 6 编译通过；Qt Test 的求值用例与原 Java `EvaluatorTest` 的 25 项结果一致
+- 说明：按 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 3.3 节，把递归下降逻辑
+  （`+ - × ÷ % ^`、括号、一元正负号、右结合乘方、全角归一化、中文错误提示）移植为
+  无 Qt GUI 依赖的纯 C++ 核心。
+
+### T-007 QML 桌面外壳 + 触屏外壳
+
+- 状态：queued
+- 目标分支：`<账号段>-<电脑段>-qt-ui`
+- 优先级：P0
+- 依赖：T-006
+- 涉及文件：新增 `src/ui/main.cpp`、`src/ui/qml/`（desktop / touch / components）
+- 验收：桌面（鼠标键盘 + 快捷键）与触屏（大按钮 + 手势，横竖屏自适应）外壳均可运行
+- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 3.4 / 3.5 节；逻辑层与 UI 层
+  通过 QQmlContext 绑定，不耦合。
+
+### T-008 基础设施改写（build 脚本 / Docker / CI / sandbox）
+
+- 状态：queued
+- 目标分支：`<账号段>-<电脑段>-qt-infra`
+- 优先级：P0
+- 依赖：T-006、T-007
+- 涉及文件：`scripts/build.ps1`、`scripts/build.sh`、`Dockerfile`、
+  `.devcontainer/devcontainer.json`、`.github/workflows/package.yml`、
+  `.github/workflows/release.yml`（测试命令联动）、`scripts/sandbox.ps1`、`scripts/sandbox.sh`、
+  `scripts/desktop.sh`、`scripts/drive.sh`、`.gitignore`
+- 验收：`scripts\build.ps1 -Task test` 全绿；CI 产出各平台安装包；沙箱用
+  `QT_QPA_PLATFORM=offscreen` 无头跑测试
+- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 6 节。JDK/Xvfb 那套整体替换为
+  Qt 6 + g++；仓库治理规则文件（AGENTS.md、branch-registry、release 脚本）不动。
+
+### T-009 各平台打包（Windows / macOS / Linux / iPadOS / Android）
+
+- 状态：queued
+- 目标分支：`<账号段>-<电脑段>-qt-packaging`
+- 优先级：P1
+- 依赖：T-008
+- 涉及文件：新增 `platform/` 元数据；打包流程
+- 验收：Windows 出 `msi`/`zip`、macOS 出 `dmg`、Linux 出 AppImage、Android 出 `apk`、
+  iPadOS 在团队 macOS 上出 `ipa`
+- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 5 节；iOS 构建仅能在 macOS 上完成。
 
 ### T-002 上传流改为三层（master ← develop ← 个人分支）
 
