@@ -101,6 +101,16 @@ Canvas {
             ctx.moveTo(13.5, 12.0);
             ctx.quadraticCurveTo(16.5, 12.2, 17.5, 16.0);
             ctx.stroke();
+        } else if (name === "user") {
+            // 单人剪影：头 + 肩
+            ctx.beginPath();
+            ctx.arc(10, 6.8, 3.2, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(3.6, 17);
+            ctx.quadraticCurveTo(4.4, 11.6, 10, 11.6);
+            ctx.quadraticCurveTo(15.6, 11.6, 16.4, 17);
+            ctx.stroke();
         } else if (name === "settings") {
             ctx.beginPath();
             ctx.arc(10, 10, 2.6, 0, Math.PI * 2);

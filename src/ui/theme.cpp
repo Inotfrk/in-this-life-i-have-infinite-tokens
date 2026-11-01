@@ -22,18 +22,36 @@ struct Palette
     QColor accent;      // 强调色（指示条、选中描边）
 };
 
-// 深色：低饱和灰蓝，参考 GitHub 深色主题的层次，但整体更暗一档。
+// 配色直接取 GitHub Primer 的语义色值，深 / 浅各一套。
+// 参照 https://primer.style/foundations/color（2026-11 版本）。
 const Palette kDark{
-    QColor("#0d1117"), QColor("#010409"), QColor("#161b22"), QColor("#0f1318"),
-    QColor("#30363d"), QColor("#21262d"), QColor("#c9d1d9"), QColor("#8b949e"),
-    QColor("#6e7681"), QColor("#21262d"), QColor("#1f2937"), QColor("#58a6ff")
+    QColor("#0d1117"), // bg           canvas.default
+    QColor("#010409"), // railBg       canvas.inset
+    QColor("#151b23"), // cardBg       canvas.subtle
+    QColor("#0d1117"), // contentBg    canvas.default
+    QColor("#3d444d"), // border       border.default
+    QColor("#21262d"), // borderSoft   border.muted
+    QColor("#f0f6fc"), // text         fg.default
+    QColor("#9198a1"), // textMuted    fg.muted
+    QColor("#6e7681"), // textFaint    fg.subtle
+    QColor("#21262d"), // hoverBg      neutral muted
+    QColor("#121d2f"), // activeBg     accent.subtle
+    QColor("#4493f8")  // accent       accent.fg
 };
 
-// 浅色：参照 macOS 浅色外观，低饱和、边框克制，不做强对比色块。
 const Palette kLight{
-    QColor("#f6f8fa"), QColor("#eaeef2"), QColor("#ffffff"), QColor("#fbfcfd"),
-    QColor("#d0d7de"), QColor("#e1e6eb"), QColor("#1f2328"), QColor("#57606a"),
-    QColor("#8b949e"), QColor("#eaeef2"), QColor("#ddf4ff"), QColor("#0969da")
+    QColor("#ffffff"), // canvas.default
+    QColor("#f6f8fa"), // canvas.subtle
+    QColor("#ffffff"), // canvas.default
+    QColor("#f6f8fa"), // canvas.inset
+    QColor("#d1d9e0"), // border.default
+    QColor("#d1d9e0"), // border.muted
+    QColor("#1f2328"), // fg.default
+    QColor("#59636e"), // fg.muted
+    QColor("#818b98"), // fg.subtle
+    QColor("#eff2f5"), // hover
+    QColor("#ddf4ff"), // accent.subtle
+    QColor("#0969da")  // accent.fg
 };
 
 // 星空：作者举例的额外主题，深底 + 冷色强调。只换配色，结构不变。

@@ -24,9 +24,9 @@ qt_add_resources(infinite-tokens "qml"
     PREFIX "/"
     FILES
         src/ui/qml/Main.qml
-        src/ui/qml/RailButton.qml
         src/ui/qml/HeaderButton.qml
         src/ui/qml/SubjectRow.qml
+        src/ui/qml/SubjectGlyph.qml
         src/ui/qml/GlyphIcon.qml
 )
 
