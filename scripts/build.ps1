@@ -1,167 +1,90 @@
-# Build / test / package for Windows. Requires JDK 21+ only (no Maven/Gradle).
-# Usage: powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test
+﻿# 配置、构建、界面检查（Windows）。仅需 CMake + Qt 6 + MSVC。
+# 用法: powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test
 param(
-    [ValidateSet('build', 'test', 'run', 'jar', 'package', 'clean')]
+    [ValidateSet('build', 'test', 'run', 'clean')]
     [string]$Task = 'build',
-    [string]$Version = '1.0.0'
+    # Qt 6 安装目录，例如 D:\Qt\6.8.1\msvc2022_64；未指定时自动探测。
+    [string]$QtDir = $env:QT_ROOT_DIR,
+    # 无显示器环境（容器 / CI）下用 offscreen 平台跑界面检查
+    [switch]$Headless
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$srcMain = Join-Path $root 'src\main\java'
-$srcTest = Join-Path $root 'src\test\java'
 $build = Join-Path $root 'build'
-$classes = Join-Path $build 'classes'
-$testClasses = Join-Path $build 'test-classes'
-$dist = Join-Path $root 'dist'
-$mainClass = 'com.helloworld.taiin.calculator.CalculatorFrame'
-$testClass = 'com.helloworld.taiin.calculator.EvaluatorTest'
-$uiTestClass = 'com.helloworld.taiin.calculator.UiTest'
-$appName = 'Calculator'
+# 单配置生成器（Ninja / Makefiles）直接放 build 根，MSVC 放在 Release 子目录。
+$exeCandidates = @(
+    (Join-Path $build 'infinite-tokens.exe'),
+    (Join-Path $build 'Release\infinite-tokens.exe')
+)
 
-function Resolve-JdkBin {
-    if ($env:JAVA_HOME -and (Test-Path (Join-Path $env:JAVA_HOME 'bin\jar.exe'))) {
-        return (Join-Path $env:JAVA_HOME 'bin')
+function Resolve-QtDir {
+    param([string]$Hint)
+    if ($Hint -and (Test-Path (Join-Path $Hint 'lib\cmake\Qt6\Qt6Config.cmake'))) { return $Hint }
+    # 常见安装布局：<base>\<version>\<toolset>
+    foreach ($base in @('C:\Qt', 'D:\Qt')) {
+        if (-not (Test-Path $base)) { continue }
+        $hits = Get-ChildItem -Path $base -Directory -ErrorAction SilentlyContinue |
+            ForEach-Object { Get-ChildItem -Path $_.FullName -Directory -ErrorAction SilentlyContinue } |
+            Where-Object { Test-Path (Join-Path $_.FullName 'lib\cmake\Qt6\Qt6Config.cmake') } |
+            Sort-Object FullName -Descending
+        if ($hits) { return $hits[0].FullName }
     }
-    # java writes -XshowSettings output to stderr; capture via cmd to avoid NativeCommandError.
-    $out = & $env:ComSpec /c 'java -XshowSettings:properties -version 2>&1'
-    $line = @($out -split "`r?`n" | Where-Object { $_ -match '^\s*java\.home\s*=' })
-    if ($line.Count -gt 0) {
-        $jdkHome = ($line[0] -replace '^\s*java\.home\s*=\s*', '').Trim()
-        if (Test-Path (Join-Path $jdkHome 'bin\jar.exe')) { return (Join-Path $jdkHome 'bin') }
-    }
-    throw 'JDK not found; set JAVA_HOME to a full JDK 21 installation'
+    throw '未找到 Qt 6；用 -QtDir <Qt6 msvc kit 路径> 指定，或设置 QT_ROOT_DIR'
 }
 
-$jdkBin = Resolve-JdkBin
-$env:Path = "$jdkBin;$env:Path"
-$javacExe = Join-Path $jdkBin 'javac.exe'
-$jarExe = Join-Path $jdkBin 'jar.exe'
-$javaExe = Join-Path $jdkBin 'java.exe'
-$jpackageExe = Join-Path $jdkBin 'jpackage.exe'
+$qtDir = Resolve-QtDir -Hint $QtDir
+$qtBin = Join-Path $qtDir 'bin'
+
+function Get-Exe {
+    foreach ($path in $exeCandidates) { if (Test-Path $path) { return $path } }
+    throw "构建产物不存在，检查 build 目录：$build"
+}
+
+function Invoke-Configure {
+    $cmakeArgs = @('-S', $root, '-B', $build, '-DCMAKE_BUILD_TYPE=Release',
+                   "-DCMAKE_PREFIX_PATH=$qtDir")
+    & cmake @cmakeArgs
+    if ($LASTEXITCODE -ne 0) { throw 'cmake configure failed' }
+}
 
 function Invoke-Build {
-    New-Item -ItemType Directory -Force -Path $classes | Out-Null
-    $files = @(Get-ChildItem -Path $srcMain -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-    & $javacExe --release 21 -encoding UTF-8 -d $classes $files
-    if ($LASTEXITCODE -ne 0) { throw 'javac failed' }
-    Write-Host "Compiled -> $classes"
+    Invoke-Configure
+    & cmake --build $build --config Release
+    if ($LASTEXITCODE -ne 0) { throw 'build failed' }
+    Write-Host "Built -> $(Get-Exe)"
 }
 
-function Invoke-Test {
+# 界面检查：真的把窗口渲染出来。Qt 的 DLL 要先拷到 exe 旁边才能独立运行。
+function Invoke-UiCheck {
     Invoke-Build
-    New-Item -ItemType Directory -Force -Path $testClasses | Out-Null
-    $files = @(Get-ChildItem -Path $srcTest -Recurse -Filter *.java | ForEach-Object { $_.FullName })
-    & $javacExe --release 21 -encoding UTF-8 -cp $classes -d $testClasses $files
-    if ($LASTEXITCODE -ne 0) { throw 'test compilation failed' }
-    & $javaExe '-Dfile.encoding=UTF-8' -cp "$classes;$testClasses" $testClass
-    if ($LASTEXITCODE -ne 0) { throw 'tests failed' }
-    & $javaExe '-Dfile.encoding=UTF-8' -cp "$classes;$testClasses" $uiTestClass
-    if ($LASTEXITCODE -ne 0) { throw 'ui tests failed' }
-}
-
-function Invoke-Jar {
-    Invoke-Build
-    New-Item -ItemType Directory -Force -Path $dist | Out-Null
-    $jarPath = Join-Path $dist "$appName.jar"
-    & $jarExe --create --file $jarPath --main-class $mainClass -C $classes .
-    if ($LASTEXITCODE -ne 0) { throw 'jar failed' }
-    Write-Host "Jar -> $jarPath"
-}
-
-function Get-PlatformTag {
-    $arch = 'x64'
-    if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { $arch = 'arm64' }
-    return "windows-$arch"
-}
-
-function Invoke-AppImage {
-    param([string]$Stage)
-    # jpackage refuses to overwrite an existing app-image directory.
-    $appDir = Join-Path $dist $appName
-    if (Test-Path $appDir) { Remove-Item -Recurse -Force $appDir }
-    $jpackageArgs = @(
-        '--type', 'app-image',
-        '--name', $appName,
-        '--app-version', $Version,
-        '--input', $Stage,
-        '--main-jar', "$appName.jar",
-        '--main-class', $mainClass,
-        '--dest', $dist,
-        '--java-options', '-Dfile.encoding=UTF-8'
-    )
-    & $jpackageExe @jpackageArgs
-    if ($LASTEXITCODE -ne 0) { throw 'jpackage app-image failed' }
-}
-
-function Invoke-Package {
-    Invoke-Jar
-    if (-not (Test-Path $jpackageExe)) {
-        throw 'jpackage not found; install a full JDK (not a JRE)'
+    $exe = Get-Exe
+    & (Join-Path $qtBin 'windeployqt.exe') --release --no-translations $exe | Out-Null
+    if ($LASTEXITCODE -ne 0) { throw 'windeployqt failed' }
+    $shot = Join-Path $build 'ui-screenshot.png'
+    if ($Headless) { $env:QT_QPA_PLATFORM = 'offscreen' }
+    $env:QT_QUICK_BACKEND = 'software'
+    # GUI 应用（WIN32_EXECUTABLE）用 & 调用不会阻塞，文件可能还没写盘；
+    # 必须用 Start-Process -Wait 等它退出、写完截图，否则会误报「截图未生成」。
+    $proc = Start-Process -FilePath $exe -ArgumentList @('--screenshot', $shot) -Wait -PassThru
+    if ($proc.ExitCode -ne 0) { throw "ui check failed (exit $($proc.ExitCode))" }
+    if (-not (Test-Path $shot) -or (Get-Item $shot).Length -eq 0) {
+        throw "界面截图未生成：$shot"
     }
-    # jpackage requires --input to be a directory that contains the main jar.
-    $stage = Join-Path $build 'package-input'
-    if (Test-Path $stage) { Remove-Item -Recurse -Force $stage }
-    New-Item -ItemType Directory -Force -Path $stage | Out-Null
-    Copy-Item (Join-Path $dist "$appName.jar") $stage
-    New-Item -ItemType Directory -Force -Path $dist | Out-Null
-
-    $isWindows = $env:OS -eq 'Windows_NT'
-    $isMac = -not $isWindows -and [bool](Get-Command sw_vers -ErrorAction SilentlyContinue)
-
-    # Portable build first: it needs neither WiX nor Xcode tooling.
-    Invoke-AppImage -Stage $stage
-    if ($isWindows) {
-        $zip = Join-Path $dist "$appName-$Version-$(Get-PlatformTag)-portable.zip"
-        if (Test-Path $zip) { Remove-Item -Force $zip }
-        Compress-Archive -Path (Join-Path $dist $appName) -DestinationPath $zip
-        Write-Host "Portable exe -> $(Join-Path $dist "$appName\$appName.exe")"
-        Write-Host "Portable zip -> $zip"
-    }
-
-    if ($isWindows) {
-        $msi = Join-Path $dist "$appName-$Version.msi"
-        if (Test-Path $msi) { Remove-Item -Force $msi }
-        & $jpackageExe '--type', 'msi', '--name', $appName, '--app-version', $Version,
-            '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
-            '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
-        if ($LASTEXITCODE -ne 0) {
-            Write-Warning 'MSI build failed (install WiX Toolset 3 to get an installer). Portable exe/zip is still available.'
-            exit 0
-        } else {
-            Write-Host "Installer -> $(Join-Path $dist "$appName-$Version.msi")"
-        }
-        return
-    }
-
-    if ($isMac) {
-        & $jpackageExe '--type', 'dmg', '--name', $appName, '--app-version', $Version,
-            '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
-            '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
-        if ($LASTEXITCODE -ne 0) { throw 'DMG build failed' }
-        Write-Host "Installer -> $(Join-Path $dist "$appName-$Version.dmg")"
-        return
-    }
-
-    & $jpackageExe '--type', 'deb', '--name', $appName, '--app-version', $Version,
-        '--input', $stage, '--main-jar', "$appName.jar", '--main-class', $mainClass,
-        '--dest', $dist, '--java-options', '-Dfile.encoding=UTF-8'
-    if ($LASTEXITCODE -ne 0) {
-        Write-Warning 'DEB build failed (dpkg/fakeroot/rpmbuild missing). Portable app-image is still available.'
-        return
-    }
-    Write-Host "Installer -> $dist"
+    Write-Host "UI check passed -> $shot"
 }
 
 switch ($Task) {
     'build' { Invoke-Build }
-    'test' { Invoke-Test }
-    'run' { Invoke-Build; & $javaExe '-Dfile.encoding=UTF-8' -cp $classes $mainClass }
-    'jar' { Invoke-Jar }
-    'package' { Invoke-Package }
+    'test' { Invoke-UiCheck }
+    'run' {
+        Invoke-Build
+        $exe = Get-Exe
+        & (Join-Path $qtBin 'windeployqt.exe') --release --no-translations $exe | Out-Null
+        & $exe
+    }
     'clean' {
-        if (Test-Path $build) { Remove-Item -Recurse -Force $build }
-        if (Test-Path $dist) { Remove-Item -Recurse -Force $dist }
-        Write-Host 'Cleaned build/ and dist/'
+        if (Test-Path $build) { Remove-Item $build -Recurse -Force }
+        Write-Host '已清理 build/'
     }
 }

@@ -31,13 +31,23 @@ jobs:
           fetch-depth: 0
           ref: develop
 
-      - uses: actions/setup-java@v4
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
         with:
-          distribution: temurin
-          java-version: '21'
+          version: '6.8.1'
+          cache: true
+
+      - name: Install Linux runtime libraries
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libgl1-mesa-dev libgl1-mesa-dri libxkbcommon-x11-0 \
+            libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
+            libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 \
+            fonts-wqy-zenhei
 
       - name: Run tests
-        # 构建机没有图形环境，界面测试会自动跳过。
+        # 构建机没有图形环境，界面检查走 offscreen 平台。
         run: bash scripts/build.sh test
 
       - name: Open and merge release pull request
