@@ -8,7 +8,6 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$remote = 'origin'
 $devBranch = 'develop'
 $relBranch = 'master'
 $owner = 'Inotfrk'
@@ -46,6 +45,25 @@ function Test-Ancestor([string]$Ancestor, [string]$Descendant) {
     $null = Invoke-GitText merge-base --is-ancestor "$remote/$Ancestor" "$remote/$Descendant"
     return $LASTEXITCODE -eq 0
 }
+
+# 每台机器 clone 时给远端起的名字可能不同（origin / github / upstream ...），
+# 不能硬编码 'origin'。优先取 push URL 指向本仓库的那个远端，再退回 origin / 唯一的远端。
+function Resolve-Remote {
+    $pattern = [regex]::Escape("$owner/$repoName")
+    foreach ($line in ((Invoke-GitText remote -v) -split "`r?`n")) {
+        if ($line -notmatch '^(\S+)\s+(\S+)\s+\(push\)') { continue }
+        # 先取出两个分组再做第二次匹配：`-and` 右侧的 -match 会覆盖 $Matches。
+        $name = $Matches[1]
+        $url = $Matches[2]
+        if ($url -match $pattern) { return $name }
+    }
+    $all = @((Invoke-GitText remote) -split "`r?`n" | Where-Object { $_.Trim() })
+    if ($all -contains 'origin') { return 'origin' }
+    if ($all.Count -eq 1) { return $all[0].Trim() }
+    throw "找不到指向 $owner/$repoName 的远端；请先 git remote add <名字> <仓库地址>"
+}
+
+$remote = Resolve-Remote
 
 $dirty = (Invoke-GitText status --porcelain).Trim()
 if ($dirty) {

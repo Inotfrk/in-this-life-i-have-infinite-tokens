@@ -44,18 +44,208 @@
   的不同机器；跨账号或主线冲突一律提示用户提 OA。Gitee 侧为每个成员建了 `<登录名>-*` 保护分支规则，
   并开启「只能推送自己的提交」推送规则；已实测用某个账号推别人前缀的分支会被 pre-receive hook 拒绝。
 
-### T-001 把计算器核心移植为单文件 C++
+### T-011 学习助手主页面——骨架界面
 
-- 状态：queued
-- 目标分支：`<账号段>-<电脑段>-cpp`
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-010
+- 涉及文件：`CMakeLists.txt`、`src/ui/main.cpp`、`src/ui/theme.h/.cpp`、
+  `src/ui/qml/Main.qml`、`src/ui/qml/RailButton.qml`、`src/ui/qml/HeaderButton.qml`、
+  `src/ui/qml/SubjectRow.qml`、`src/ui/qml/GlyphIcon.qml`
+- 验收：`scripts\build.ps1 -Task test` 通过；三套主题（dark / light / star）都能 offscreen 出图
+- 说明：纯界面骨架，不接任何功能。已落地 [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 的
+  **结构化界面结论**：左侧图标栏、卡片头部（☰ + 右端「＋ / AI / 用户」组，C1–C3）、
+  学科侧栏、右侧留空主内容区、侧栏底部预留区。
+
+### T-014 主题系统（多主题 + 明暗双模式 + 可扩展接口）
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-011
+- 涉及文件：`src/ui/theme.h`、`src/ui/theme.cpp`、`src/ui/main.cpp`、`src/ui/qml/*.qml`
+- 验收：`--theme dark|light|star` 三套都能渲染；QML 只读 `Theme.palette.*`，不含任何颜色字面量
+- 说明：对应文档 4.6 与第 8 节 S1/S2（C4–C6）。配色集中在 `theme.cpp` 的 `kThemes` 表，
+  **新增主题只加一份 `Palette`，不改界面结构代码**。当前内置三套：`dark`、`light`、`star`（星空）。
+  切换方式（跟随系统 / 手动）尚未决定，见文档 7.2 第 8 条。
+
+### T-015 主题切换 UI 与设置页面
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
 - 优先级：P1
+- 依赖：T-014
+- 涉及文件：新增设置页（路径待定）、`src/ui/main.cpp`（记忆选择）
+- 验收：能在界面里切换三套主题并持久化
+- 说明：主题数据层已可用，但**设置页面尚不存在**，且切换方式未定
+  （文档 7.2 第 8 条：自动跟随系统 / 手动 / 两者都支持）。
+  阻塞原因：需要先定切换方式与设置页的入口位置（文档 7.2 第 5 条），否则会返工。
+
+## 记录待做（需要接功能，本阶段只登记不实现）
+
+> 以下条目**只把设计意图落到待办**，本阶段一律不实现。它们的详细背景见
+> [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 第 4.4.1–4.4.3、7.1、7.2 与第 8 节。
+
+### T-016 学科专属功能模块（按学科渲染不同内容）
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-011
+- 涉及文件：`src/ui/qml/Main.qml`（主内容区）
+- 验收：选中不同学科时主内容区渲染不同模块；无专属功能的学科显示资料视图
+- 说明：对应 C8 / C9。**阻塞**：学科专属功能是内置写死还是每学科可配置未定（7.2 第 12 条），
+  资料区与专属功能是否共存也未定（第 13 条）。
+
+### T-017 背单词模块（学习 + 复习，5 个记忆点）
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-016
+- 涉及文件：新增背单词页面与数据层
+- 验收：可实现「每词 5 个记忆点、点对 5 次算过」的学习与复习流程
+- 说明：对应 C10–C13 与文档 4.4.1。记忆逻辑参考有道背单词（艾宾浩斯 + 莱特纳五盒）。
+  **阻塞**：答错时记忆点怎么走未定（7.2 第 15 条）、每次考什么未定（第 16 条）、
+  是否按时间间隔排程未定（第 17 条）、满级后是否回访未定（第 18 条）。
+
+### T-018 作业提交与切题（题号提问的前提）
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-016
+- 涉及文件：新增作业页面、切题与 OCR/解析管线
+- 验收：能把一次作业切成题目列表并逐条编号，支持「第 7 题不会」这类指代
+- 说明：对应 C14、C15、C18 与文档 4.4.2。这是「报题号」和「点词收生词」的**共同前置**。
+  **阻塞**：作业提交形式未定（7.2 第 19 条）、切题识别不准时怎么办未定（第 20 条）。
+
+### T-019 学习会话（开始 / 结束 + 全程不跳出）
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-018
+- 涉及文件：新增会话状态与计时
+- 验收：能开始 / 结束一次学习会话，会话内所有交互不跳转到外部 AI
+- 说明：对应 C16、C17。**阻塞**：会话是纯计时还是锁定作业清单未定（7.2 第 21 条）、
+  收尾环节（订正 / 错题 / 明日计划）是否属于流程未定（第 22 条）。
+
+### T-020 生词收集与单词本联动
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-017、T-018
+- 涉及文件：新增单词本数据层、题目文本的点选交互
+- 验收：点题目里的词 → AI 判是否学科专业词 → 入库 → 作业结束后可被背单词模块取到
+- 说明：对应 C19、C20 与文档 4.4.3。单词本是**全局收集箱**，词源有两处（自建词表 + 点选的生词）。
+  **阻塞**：用户能否否决 AI 的判断未定（7.2 第 23 条）、生词归属当前学科还是全局未定（第 24 条）、
+  结束后自动进背诵还是仅提示未定（第 25 条）。
+
+### T-021 AI 入口的实际能力（让 AI 操作软件）
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-011
+- 涉及文件：`src/ui/qml/AiButton.qml`、新增 AI 调度层
+- 验收：点 AI 能发起一次让 AI 操作软件的交互（如换学科、导入资料）
+- 说明：对应文档 4.2 的 AI 入口注释（作者口述：点它就能对软件做任何操作）。
+  当前**只有按钮外观与服务商切换**，没有任何真实的 AI 调用。
+  阻塞原因：AI 服务端方案与 API Key 策略尚未定，属于「服务端后面再说」的范围。
+
+### T-025 AI 服务商注册表与图标
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：T-011
+- 涉及文件：`src/ui/ai_provider.h/.cpp`、`src/ui/qml/AiGlyph.qml`、
+  `src/ui/qml/AiButton.qml`、`src/ui/qml/AiProviderMenu.qml`、`src/ui/main.cpp`
+- 验收：`--ai deepseek|claude|gpt|gemini|qwen|custom` 都能正确渲染对应标识；
+  点头部 AI 按钮可切换服务商并立即生效
+- 说明：对应 C23 / S3。作者要求 AI 图标**跟着用户所用的服务商变**，当前默认 **DeepSeek**。
+  注册表内置六项，每项带展示名、缩写、品牌色；新增服务商只需在注册表与 `AiGlyph.qml`
+  各加一处，界面代码不动。图标用形状与配色表达，不内嵌商标文件。
+
+### T-026 AI 服务商设置页与持久化
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：T-025
+- 涉及文件：新增设置页、`src/ui/ai_provider.cpp`（读写配置）
+- 验收：在设置里选服务商，重启后仍然保持；能填各家的 API Key
+- 说明：服务商数据层已完成，但**设置页面还不存在**，选择也不持久化（重启回到 DeepSeek）。
+  **阻塞**：设置页的入口与分组未定（7.2 第 5 条）；API Key 存哪、要不要加密、
+  是否跟随账号同步（T-024）都未定。
+
+### T-022 新增学科入口与学科数据模型
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P2
+- 依赖：T-011
+- 涉及文件：`src/ui/qml/SubjectRow.qml`、`src/ui/qml/Main.qml`、新增学科数据层
+- 验收：能新增学科并在侧栏出现；学科可持久化
+- 说明：原以为是卡片头部的 ＋ 按钮，**2026-11-01 作者已否定**，入口位置需重新确定（7.2 第 31 条）。
+  当前 ＋ 已从头部移除，学科列表仍写死 math / phy / che。
+  **阻塞**：入口位置未定（31）、学科能否嵌套未定（7.2 第 3 条）。
+
+### T-024 账号登录与资料同步
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：T-011
+- 涉及文件：`src/ui/qml/GlyphIcon.qml`（user 图标）、`src/ui/qml/Main.qml`（头部右端）、
+  新增账号与会话层、新增同步层
+- 验收：不同账号登录后能看到各自的资料；退出后可切换账号
+- 说明：对应 C21 / C22。目前**只有用户图标外观**（单人剪影，位于 AI 右侧），点击无行为。
+  作者意图：多个用户各登各的账号，**数据跟着账号走而不是跟机器走**。
+  **阻塞**：点击后的形态（26）、登录后图标是否变头像（27）、同步走什么通道（28）、
+  同步范围是否含资料文件（29）、未登录能否使用（30）。服务端方案作者表示「后面再说」，
+  所以也可以先做本地多用户 profile 作为过渡。
+
+### T-023 侧栏底部预留区的内容
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P3
 - 依赖：无
-- 涉及文件：新增 `calculator.cpp`；`README.md` / `README.en.md` 的 C++ 段落
-- 验收：`g++ -std=c++17 -O2 calculator.cpp -o calculator` 编译通过，示例表达式结果与
-  `EvaluatorTest` 的 25 项一致；`scripts\build.ps1 -Task test` 仍全绿
-- 说明：README 已把 C++17 单文件计算器作为主线描述，但仓库里尚无 `calculator.cpp`。
-  需要把 `ExpressionEvaluator` 的递归下降逻辑（`+ - * / % ^`、括号、一元正负号、右结合乘方）
-  转成单个 C++ 源文件，错误提示保持中文；Java 实现保留为历史示例，不删除。
+- 涉及文件：`src/ui/qml/Main.qml`（reservedArea）
+- 验收：预留区放实际内容并去掉「待定」占位
+- 说明：对应文档 4.5。当前只画了分隔线与「预留区（待定）」文字。
+  **阻塞**：放什么未定（7.2 第 2 条：资料树 / 标签 / 说明）。
+
+### T-012 Qt 6 构建与沙箱基础设施
+
+- 状态：in-progress
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-011
+- 涉及文件：`Dockerfile`、`.devcontainer/devcontainer.json`、`scripts/build.ps1`、
+  `scripts/build.sh`、`scripts/sandbox.ps1`、`scripts/sandbox.sh`、`scripts/desktop.sh`、
+  `docs/docker-sandbox.md`、`README.md`、`README.en.md`
+- 验收：沙箱镜像构建通过；容器内 `bash scripts/build.sh test` 出图；
+  旧的 JDK / Xvfb / VisualDrive 相关脚本与文档引用全部清除
+- 说明：整体从「JDK 21 + Swing」换成「Qt 6 + CMake + Ninja」。界面检查改为
+  `--screenshot` + `QT_QPA_PLATFORM=offscreen`，不再依赖 `xvfb-run`。
+
+## 已完成
+
+### T-013 废弃计算器实现与设计
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：无
+- 涉及文件：删除 `docs/design-cpp-qt.md`、`scripts/drive.sh`；改写 `README.md`、`README.en.md`、
+  `TODO.md`、`docs/docker-sandbox.md`
+- 验收：仓库内不再有 Java / Swing / 计算器求值器的构建入口与文档指引
+- 说明：产品方向从「计算器」改为「学习助手」，Java 计算器连同其 C++/Qt 移植设计一并淘汰。
 
 ### T-002 上传流改为三层（master ← develop ← 个人分支）
 
@@ -83,6 +273,17 @@
   `develop -> master` 自动发布（标签 `v2026.10.25-1731`）。三层流现已闭合。
 
 ## 已完成
+
+### T-010 学习助手主页面设计文档
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：无
+- 涉及文件：新增 `docs/design-study-app-ui.md`、`TODO.md`
+- 验收：文档 Markdown 链接有效；明确写出「仅设计、不实现功能」与「GitHub 风格非仓库共识」
+- 说明：按用户口述 + 手绘草图整理主页面分区（全局图标栏、卡片头部 ☰ 与 AI 入口、学科可滚动侧栏、
+  右侧空白主内容区、侧栏底部预留区），并留下 5 个待确认问题供产品决策。
 
 ### T-005 仓库整体从 Gitee 迁到 GitHub
 

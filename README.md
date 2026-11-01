@@ -1,108 +1,85 @@
 # In this life I have infinite tokens.
 
-一个用 **C++17** 写的跨平台计算器：核心逻辑收在一个源文件里，**零第三方依赖**，
-不需要 CMake 之类的构建系统，一条编译命令就能跑起来。这个仓库同时是「一个小项目该怎么用分支、
-任务队列和 agent 协作来维护」的样板——看懂这份说明，就明白这个仓库怎么用。
+一个用 **C++17 + Qt 6（Qt Quick/QML）** 写的跨平台**学习助手**桌面应用，目标覆盖 Windows、macOS、
+Linux，以及后续的 iPadOS 与 Android。它可以把你的学习资料统一扔进来、按学科归类，并接 AI 帮你操作。
+这个仓库同时是「一个小项目该怎么用分支、任务队列和 agent 协作来维护」的样板——
+看懂这份说明，就明白这个仓库怎么用。
+
+> **当前状态**：**页面骨架阶段**。主页面已经能在 Qt 6 里跑起来（`src/ui/qml/Main.qml`），
+> 但**没有任何业务功能**：不读文件、不调 AI、不存 API Key。
+> 界面设计说明见 [docs/design-study-app-ui.md](docs/design-study-app-ui.md)，
+> 后续规划见 [TODO.md](TODO.md)。
 
 #### 功能
 
-- 支持 `+ - × ÷ % ^`、括号、小数、一元正负号
-- 完整表达式求值（不是逐步运算），乘方右结合：`2^3^2 = 512`
-- 交互命令：直接输入表达式回车计算，`clear` 清空、`del` 退格、`copy` 输出上次结果、`recall` 取回上次表达式
-- 计算后可直接接运算符，继续用上一次结果计算
-- 除零、括号不匹配等错误给出中文提示
-- 单文件、无全局状态，`std::string` 切片 + 递归下降解析，整个程序可以塞进一个 `.cpp`
+现阶段只是界面骨架，实际行为都还没接：
+
+- 左侧全局图标栏（搜索 / 笔记类工具 / 主页 / 协作 / 设置），当前页高亮
+- 内容卡片头部：左侧 `☰` 更多选项，右侧 **AI** 入口（外观将来可在设置里更换）
+- 学科侧栏写死 `math` / `phy` / `che`，可点选高亮、列表可独立滚动
+- 右侧主内容区刻意留空，等后续接入资料阅读
+- 侧栏底部预留区（用途未定）
+
+> 界面风格参考了 GitHub，但那是**作者个人偏好**，不是仓库规范，其他人不必照抄。
+> 早期那个 Java Swing 计算器的设计（[docs/design-cpp-qt.md](docs/design-cpp-qt.md)）已随实现一并淘汰。
 
 #### 软件架构
 
 ```
-calculator.cpp        单文件示例：递归下降求值器 + 交互循环，整个程序就是这一个文件（规划中）
+src/
+    ui/                 QML 界面
+        main.cpp               入口（含 --screenshot 无头截图开关）
+        qml/
+            Main.qml           主页面骨架
+            GlyphIcon.qml      Canvas 画的线性图标（不依赖系统图标字体）
+            Theme.js           配色与间距刻度
+CMakeLists.txt         顶层 CMake 工程（Qt 6 + Qt Quick）
 scripts/
-    build.ps1         Windows 构建脚本（build / test / run / jar / package / clean）
-    build.sh          macOS / Linux 构建脚本
-src/                  早期 Java 实现（历史示例，构建脚本仍可直接编译运行）
+    build.ps1           Windows 构建 / 界面检查
+    build.sh            macOS / Linux 构建 / 界面检查
+    sandbox.ps1         长驻 Docker 沙箱（Windows）
+    sandbox.sh          长驻 Docker 沙箱（macOS / Linux）
+    desktop.sh          容器内起 Xvfb + noVNC，用浏览器看真实界面
+docs/design-study-app-ui.md  主页面设计说明
 ```
-
-单文件示例的分层就是几个函数，从上往下读即可：
-
-```cpp
-// calculator.cpp —— 结构示意
-double parseExpression();   // 顶层：加减
-double parseTerm();         // 乘除取模
-double parsePower();        // 乘方，右结合
-double parseUnary();        // 一元正负号
-double parsePrimary();      // 数字与括号
-```
-
-> **当前状态**：仓库里目前真正可运行、被 `scripts/` 构建与测试覆盖的仍是早期的 Java 实现
-> （`src/main/java`）；C++ 单文件形态是本仓库的目标，`calculator.cpp` 尚未入库，
-> 移植工作按 [TODO.md](TODO.md) 排队推进。下面标「C++ 示例」的步骤在移植完成后即可使用。
 
 #### 安装教程
 
-**默认沙箱（推荐，Docker）**：不装 JDK，构建和测试都在容器里跑。
-安装器说明、踩坑记录见 [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md)：
+需要 **Qt 6**（推荐 6.5 LTS 及以上）与一个支持 C++17 的编译器（MSVC / MinGW-w64 / clang++ / g++），
+以及 **CMake 3.21+**。
+
+```powershell
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.1\msvc2022_64
+cmake --build build --config Release
+```
+
+macOS / Linux：
+
+```bash
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+```
+
+不想在本机装 Qt 时，用 Docker 沙箱（见 [docs/docker-sandbox.md](docs/docker-sandbox.md)）：
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view   # 浏览器里看界面
 ```
 
-macOS / Linux 用 `scripts/sandbox.sh build` 与 `scripts/sandbox.sh test`。
-容器常驻、每次运行留档到 `.sandbox-runs/`，失败可回溯现场。容器默认限 `2g` 内存 / 2 CPU
-（`--memory-swap` 同步封顶），避免构建异常时把整台机器拖死；可用 `-Memory`、`-Cpus` 调整。
-细节见 [docs/docker-sandbox.md](docs/docker-sandbox.md)。
+#### 使用说明（当前可用）
 
-**C++ 示例**（移植完成后可用）：只需要一个支持 C++17 的编译器（Windows 用 MSVC 或 MinGW-w64 的 `g++`，
-macOS / Linux 用 `clang++` 或 `g++`），不需要安装任何库。
+| 操作 | 说明 |
+| --- | --- |
+| 运行桌面版 | 构建产物 `infinite-tokens`（Windows 为 `infinite-tokens.exe`） |
+| 看界面截图（无头） | `infinite-tokens --screenshot out.png`，容器 / CI 里也能出图 |
+| 构建 + 界面检查 | `scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`） |
 
-1. 检查环境：`g++ --version`（Windows 也可用 `cl` / `clang++`）
-2. 克隆本仓库
-3. 编译：`g++ -std=c++17 -O2 calculator.cpp -o calculator`
-
-**现有 Java 实现**（`scripts/` 覆盖的那一套）：需要 **JDK 21 或更高版本**
-（必须是完整 JDK，JRE 里没有 `javac` / `jar` / `jpackage`）。
-
-1. 检查环境：`java -version`
-2. 编译：`scripts\build.ps1 -Task build`（macOS / Linux：`scripts/build.sh build`）
-
-#### 使用说明
-
-| 操作 | Windows | macOS / Linux |
-| --- | --- | --- |
-| 运行 C++ 示例（编译后） | `calculator.exe` | `./calculator` |
-| 运行 Java 版界面 | `scripts\build.ps1 -Task run` | `scripts/build.sh run` |
-| 运行全部测试 | `scripts\build.ps1 -Task test` | `scripts/build.sh test` |
-| 生成可执行 jar | `scripts\build.ps1 -Task jar` → `dist\Calculator.jar` | `scripts/build.sh jar` |
-| 打安装包 | `scripts\build.ps1 -Task package` | `scripts/build.sh package` |
-| 清理产物 | `scripts\build.ps1 -Task clean` | `scripts/build.sh clean` |
-
-安装包说明：
-
-- **Windows**：一次打包同时产出两个结果
-  - `dist\Calculator\Calculator.exe`：免安装绿色版，双击即用；同时压成
-    `dist\Calculator-<版本>-windows-x64-portable.zip` 方便分发
-  - `dist\Calculator-<版本>.msi`：安装包，需要 [WiX Toolset 3](https://wixtoolset.org/) 在 PATH 上；
-    没有 WiX 时只跳过 msi，绿色版照常生成，脚本仍以成功退出
-- **macOS**：一次打包产出 `dist/Calculator.app`（便携）与 `dist/Calculator-<版本>.dmg`（安装包）
-- **版本号**：`-Task package -Version 1.2.0`（Windows）或 `APP_VERSION=1.2.0 scripts/build.sh package`
-
-打包脚本按平台各跑一次，交给 GitHub Actions 在原生 runner 上执行：
-
-| 平台 | 位置 | 产物 |
-| --- | --- | --- |
-| GitHub Actions（测试） | [.github/workflows/package.yml](.github/workflows/package.yml) | 三平台跑测试 |
-| GitHub Actions（打包） | [.github/workflows/package.yml](.github/workflows/package.yml) | macOS `dmg`、Windows `zip` + `msi`，作为 artifact 上传 |
-
-> 仓库已迁到 GitHub（`Inotfrk/in-this-life-i-have-infinite-tokens`），推送即触发 Actions，
-> 不需要手动开启。想在本机出安装包也可以跑 `scripts\build.ps1 -Task package`
-> 或 `scripts/build.sh package`。
-
-已生成的 jar 也可以直接用 `java -jar dist\Calculator.jar` 运行。
+各平台打包（`windeployqt` / `macdeployqt` / AppImage / `androiddeployqt`）尚未实现，见 [TODO.md](TODO.md)。
 
 #### 仓库怎么用（同学先看这段）
 
-这个仓库的重点不只是那个计算器，而是它示范的协作方式。分支只有三层，改动只能**自下往上**流动：
+这个仓库的重点不只是那个应用，而是它示范的协作方式。分支只有三层，改动只能**自下往上**流动：
 
 | 层次 | 分支 | 是什么 |
 | --- | --- | --- |
