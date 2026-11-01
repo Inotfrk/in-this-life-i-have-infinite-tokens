@@ -44,6 +44,7 @@ scripts/
     sandbox.sh          Long-lived Docker sandbox (macOS / Linux)
     desktop.sh          Xvfb + noVNC inside the container, view the UI in a browser
 docs/design-study-app-ui.md  Main page design notes
+docs/server-plan.md          Backend plan (accounts / sync / remote config, not implemented)
 ```
 
 #### Installation
