@@ -23,7 +23,7 @@ Item {
     signal sendRequested(string text)
     signal closeRequested()
 
-    // 只在界面里演示对话流：append 一条用户消息 + 一条占位回复
+    // 只在界面里追加消息。真正的回复由服务器返回（见 Main.qml 的 AiClient 连接）。
     function send(text) {
         if (text.length === 0)
             return;
@@ -33,7 +33,20 @@ Item {
     }
 
     function appendAssistant(text) {
+        thinking = false;
+        if (text.length === 0)
+            return;
         messages = messages.concat([{ role: "assistant", text: text, pending: false }]);
+    }
+
+    // 系统提示（错误、指令被拒绝等）。必须和 AI 说话区分开，不能让用户以为这是模型说的。
+    function appendSystem(text) {
+        thinking = false;
+        messages = messages.concat([{ role: "system", text: text, pending: false }]);
+    }
+
+    // 请求结束但没有任何可显示内容时，至少要停掉思考动画
+    function stopThinking() {
         thinking = false;
     }
 
@@ -49,6 +62,7 @@ Item {
         height: content.implicitHeight + 28
 
         readonly property bool fromUser: role === "user"
+        readonly property bool fromSystem: role === "system"
 
         Rectangle {
             anchors.fill: parent
@@ -57,7 +71,9 @@ Item {
                              Theme.palette.accent.b, 0.10)
                    : "transparent"
             radius: 6
-            visible: bubble.fromUser
+            visible: bubble.fromUser || bubble.fromSystem
+            border.width: bubble.fromSystem ? 1 : 0
+            border.color: Theme.palette.border
         }
 
         Item {
@@ -78,7 +94,7 @@ Item {
                     spacing: 6
 
                     AiGlyph {
-                        visible: !bubble.fromUser
+                        visible: !bubble.fromUser && !bubble.fromSystem
                         anchors.verticalCenter: parent.verticalCenter
                         glyph: panel.providerGlyph
                         color: panel.providerColor
@@ -88,9 +104,11 @@ Item {
 
                     Text {
                         anchors.verticalCenter: parent.verticalCenter
-                        text: bubble.fromUser ? "你" : panel.providerName
+                        text: bubble.fromUser ? "你"
+                              : (bubble.fromSystem ? "提示" : panel.providerName)
                         color: bubble.fromUser ? Theme.palette.textMuted
-                                               : panel.providerColor
+                              : (bubble.fromSystem ? Theme.palette.textFaint
+                                                   : panel.providerColor)
                         font.pixelSize: 10
                         font.bold: true
                     }
@@ -99,7 +117,7 @@ Item {
                 Text {
                     width: parent.width
                     text: bubble.text
-                    color: Theme.palette.text
+                    color: bubble.fromSystem ? Theme.palette.textMuted : Theme.palette.text
                     font.pixelSize: 12
                     lineHeight: 1.45
                     wrapMode: Text.WordWrap
