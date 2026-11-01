@@ -28,12 +28,16 @@ Window {
     property string userName: "Learner"
     property string avatarSource: ""
     property bool accountMenuOpen: false
+    property bool aiMenuOpen: false
 
-    // 仅用于截图预览：--open-account-menu 让菜单默认展开，--avatar <路径> 试照片头像
+    // 仅用于截图预览：--open-account-menu 让账号菜单展开；
+    // --open-ai-menu 让服务商菜单展开；--avatar <路径> 试照片头像
     Component.onCompleted: {
         var args = Qt.application.arguments;
         if (args.indexOf("--open-account-menu") >= 0)
             accountMenuOpen = true;
+        if (args.indexOf("--open-ai-menu") >= 0)
+            aiMenuOpen = true;
         var i = args.indexOf("--avatar");
         if (i >= 0 && i + 1 < args.length)
             avatarSource = "file:///" + args[i + 1].replace(/\\/g, "/").replace(/^\//, "");
@@ -72,10 +76,18 @@ Window {
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 6
 
-                HeaderButton {
-                    label: "AI"
+                AiButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    providerName: Ai.provider.name
+                    providerShort: Ai.provider.short
+                    providerGlyph: Ai.provider.glyph
+                    providerColor: Ai.provider.color
+                    opened: window.aiMenuOpen
+                    onClicked: {
+                        window.aiMenuOpen = !window.aiMenuOpen;
+                        window.accountMenuOpen = false;
+                    }
                 }
-
                 Avatar {
                     id: headerAvatar
                     anchors.verticalCenter: parent.verticalCenter
@@ -83,7 +95,10 @@ Window {
                     name: window.userName
                     imageSource: window.avatarSource
 
-                    onClicked: window.accountMenuOpen = !window.accountMenuOpen
+                    onClicked: {
+                        window.accountMenuOpen = !window.accountMenuOpen;
+                        window.aiMenuOpen = false;
+                    }
                 }
             }
         }
@@ -209,16 +224,32 @@ Window {
         y: 20 + card.headerHeight + 6
         userName: window.userName
         avatarSource: window.avatarSource
+    }
 
-        // 关掉菜单：点菜单外任何地方
-        onVisibleChanged: if (!visible) window.accountMenuOpen = false
+    // ---- AI 服务商菜单（点 AI 按钮弹出）-------------------------------------
+    AiProviderMenu {
+        id: aiMenu
+        visible: window.aiMenuOpen
+        // 贴住 AI 按钮，按钮在头像左侧，所以菜单右边缘也要往左让一点
+        x: window.width - width - 20 - 10 - 34
+        y: 20 + card.headerHeight + 6
+        currentId: Ai.current
+        providers: Ai.available
+
+        onProviderPicked: function (id) {
+            Ai.current = id;
+            window.aiMenuOpen = false;
+        }
     }
 
     // 点空白处收起菜单
     MouseArea {
         anchors.fill: parent
-        enabled: window.accountMenuOpen
+        enabled: window.accountMenuOpen || window.aiMenuOpen
         z: -1
-        onClicked: window.accountMenuOpen = false
+        onClicked: {
+            window.accountMenuOpen = false;
+            window.aiMenuOpen = false;
+        }
     }
 }

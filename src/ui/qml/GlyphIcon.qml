@@ -177,6 +177,12 @@ Canvas {
             ctx.lineTo(3, 15.5);
             ctx.closePath();
             ctx.stroke();
+        } else if (name === "check") {
+            ctx.beginPath();
+            ctx.moveTo(4.5, 10.5);
+            ctx.lineTo(8, 14);
+            ctx.lineTo(15.5, 6);
+            ctx.stroke();
         }
 
         ctx.restore();

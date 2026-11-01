@@ -16,6 +16,8 @@ qt_add_executable(infinite-tokens
     src/ui/main.cpp
     src/ui/theme.cpp
     src/ui/theme.h
+    src/ui/ai_provider.cpp
+    src/ui/ai_provider.h
 )
 
 # QML 走资源文件：路径固定为 qrc:/src/ui/qml/Main.qml，
@@ -25,6 +27,9 @@ qt_add_resources(infinite-tokens "qml"
     FILES
         src/ui/qml/Main.qml
         src/ui/qml/HeaderButton.qml
+        src/ui/qml/AiButton.qml
+        src/ui/qml/AiGlyph.qml
+        src/ui/qml/AiProviderMenu.qml
         src/ui/qml/SubjectRow.qml
         src/ui/qml/SubjectGlyph.qml
         src/ui/qml/Avatar.qml

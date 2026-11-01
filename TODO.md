@@ -150,11 +150,37 @@
 - 目标分支：`inotfrk-Fairy-qt-design`
 - 优先级：P2
 - 依赖：T-011
-- 涉及文件：`src/ui/qml/HeaderButton.qml`（AI 按钮）、新增 AI 调度层
+- 涉及文件：`src/ui/qml/AiButton.qml`、新增 AI 调度层
 - 验收：点 AI 能发起一次让 AI 操作软件的交互（如换学科、导入资料）
 - 说明：对应文档 4.2 的 AI 入口注释（作者口述：点它就能对软件做任何操作）。
-  当前**只有按钮外观，点击无行为**。阻塞原因：AI 服务端方案与 API Key 策略尚未定，
-  属于「服务端后面再说」的范围。
+  当前**只有按钮外观与服务商切换**，没有任何真实的 AI 调用。
+  阻塞原因：AI 服务端方案与 API Key 策略尚未定，属于「服务端后面再说」的范围。
+
+### T-025 AI 服务商注册表与图标
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：T-011
+- 涉及文件：`src/ui/ai_provider.h/.cpp`、`src/ui/qml/AiGlyph.qml`、
+  `src/ui/qml/AiButton.qml`、`src/ui/qml/AiProviderMenu.qml`、`src/ui/main.cpp`
+- 验收：`--ai deepseek|claude|gpt|gemini|qwen|custom` 都能正确渲染对应标识；
+  点头部 AI 按钮可切换服务商并立即生效
+- 说明：对应 C23 / S3。作者要求 AI 图标**跟着用户所用的服务商变**，当前默认 **DeepSeek**。
+  注册表内置六项，每项带展示名、缩写、品牌色；新增服务商只需在注册表与 `AiGlyph.qml`
+  各加一处，界面代码不动。图标用形状与配色表达，不内嵌商标文件。
+
+### T-026 AI 服务商设置页与持久化
+
+- 状态：blocked
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：T-025
+- 涉及文件：新增设置页、`src/ui/ai_provider.cpp`（读写配置）
+- 验收：在设置里选服务商，重启后仍然保持；能填各家的 API Key
+- 说明：服务商数据层已完成，但**设置页面还不存在**，选择也不持久化（重启回到 DeepSeek）。
+  **阻塞**：设置页的入口与分组未定（7.2 第 5 条）；API Key 存哪、要不要加密、
+  是否跟随账号同步（T-024）都未定。
 
 ### T-022 新增学科入口与学科数据模型
 
