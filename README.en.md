@@ -1,80 +1,89 @@
 # In this life I have infinite tokens.
 
-A cross-platform calculator written in **C++17 + Qt 6 (Qt Quick/QML)**, targeting Windows, macOS,
-Linux, iPadOS and Android. The repository doubles as a sample of how a small project is kept with
-branches, a task queue and agent collaboration — read this page and you know how the repo is meant
+A cross-platform **study assistant** desktop app written in **C++17 + Qt 6 (Qt Quick/QML)**, targeting
+Windows, macOS and Linux, with iPadOS and Android later. Throw any learning material at it, sort it by
+subject, and let AI act on your behalf. The repository doubles as a sample of how a small project is kept
+with branches, a task queue and agent collaboration — read this page and you know how the repo is meant
 to be used.
 
-> **Current state:** in the **design phase**. See [docs/design-cpp-qt.md](docs/design-cpp-qt.md) for the
-> full design. The earlier Java implementation (`src/main/java`, `src/test/java`) has been removed; the
-> C++ / Qt code is not in the repository yet and the implementation is queued in [TODO.md](TODO.md)
-> (T-006 ~ T-009).
+> **Current state:** **page-skeleton phase**. The main page already runs in Qt 6
+> (`src/ui/qml/Main.qml`), but there is **no functionality yet**: no file loading, no AI calls, no API-key
+> storage. The UI design is described in [docs/design-study-app-ui.md](docs/design-study-app-ui.md) and the
+> roadmap lives in [TODO.md](TODO.md).
 
 #### Features
 
-- Full expression evaluation with `+ - * / % ^`, parentheses, decimals and unary signs
-- Right-associative power: `2^3^2 = 512`
-- Commands: type an expression and press Enter to evaluate, `clear`, `del`, `copy` (print last result), `recall`
-- Operators typed after a result continue from that result
-- Chinese error messages for divide-by-zero and mismatched parentheses
-- Logic layer (pure C++ evaluator) separated from the QML UI; desktop and touch shells
+Only the UI skeleton exists so far; no behaviour is wired up:
+
+- Left global icon rail (search / note tools / home / collaboration / settings), current page highlighted
+- Card header: `☰` more options on the left, an **AI** entry point on the right (its look will be
+  configurable in settings)
+- Subject sidebar hard-coded to `math` / `phy` / `che`; selects highlight, the list scrolls on its own
+- Main content area deliberately empty, reserved for the document reader
+- A reserved area at the bottom of the sidebar (purpose undecided)
+
+> The visual style follows GitHub, but that is the **author's personal preference**, not a repository
+> standard — nobody else has to copy it. The earlier Java Swing calculator design
+> ([docs/design-cpp-qt.md](docs/design-cpp-qt.md)) was retired together with its implementation.
 
 #### Software Architecture
 
 ```
 src/
-    core/               Pure C++ core (no Qt GUI dependency)
-        expression_evaluator.*   Recursive-descent evaluator
-        calculator_engine.*      Session state (last result, recall)
     ui/                 QML UI
-        main.cpp                Entry point
-        qml/desktop/            Desktop shell (mouse + keyboard, shortcuts)
-        qml/touch/              Touch shell (iPadOS / Android, large buttons + gestures)
-CMakeLists.txt         Top-level CMake project (Qt 6)
+        main.cpp                Entry point (includes a --screenshot headless switch)
+        qml/
+            Main.qml            Main page skeleton
+            GlyphIcon.qml      Canvas-drawn line icons (no system icon font needed)
+            Theme.js            Colours and spacing scale
+CMakeLists.txt         Top-level CMake project (Qt 6 + Qt Quick)
 scripts/
-    build.ps1           Windows build script (switches to CMake + Qt in implementation phase)
-    build.sh            macOS / Linux build script
-docs/design-cpp-qt.md  Design document
+    build.ps1           Windows build / UI check
+    build.sh            macOS / Linux build / UI check
+    sandbox.ps1         Long-lived Docker sandbox (Windows)
+    sandbox.sh          Long-lived Docker sandbox (macOS / Linux)
+    desktop.sh          Xvfb + noVNC inside the container, view the UI in a browser
+docs/design-study-app-ui.md  Main page design notes
 ```
 
-The core layout is a handful of functions, ported from the earlier Java `ExpressionEvaluator`:
-
-```cpp
-// core layer — behaviour identical to the earlier Java implementation
-double parseExpression();   // top level: + and -
-double parseTerm();         // * / %
-double parsePower();        // ^, right-associative
-double parseUnary();        // unary +/-
-double parsePrimary();      // numbers and parentheses
-```
-
-#### Installation (available after implementation)
+#### Installation
 
 Requires **Qt 6** (6.5 LTS or newer recommended), a C++17 compiler (MSVC / MinGW-w64 / clang++ / g++)
-and **CMake 3.21+**. Building for iPadOS additionally requires macOS + Xcode (Apple requirement).
+and **CMake 3.21+**.
 
 ```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.1\msvc2022_64
+cmake --build build --config Release
 ```
 
-> These commands take effect once the C++ / Qt code lands (T-006 ~ T-008). No directly compilable
-> source exists in this phase.
+macOS / Linux:
 
-#### Instructions (planned, lands in implementation phase)
+```bash
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+```
+
+To avoid installing Qt locally, use the Docker sandbox (see [docs/docker-sandbox.md](docs/docker-sandbox.md)):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view   # view the UI in a browser
+```
+
+#### Instructions (available now)
 
 | Action | Notes |
 | --- | --- |
-| Run desktop build | Build output `Calculator` (`Calculator.exe` on Windows) |
-| Run touch build | Same QML, adaptive large-button layout on iPadOS / Android |
-| Run all tests | Qt Test (matching the 25 cases of the earlier Java `EvaluatorTest`) |
+| Run the desktop app | Build output `infinite-tokens` (`infinite-tokens.exe` on Windows) |
+| Headless UI screenshot | `infinite-tokens --screenshot out.png`, works in containers / CI |
+| Build + UI check | `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`) |
 
-Per-platform packaging (`windeployqt` / `macdeployqt` / `linuxdeployqt` / `androiddeployqt` / Xcode)
-is covered in [docs/design-cpp-qt.md](docs/design-cpp-qt.md) §5.
+Per-platform packaging (`windeployqt` / `macdeployqt` / AppImage / `androiddeployqt`) is not implemented
+yet; see [TODO.md](TODO.md).
 
 #### How to use this repository (read this first)
 
-The point of the repo is not only the calculator but the workflow it demonstrates. There are exactly three
+The point of the repo is not only the app but the workflow it demonstrates. There are exactly three
 branch layers, and changes only flow **upwards**:
 
 | Layer | Branch | What it is |

@@ -1,13 +1,13 @@
-# 默认沙箱（Docker）
+﻿# 默认沙箱（Docker）
 
-本仓库的构建与测试**默认在 Docker 沙箱里跑**，不在宿主机直接装 JDK。
+本仓库的构建与界面检查**默认在 Docker 沙箱里跑**，不在宿主机直接装 Qt 6。
 这样每个人的环境一致，也不会把依赖、缓存、构建产物留在本机。
 
 镜像分成两个 target，按需选一个，避免为了跑测试被迫拉可视化组件：
 
 | Target | 内容 | 体积 | 用途 |
 | --- | --- | --- | --- |
-| `test`（默认） | JDK 21 + Xvfb + X11 库 + 中文字体 | 约 740 MB | 日常构建与测试 |
+| `test`（默认） | Qt 6 + CMake + Ninja + Xvfb + 中文字体 | 约 1.2 GB | 日常构建与界面检查 |
 | `view` | 在 `test` 之上加 fluxbox / x11vnc / noVNC | 约 +208 MB | 需要**看真实界面**时 |
 
 ## 推荐用法：可回溯的长驻容器
@@ -28,7 +28,7 @@ macOS / Linux：`scripts/sandbox.sh build`、`scripts/sandbox.sh test`、`script
 
 | 机制 | 效果 |
 | --- | --- |
-| 容器固定命名 `calculator-sandbox`，`sleep infinity` 常驻 | 失败后仍可用 `docker exec` 进去翻现场，不随命令结束消失 |
+| 容器固定命名 `infinite-tokens-sandbox`，`sleep infinity` 常驻 | 失败后仍可用 `docker exec` 进去翻现场，不随命令结束消失 |
 | 每次运行写入 `.sandbox-runs/<时间戳>/stdout.log` | 完整输出，含失败项与中文错误提示 |
 | 每次运行写入 `.sandbox-runs/<时间戳>/meta.json` | 记录 `exit_code`、耗时、命令、**镜像 ID**、**git commit**、分支、是否有未提交改动 |
 | 源码 bind mount 到 `/workspace` | 容器里跑的就是你当前工作区的代码，与 `git status` 一一对应 |
@@ -42,7 +42,7 @@ macOS / Linux：`scripts/sandbox.sh build`、`scripts/sandbox.sh test`、`script
 | --- | --- |
 | `build` | `docker build --pull`，拉最新基础镜像后构建；`-Target view`（sh：`TARGET=view`）构建可视版 |
 | `start` | 创建或启动长驻容器（已存在则复用；默认 `--memory 2g --cpus 2 --init`） |
-| `test` | 跑 `xvfb-run -a bash scripts/build.sh test` 并留档（外层再套 `timeout`） |
+| `test` | 跑 `bash scripts/build.sh test` 并留档（外层再套 `timeout`） |
 | `view` | 起 noVNC 桌面，打印访问地址并自动截图 |
 | `shell` | 交互式进入容器（需要在真终端里跑） |
 | `runs` | 按时间倒序列出历史运行与退出码 |
@@ -54,7 +54,7 @@ macOS / Linux：`scripts/sandbox.sh build`、`scripts/sandbox.sh test`、`script
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test `
-  -Command "xvfb-run -a bash scripts/build.sh build" `
+  -Command "bash scripts/build.sh build" `
   -Memory 3g -Cpus 4 -Timeout 900
 ```
 
@@ -74,22 +74,19 @@ powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view
 它会自动做四件事：容器用的若是轻量镜像就重建为 `view`；起 Xvfb `:99`、fluxbox、x11vnc、noVNC；
 等 `vnc.html` 返回 200；抓一张 `import -window root` 截图存进 `.sandbox-runs/`。
 
-想用命令驱动界面（验证中文提示、按钮逻辑）：
+不想开 noVNC 时也可以直接让应用自己出一张图：
 
 ```bash
-docker exec calculator-sandbox bash scripts/drive.sh "1/0="   # 触发除零提示并截图
-docker exec calculator-sandbox bash scripts/drive.sh "12*3+4=" # 正常计算
+# 在容器里构建并渲染一张界面截图（offscreen，无需显示器）
+docker exec infinite-tokens-sandbox bash scripts/build.sh test
+docker cp infinite-tokens-sandbox:/workspace/build/ui-screenshot.png .
 ```
 
-`drive.sh` 不按像素点按钮——布局随字体与窗口尺寸浮动，按坐标点击实测会把 `1/0=` 点成 `41%`。
-它改用 [VisualDrive](../src/test/java/com/helloworld/taiin/calculator/VisualDrive.java)，
-直接调用 `CalculatorFrame.press()`，与按钮 ActionListener 是同一条代码路径，
-并且会打印 `display=` / `status=` 便于断言：
+截图由应用自己的 `--screenshot <文件>` 开关产生：窗口绘制完一帧后调用
+`QQuickWindow::grabWindow()` 存成 PNG 并退出。它在 `QT_QPA_PLATFORM=offscreen` 下也能出图，
+所以既能用在 CI，也能用来肉眼核对布局。
 
-```
-display=1/0
-status=错误：除数不能为零
-```
+> 当前阶段只有页面骨架，**没有任何交互行为可测**，所以这里不做点击验证。
 
 > `view` 这套运行起来只占约 130 MB 内存，**主要成本是镜像与构建缓存**。
 > 不需要看画面时不要用 `view`，`test` 就够了。
@@ -99,20 +96,20 @@ status=错误：除数不能为零
 需要完全干净、跑完即弃时仍可直接用 `docker run`：
 
 ```bash
-docker build --target test -t calculator-sandbox .
+docker build --target test -t infinite-tokens-sandbox .
 docker run --rm --memory 2g --memory-swap 2g --cpus 2 \
-  -v "$(pwd):/workspace" calculator-sandbox
+  -v "$(pwd):/workspace" infinite-tokens-sandbox
 ```
 
 Windows PowerShell：
 
 ```powershell
-docker build --target test -t calculator-sandbox .
-docker run --rm --memory 2g --memory-swap 2g --cpus 2 -v "${PWD}:/workspace" calculator-sandbox
+docker build --target test -t infinite-tokens-sandbox .
+docker run --rm --memory 2g --memory-swap 2g --cpus 2 -v "${PWD}:/workspace" infinite-tokens-sandbox
 ```
 
-容器默认执行 `xvfb-run -a bash scripts/build.sh test`，也就是完整测试；
-`UiTest` 在容器里靠 `xvfb` 提供虚拟显示，不会因为无图形环境被跳过。
+容器默认执行 `bash scripts/build.sh test`：CMake 配置 → 编译 → offscreen 渲染一张界面截图。
+容器里没有显卡，镜像预设了 `QT_QPA_PLATFORM=offscreen` 与 `QT_QUICK_BACKEND=software`。
 
 ### 内存上限必须带
 
@@ -131,10 +128,10 @@ docker run --rm --memory 2g --memory-swap 2g --cpus 2 -v "${PWD}:/workspace" cal
 ```dockerfile
 RUN apt-get install -y ... tini
 ENTRYPOINT ["/usr/bin/tini", "--"]
-CMD ["xvfb-run", "-a", "bash", "scripts/build.sh", "test"]
+CMD ["bash", "-lc", "bash scripts/build.sh test"]
 ```
 
-早期版本没装 `tini`，`xvfb-run` 会以 PID 1 身份挂在 `wait` 上，
+早期版本没装 `tini`，Xvfb 会以 PID 1 身份挂在 `wait` 上，
 表现为「测试输出已经打完，容器却永不退出，`docker run` 一直不返回」。
 现在镜像自带 init，加不加 `--init` 都能正常退出；runner 里仍保留 `--init` 作为双保险。
 
@@ -142,19 +139,18 @@ CMD ["xvfb-run", "-a", "bash", "scripts/build.sh", "test"]
 
 | 文件 | 作用 |
 | --- | --- |
-| [Dockerfile](../Dockerfile) | 多阶段：`base`（`eclipse-temurin:21-jdk-jammy` + `xvfb` + `tini`，非 root 用户 `dev`）/ `test`（轻量）/ `view`（带 noVNC） |
+| [Dockerfile](../Dockerfile) | 多阶段：`base`（`ubuntu:24.04` + Qt 6 + CMake + Ninja + Xvfb + `tini`，非 root 用户 `dev`）/ `test`（无头）/ `view`（带 noVNC） |
 | [.dockerignore](../.dockerignore) | 排除 `build/`、`dist/`、`.git/` 等，镜像更小 |
 | [.devcontainer/devcontainer.json](../.devcontainer/devcontainer.json) | VS Code Dev Containers 配置，复用同一个 Dockerfile |
 | [.devcontainer/99-cjk-preference.conf](../.devcontainer/99-cjk-preference.conf) | fontconfig 规则，把文泉驿提为中文首选 |
 | [scripts/sandbox.ps1](../scripts/sandbox.ps1) | Windows 长驻容器 runner，带运行留档与 view |
 | [scripts/sandbox.sh](../scripts/sandbox.sh) | macOS / Linux 同款 runner |
 | [scripts/desktop.sh](../scripts/desktop.sh) | 容器内起 Xvfb + fluxbox + x11vnc + noVNC |
-| [scripts/drive.sh](../scripts/drive.sh) | 调 VisualDrive 驱动界面并截图 |
-| [VisualDrive.java](../src/test/java/com/helloworld/taiin/calculator/VisualDrive.java) | 通过 `press()` 注入按键，绕过像素坐标 |
+| [src/ui/main.cpp](../src/ui/main.cpp) | 应用入口，含 `--screenshot` 无头截图开关 |
 
 ## 注意
 
 - 宿主机仍保留 `scripts/build.ps1` / `scripts/build.sh`，没有 Docker 时可直接用，但**默认推荐沙箱**。
 - 容器内路径是 `/workspace`，不要在容器里 `git push`；提交仍在宿主机做。
-- 首次 `build` 会从 `mirrors.ustc.edu.cn` 装包（官方源在部分网络下 502）；海外机器可删掉 Dockerfile 里的换源那段。
+- 首次 `build` 默认用官方 apt 源。官方源偶发 `500 reading HTTP response body`，可用 `-o` 之外的方式换源：`docker build --build-arg APT_MIRROR=<镜像地址> ...`。注意本机实测 HTTPS 镜像会证书校验失败（中间人代理），此时用 HTTP 镜像地址。
 - 本机安装 Docker 的完整踩坑记录见 [docker-sandbox-install.md](docker-sandbox-install.md)。

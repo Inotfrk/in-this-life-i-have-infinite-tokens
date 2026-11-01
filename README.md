@@ -1,77 +1,85 @@
 # In this life I have infinite tokens.
 
-一个用 **C++17 + Qt 6（Qt Quick/QML）** 写的跨平台计算器，目标覆盖 Windows、macOS、Linux、
-iPadOS 与 Android。这个仓库同时是「一个小项目该怎么用分支、任务队列和 agent 协作来维护」的
-样板——看懂这份说明，就明白这个仓库怎么用。
+一个用 **C++17 + Qt 6（Qt Quick/QML）** 写的跨平台**学习助手**桌面应用，目标覆盖 Windows、macOS、
+Linux，以及后续的 iPadOS 与 Android。它可以把你的学习资料统一扔进来、按学科归类，并接 AI 帮你操作。
+这个仓库同时是「一个小项目该怎么用分支、任务队列和 agent 协作来维护」的样板——
+看懂这份说明，就明白这个仓库怎么用。
 
-> **当前状态**：处于**设计阶段**。完整设计见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md)。
-> 早期的 Java 实现（`src/main/java`、`src/test/java`）已删除，C++ / Qt 代码尚未入库，
-> 实现任务按 [TODO.md](TODO.md) 的 T-006~T-009 排队推进。
+> **当前状态**：**页面骨架阶段**。主页面已经能在 Qt 6 里跑起来（`src/ui/qml/Main.qml`），
+> 但**没有任何业务功能**：不读文件、不调 AI、不存 API Key。
+> 界面设计说明见 [docs/design-study-app-ui.md](docs/design-study-app-ui.md)，
+> 后续规划见 [TODO.md](TODO.md)。
 
 #### 功能
 
-- 支持 `+ - × ÷ % ^`、括号、小数、一元正负号
-- 完整表达式求值（不是逐步运算），乘方右结合：`2^3^2 = 512`
-- 交互命令：直接输入表达式回车计算，`clear` 清空、`del` 退格、`copy` 输出上次结果、`recall` 取回上次表达式
-- 计算后可直接接运算符，继续用上一次结果计算
-- 除零、括号不匹配等错误给出中文提示
-- 逻辑层（纯 C++ 求值器）与 UI 层（QML）分离，桌面与触屏两套外壳
+现阶段只是界面骨架，实际行为都还没接：
+
+- 左侧全局图标栏（搜索 / 笔记类工具 / 主页 / 协作 / 设置），当前页高亮
+- 内容卡片头部：左侧 `☰` 更多选项，右侧 **AI** 入口（外观将来可在设置里更换）
+- 学科侧栏写死 `math` / `phy` / `che`，可点选高亮、列表可独立滚动
+- 右侧主内容区刻意留空，等后续接入资料阅读
+- 侧栏底部预留区（用途未定）
+
+> 界面风格参考了 GitHub，但那是**作者个人偏好**，不是仓库规范，其他人不必照抄。
+> 早期那个 Java Swing 计算器的设计（[docs/design-cpp-qt.md](docs/design-cpp-qt.md)）已随实现一并淘汰。
 
 #### 软件架构
 
 ```
 src/
-    core/               纯 C++ 核心（无 Qt GUI 依赖）
-        expression_evaluator.*   递归下降求值器
-        calculator_engine.*      会话状态（上次结果、recall）
     ui/                 QML 界面
-        main.cpp               入口
-        qml/desktop/           桌面外壳（鼠标键盘 + 快捷键）
-        qml/touch/             触屏外壳（iPadOS / Android，大按钮 + 手势）
-CMakeLists.txt         顶层 CMake 工程（Qt 6）
+        main.cpp               入口（含 --screenshot 无头截图开关）
+        qml/
+            Main.qml           主页面骨架
+            GlyphIcon.qml      Canvas 画的线性图标（不依赖系统图标字体）
+            Theme.js           配色与间距刻度
+CMakeLists.txt         顶层 CMake 工程（Qt 6 + Qt Quick）
 scripts/
-    build.ps1           Windows 构建脚本（实现阶段切换为 CMake + Qt）
-    build.sh            macOS / Linux 构建脚本
-docs/design-cpp-qt.md  设计文档
+    build.ps1           Windows 构建 / 界面检查
+    build.sh            macOS / Linux 构建 / 界面检查
+    sandbox.ps1         长驻 Docker 沙箱（Windows）
+    sandbox.sh          长驻 Docker 沙箱（macOS / Linux）
+    desktop.sh          容器内起 Xvfb + noVNC，用浏览器看真实界面
+docs/design-study-app-ui.md  主页面设计说明
 ```
 
-核心分层（自顶向下）：
-
-```cpp
-// 逻辑层 —— 移植自早期 Java ExpressionEvaluator，行为一致
-double parseExpression();   // 顶层：加减
-double parseTerm();         // 乘除取模
-double parsePower();        // 乘方，右结合
-double parseUnary();        // 一元正负号
-double parsePrimary();      // 数字与括号
-```
-
-#### 安装教程（实现阶段完成后可用）
+#### 安装教程
 
 需要 **Qt 6**（推荐 6.5 LTS 及以上）与一个支持 C++17 的编译器（MSVC / MinGW-w64 / clang++ / g++），
-以及 **CMake 3.21+**。iPadOS 构建还需 macOS + Xcode（Apple 硬性要求）。
+以及 **CMake 3.21+**。
 
 ```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release
-cmake --build build
+cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.1\msvc2022_64
+cmake --build build --config Release
 ```
 
-> 上述命令在 C++ / Qt 代码入库（T-006~T-008）后生效。本阶段暂无可直接编译的源码。
+macOS / Linux：
 
-#### 使用说明（规划，实现阶段落地）
+```bash
+cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
+cmake --build build --parallel
+```
+
+不想在本机装 Qt 时，用 Docker 沙箱（见 [docs/docker-sandbox.md](docs/docker-sandbox.md)）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
+powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view   # 浏览器里看界面
+```
+
+#### 使用说明（当前可用）
 
 | 操作 | 说明 |
 | --- | --- |
-| 运行桌面版 | 构建产物 `Calculator`（Windows 为 `Calculator.exe`） |
-| 运行触屏版 | 同一套 QML，在 iPadOS / Android 上自适应大按钮布局 |
-| 运行全部测试 | Qt Test（对应早期 Java `EvaluatorTest` 的 25 项） |
+| 运行桌面版 | 构建产物 `infinite-tokens`（Windows 为 `infinite-tokens.exe`） |
+| 看界面截图（无头） | `infinite-tokens --screenshot out.png`，容器 / CI 里也能出图 |
+| 构建 + 界面检查 | `scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`） |
 
-各平台打包（`windeployqt` / `macdeployqt` / `linuxdeployqt` / `androiddeployqt` / Xcode）见
-[docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 5 节。
+各平台打包（`windeployqt` / `macdeployqt` / AppImage / `androiddeployqt`）尚未实现，见 [TODO.md](TODO.md)。
 
 #### 仓库怎么用（同学先看这段）
 
-这个仓库的重点不只是那个计算器，而是它示范的协作方式。分支只有三层，改动只能**自下往上**流动：
+这个仓库的重点不只是那个应用，而是它示范的协作方式。分支只有三层，改动只能**自下往上**流动：
 
 | 层次 | 分支 | 是什么 |
 | --- | --- | --- |

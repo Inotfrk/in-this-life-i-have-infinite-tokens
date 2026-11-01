@@ -44,55 +44,46 @@
   的不同机器；跨账号或主线冲突一律提示用户提 OA。Gitee 侧为每个成员建了 `<登录名>-*` 保护分支规则，
   并开启「只能推送自己的提交」推送规则；已实测用某个账号推别人前缀的分支会被 pre-receive hook 拒绝。
 
-### T-006 移植核心求值器为 C++（Qt Test 单测）
+### T-011 学习助手主页面——骨架界面
 
-- 状态：queued
-- 目标分支：`<账号段>-<电脑段>-qt-core`
+- 状态：in-progress
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-010
+- 涉及文件：`CMakeLists.txt`、`src/ui/main.cpp`、`src/ui/qml/Main.qml`、
+  `src/ui/qml/GlyphIcon.qml`、`src/ui/qml/Theme.js`
+- 验收：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`）通过；
+  offscreen 渲染出 `build/ui-screenshot.png`，布局与 [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 一致
+- 说明：实现**纯界面骨架**，不接任何功能（不读文件、不调 AI、不存 API Key）。
+  学科写死 `math` / `phy` / `che`，点选只改高亮。GitHub 风格只是作者个人偏好，
+  不得据此改动任何仓库规则文件。
+
+### T-012 Qt 6 构建与沙箱基础设施
+
+- 状态：in-progress
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-011
+- 涉及文件：`Dockerfile`、`.devcontainer/devcontainer.json`、`scripts/build.ps1`、
+  `scripts/build.sh`、`scripts/sandbox.ps1`、`scripts/sandbox.sh`、`scripts/desktop.sh`、
+  `docs/docker-sandbox.md`、`README.md`、`README.en.md`
+- 验收：沙箱镜像构建通过；容器内 `bash scripts/build.sh test` 出图；
+  旧的 JDK / Xvfb / VisualDrive 相关脚本与文档引用全部清除
+- 说明：整体从「JDK 21 + Swing」换成「Qt 6 + CMake + Ninja」。界面检查改为
+  `--screenshot` + `QT_QPA_PLATFORM=offscreen`，不再依赖 `xvfb-run`。
+
+## 已完成
+
+### T-013 废弃计算器实现与设计
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
 - 优先级：P0
 - 依赖：无
-- 涉及文件：新增 `src/core/expression_evaluator.h/.cpp`、`src/core/calculator_engine.h/.cpp`、
-  `src/core/expression_evaluator_test.cpp`、顶层 `CMakeLists.txt`
-- 验收：CMake + Qt 6 编译通过；Qt Test 的求值用例与原 Java `EvaluatorTest` 的 25 项结果一致
-- 说明：按 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 3.3 节，把递归下降逻辑
-  （`+ - × ÷ % ^`、括号、一元正负号、右结合乘方、全角归一化、中文错误提示）移植为
-  无 Qt GUI 依赖的纯 C++ 核心。
-
-### T-007 QML 桌面外壳 + 触屏外壳
-
-- 状态：queued
-- 目标分支：`<账号段>-<电脑段>-qt-ui`
-- 优先级：P0
-- 依赖：T-006
-- 涉及文件：新增 `src/ui/main.cpp`、`src/ui/qml/`（desktop / touch / components）
-- 验收：桌面（鼠标键盘 + 快捷键）与触屏（大按钮 + 手势，横竖屏自适应）外壳均可运行
-- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 3.4 / 3.5 节；逻辑层与 UI 层
-  通过 QQmlContext 绑定，不耦合。
-
-### T-008 基础设施改写（build 脚本 / Docker / CI / sandbox）
-
-- 状态：queued
-- 目标分支：`<账号段>-<电脑段>-qt-infra`
-- 优先级：P0
-- 依赖：T-006、T-007
-- 涉及文件：`scripts/build.ps1`、`scripts/build.sh`、`Dockerfile`、
-  `.devcontainer/devcontainer.json`、`.github/workflows/package.yml`、
-  `.github/workflows/release.yml`（测试命令联动）、`scripts/sandbox.ps1`、`scripts/sandbox.sh`、
-  `scripts/desktop.sh`、`scripts/drive.sh`、`.gitignore`
-- 验收：`scripts\build.ps1 -Task test` 全绿；CI 产出各平台安装包；沙箱用
-  `QT_QPA_PLATFORM=offscreen` 无头跑测试
-- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 6 节。JDK/Xvfb 那套整体替换为
-  Qt 6 + g++；仓库治理规则文件（AGENTS.md、branch-registry、release 脚本）不动。
-
-### T-009 各平台打包（Windows / macOS / Linux / iPadOS / Android）
-
-- 状态：queued
-- 目标分支：`<账号段>-<电脑段>-qt-packaging`
-- 优先级：P1
-- 依赖：T-008
-- 涉及文件：新增 `platform/` 元数据；打包流程
-- 验收：Windows 出 `msi`/`zip`、macOS 出 `dmg`、Linux 出 AppImage、Android 出 `apk`、
-  iPadOS 在团队 macOS 上出 `ipa`
-- 说明：见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md) 第 5 节；iOS 构建仅能在 macOS 上完成。
+- 涉及文件：删除 `docs/design-cpp-qt.md`、`scripts/drive.sh`；改写 `README.md`、`README.en.md`、
+  `TODO.md`、`docs/docker-sandbox.md`
+- 验收：仓库内不再有 Java / Swing / 计算器求值器的构建入口与文档指引
+- 说明：产品方向从「计算器」改为「学习助手」，Java 计算器连同其 C++/Qt 移植设计一并淘汰。
 
 ### T-002 上传流改为三层（master ← develop ← 个人分支）
 
@@ -119,7 +110,31 @@
   快进合入本地 `develop`，接收本地改动后推送，再用 `scripts/release.ps1` 完成首次
   `develop -> master` 自动发布（标签 `v2026.10.25-1731`）。三层流现已闭合。
 
+### T-011 学习助手主页面——骨架界面实现
+
+- 状态：blocked
+- 目标分支：`<账号段>-<电脑段>-study-ui`
+- 优先级：P1
+- 依赖：T-010
+- 涉及文件：新增主页面骨架（具体路径在 T-010 的技术选型定下来后补）
+- 验收：左侧全局图标栏 + 内容卡片 + 学科侧栏 + 主内容区空壳可运行；学科列表可独立滚动
+- 说明：按 [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 实现**纯界面骨架**，
+  不接任何功能（不读文件、不调 AI、不存 API Key）。**必须先解决该文档第 7 节的 5 个待确认问题**，
+  否则状态保持 `blocked`。GitHub 风格只是作者个人偏好，不得据此改动任何仓库规则文件。
+  > 已被 T-010/T-013 之后的实际实现取代：骨架已在 Qt 6 里落地，见上方「T-011 学习助手主页面——骨架界面」。
+
 ## 已完成
+
+### T-010 学习助手主页面设计文档
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P1
+- 依赖：无
+- 涉及文件：新增 `docs/design-study-app-ui.md`、`TODO.md`
+- 验收：文档 Markdown 链接有效；明确写出「仅设计、不实现功能」与「GitHub 风格非仓库共识」
+- 说明：按用户口述 + 手绘草图整理主页面分区（全局图标栏、卡片头部 ☰ 与 AI 入口、学科可滚动侧栏、
+  右侧空白主内容区、侧栏底部预留区），并留下 5 个待确认问题供产品决策。
 
 ### T-005 仓库整体从 Gitee 迁到 GitHub
 
