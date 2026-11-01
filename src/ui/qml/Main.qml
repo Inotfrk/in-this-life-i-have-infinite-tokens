@@ -24,6 +24,21 @@ Window {
         { id: "che", title: "化学" }
     ]
 
+    // 账号状态。本阶段只是界面，点了不会真的登录或存盘。
+    property string userName: "Learner"
+    property string avatarSource: ""
+    property bool accountMenuOpen: false
+
+    // 仅用于截图预览：--open-account-menu 让菜单默认展开，--avatar <路径> 试照片头像
+    Component.onCompleted: {
+        var args = Qt.application.arguments;
+        if (args.indexOf("--open-account-menu") >= 0)
+            accountMenuOpen = true;
+        var i = args.indexOf("--avatar");
+        if (i >= 0 && i + 1 < args.length)
+            avatarSource = "file:///" + args[i + 1].replace(/\\/g, "/").replace(/^\//, "");
+    }
+
     Rectangle {
         id: card
         anchors.fill: parent
@@ -50,19 +65,25 @@ Window {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            // 右：用户图标（登录不同账号，同步各自的资料），AI 在它左侧
+            // 右：用户头像（登录不同账号，同步各自资料），AI 在它左侧
             Row {
                 anchors.right: parent.right
                 anchors.rightMargin: 10
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 4
+                spacing: 6
 
                 HeaderButton {
                     label: "AI"
                 }
 
-                HeaderButton {
-                    icon: "user"
+                Avatar {
+                    id: headerAvatar
+                    anchors.verticalCenter: parent.verticalCenter
+                    size: 28
+                    name: window.userName
+                    imageSource: window.avatarSource
+
+                    onClicked: window.accountMenuOpen = !window.accountMenuOpen
                 }
             }
         }
@@ -178,5 +199,26 @@ Window {
                 font.pixelSize: 13
             }
         }
+    }
+
+    // ---- 账号菜单（点头像弹出）----------------------------------------------
+    AccountMenu {
+        id: accountMenu
+        visible: window.accountMenuOpen
+        x: window.width - width - 20 - 10
+        y: 20 + card.headerHeight + 6
+        userName: window.userName
+        avatarSource: window.avatarSource
+
+        // 关掉菜单：点菜单外任何地方
+        onVisibleChanged: if (!visible) window.accountMenuOpen = false
+    }
+
+    // 点空白处收起菜单
+    MouseArea {
+        anchors.fill: parent
+        enabled: window.accountMenuOpen
+        z: -1
+        onClicked: window.accountMenuOpen = false
     }
 }

@@ -111,6 +111,35 @@ Canvas {
             ctx.quadraticCurveTo(4.4, 11.6, 10, 11.6);
             ctx.quadraticCurveTo(15.6, 11.6, 16.4, 17);
             ctx.stroke();
+        } else if (name === "camera") {
+            // 相机：机身 + 镜头 + 顶部取景器
+            ctx.beginPath();
+            ctx.rect(2.5, 6.5, 15, 10);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(7, 6.5);
+            ctx.lineTo(8.2, 3.5);
+            ctx.lineTo(11.8, 3.5);
+            ctx.lineTo(13, 6.5);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(10, 11.5, 2.6, 0, Math.PI * 2);
+            ctx.stroke();
+        } else if (name === "signout") {
+            // 门 + 向右的箭头
+            ctx.beginPath();
+            ctx.moveTo(11.5, 3);
+            ctx.lineTo(4, 3);
+            ctx.lineTo(4, 17);
+            ctx.lineTo(11.5, 17);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(9.5, 10);
+            ctx.lineTo(16.5, 10);
+            ctx.moveTo(13.8, 7.2);
+            ctx.lineTo(16.6, 10);
+            ctx.lineTo(13.8, 12.8);
+            ctx.stroke();
         } else if (name === "settings") {
             ctx.beginPath();
             ctx.arc(10, 10, 2.6, 0, Math.PI * 2);

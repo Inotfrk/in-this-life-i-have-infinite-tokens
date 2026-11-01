@@ -20,6 +20,7 @@ struct Palette
     QColor hoverBg;     // 悬停底色
     QColor activeBg;    // 当前项底色
     QColor accent;      // 强调色（指示条、选中描边）
+    QColor danger;      // 危险操作（退出登录、删除）
 };
 
 // 配色直接取 GitHub Primer 的语义色值，深 / 浅各一套。
@@ -36,7 +37,8 @@ const Palette kDark{
     QColor("#6e7681"), // textFaint    fg.subtle
     QColor("#21262d"), // hoverBg      neutral muted
     QColor("#121d2f"), // activeBg     accent.subtle
-    QColor("#4493f8")  // accent       accent.fg
+    QColor("#4493f8"), // accent       accent.fg
+    QColor("#f85149")  // danger       danger.fg
 };
 
 const Palette kLight{
@@ -51,14 +53,16 @@ const Palette kLight{
     QColor("#818b98"), // fg.subtle
     QColor("#eff2f5"), // hover
     QColor("#ddf4ff"), // accent.subtle
-    QColor("#0969da")  // accent.fg
+    QColor("#0969da"), // accent.fg
+    QColor("#cf222e")  // danger.fg
 };
 
 // 星空：作者举例的额外主题，深底 + 冷色强调。只换配色，结构不变。
 const Palette kStar{
     QColor("#0a0a12"), QColor("#05050b"), QColor("#12121f"), QColor("#0c0c16"),
     QColor("#2a2a45"), QColor("#1b1b2e"), QColor("#e0e0f5"), QColor("#9a9ac0"),
-    QColor("#6e6e96"), QColor("#1b1b2e"), QColor("#23233d"), QColor("#8b8bff")
+    QColor("#6e6e96"), QColor("#1b1b2e"), QColor("#23233d"), QColor("#8b8bff"),
+    QColor("#ff6b6b")
 };
 
 QVariantMap ToMap(const Palette &p)
@@ -76,6 +80,7 @@ QVariantMap ToMap(const Palette &p)
         {QStringLiteral("hoverBg"), p.hoverBg.name()},
         {QStringLiteral("activeBg"), p.activeBg.name()},
         {QStringLiteral("accent"), p.accent.name()},
+        {QStringLiteral("danger"), p.danger.name()},
     };
 }
 
