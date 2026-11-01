@@ -44,19 +44,6 @@
   的不同机器；跨账号或主线冲突一律提示用户提 OA。Gitee 侧为每个成员建了 `<登录名>-*` 保护分支规则，
   并开启「只能推送自己的提交」推送规则；已实测用某个账号推别人前缀的分支会被 pre-receive hook 拒绝。
 
-### T-001 把计算器核心移植为单文件 C++
-
-- 状态：done
-- 目标分支：`<账号段>-<电脑段>-cpp`
-- 优先级：P1
-- 依赖：无
-- 涉及文件：新增 `calculator.cpp`；`README.md` / `README.en.md` 的 C++ 段落
-- 验收：`g++ -std=c++17 -O2 calculator.cpp -o calculator` 编译通过，示例表达式结果与
-  `EvaluatorTest` 的 25 项一致；`scripts\build.ps1 -Task test` 仍全绿
-- 说明：已由 T-006 取代。原「单文件 C++、Java 保留为历史示例」的思路被整体替换为
-  **C++ / Qt Quick 架构**（见 [docs/design-cpp-qt.md](docs/design-cpp-qt.md)），
-  Java 计算器源码、测试与构建产物已按用户要求删除。
-
 ### T-006 移植核心求值器为 C++（Qt Test 单测）
 
 - 状态：queued
