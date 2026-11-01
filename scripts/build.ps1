@@ -64,8 +64,10 @@ function Invoke-UiCheck {
     $shot = Join-Path $build 'ui-screenshot.png'
     if ($Headless) { $env:QT_QPA_PLATFORM = 'offscreen' }
     $env:QT_QUICK_BACKEND = 'software'
-    & $exe --screenshot $shot
-    if ($LASTEXITCODE -ne 0) { throw 'ui check failed' }
+    # GUI 应用（WIN32_EXECUTABLE）用 & 调用不会阻塞，文件可能还没写盘；
+    # 必须用 Start-Process -Wait 等它退出、写完截图，否则会误报「截图未生成」。
+    $proc = Start-Process -FilePath $exe -ArgumentList @('--screenshot', $shot) -Wait -PassThru
+    if ($proc.ExitCode -ne 0) { throw "ui check failed (exit $($proc.ExitCode))" }
     if (-not (Test-Path $shot) -or (Get-Item $shot).Length -eq 0) {
         throw "界面截图未生成：$shot"
     }
