@@ -34,18 +34,24 @@ Canvas {
         ctx.scale(w / 18, h / 18);
 
         if (glyph === "deepseek") {
-            // 鲸鱼意象：圆身 + 尾鳍 + 眼睛
+            // 鲸鱼标识：饱满身体 + 上扬尾鳍，眼睛用 evenodd 挖空
             ctx.beginPath();
-            ctx.arc(8.2, 9.4, 5.0, Math.PI * 0.32, Math.PI * 1.78);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.moveTo(12.6, 5.4);
-            ctx.quadraticCurveTo(15.6, 3.2, 16.2, 6.2);
-            ctx.quadraticCurveTo(14.2, 6.4, 13.6, 8.4);
-            ctx.stroke();
-            ctx.beginPath();
-            ctx.arc(6.4, 8.2, 1.0, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.moveTo(2.6, 12.2);
+            ctx.quadraticCurveTo(2.4, 6.2, 8.2, 5.4);
+            ctx.quadraticCurveTo(13.4, 4.8, 14.8, 8.0);
+            ctx.quadraticCurveTo(15.8, 10.4, 13.6, 12.0);
+            ctx.quadraticCurveTo(11.2, 13.8, 7.8, 13.4);
+            ctx.quadraticCurveTo(4.8, 13.0, 2.6, 12.2);
+            ctx.closePath();
+            // 尾鳍
+            ctx.moveTo(13.4, 7.6);
+            ctx.quadraticCurveTo(15.8, 3.8, 17.2, 6.4);
+            ctx.quadraticCurveTo(15.4, 6.8, 14.8, 9.2);
+            ctx.closePath();
+            // 眼睛（同一路径内的圆形子路径 + evenodd = 挖洞）
+            ctx.moveTo(7.6, 8.4);
+            ctx.arc(7.6, 8.9, 0.95, 0, Math.PI * 2, true);
+            ctx.fill("evenodd");
         } else if (glyph === "claude") {
             // 星芒：长短不一的放射线
             for (var i = 0; i < 8; ++i) {

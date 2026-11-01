@@ -12,6 +12,7 @@ Item {
     signal changeAvatarRequested()
     signal switchAccountRequested()
     signal signOutRequested()
+    signal settingsRequested()
 
     // 单个菜单项：图标 + 文字，悬停整行变色（GitHub 下拉菜单的做法）
     component MenuRow: Item {
@@ -155,8 +156,8 @@ Item {
 
             MenuRow {
                 icon: "settings"
-                text: "账号设置"
-                onClicked: menu.switchAccountRequested()
+                text: "设置…"
+                onClicked: menu.settingsRequested()
             }
 
             Item { width: parent.width; height: 6 }

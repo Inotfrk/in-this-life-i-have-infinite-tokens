@@ -28,16 +28,18 @@ Window {
     property string userName: "Learner"
     property string avatarSource: ""
     property bool accountMenuOpen: false
-    property bool aiMenuOpen: false
+    property bool chatOpen: false
+    property bool settingsOpen: false
 
-    // 仅用于截图预览：--open-account-menu 让账号菜单展开；
-    // --open-ai-menu 让服务商菜单展开；--avatar <路径> 试照片头像
+    // 仅用于截图预览
     Component.onCompleted: {
         var args = Qt.application.arguments;
         if (args.indexOf("--open-account-menu") >= 0)
             accountMenuOpen = true;
-        if (args.indexOf("--open-ai-menu") >= 0)
-            aiMenuOpen = true;
+        if (args.indexOf("--open-chat") >= 0)
+            chatOpen = true;
+        if (args.indexOf("--open-settings") >= 0)
+            settingsOpen = true;
         var i = args.indexOf("--avatar");
         if (i >= 0 && i + 1 < args.length)
             avatarSource = "file:///" + args[i + 1].replace(/\\/g, "/").replace(/^\//, "");
@@ -82,9 +84,9 @@ Window {
                     providerShort: Ai.provider.short
                     providerGlyph: Ai.provider.glyph
                     providerColor: Ai.provider.color
-                    opened: window.aiMenuOpen
+                    opened: window.chatOpen
                     onClicked: {
-                        window.aiMenuOpen = !window.aiMenuOpen;
+                        window.chatOpen = !window.chatOpen;
                         window.accountMenuOpen = false;
                     }
                 }
@@ -224,32 +226,61 @@ Window {
         y: 20 + card.headerHeight + 6
         userName: window.userName
         avatarSource: window.avatarSource
+
+        onSettingsRequested: {
+            window.accountMenuOpen = false;
+            window.settingsOpen = true;
+        }
     }
 
-    // ---- AI 服务商菜单（点 AI 按钮弹出）-------------------------------------
-    AiProviderMenu {
-        id: aiMenu
-        visible: window.aiMenuOpen
-        // 贴住 AI 按钮，按钮在头像左侧，所以菜单右边缘也要往左让一点
-        x: window.width - width - 20 - 10 - 34
-        y: 20 + card.headerHeight + 6
-        currentId: Ai.current
+    // ---- 设置页（从账号菜单进入）-------------------------------------------
+    SettingsPanel {
+        id: settingsPanel
+        visible: window.settingsOpen
+        width: 380
+        height: window.height - 40
+        x: window.width - width - 20
+        y: 20
+        currentProvider: Ai.current
         providers: Ai.available
 
-        onProviderPicked: function (id) {
+        onProviderSelected: function (id) {
             Ai.current = id;
-            window.aiMenuOpen = false;
+        }
+        onCloseRequested: window.settingsOpen = false
+    }
+
+    // ---- AI 对话面板（点 AI 按钮从右侧滑出，参考 Copilot 聊天面板）----------
+    ChatPanel {
+        id: chatPanel
+        visible: window.chatOpen
+        width: 360
+        height: window.height - 40
+        x: window.width - width - 20
+        y: 20
+        providerName: Ai.provider.name
+        providerShort: Ai.provider.short
+        providerGlyph: Ai.provider.glyph
+        providerColor: Ai.provider.color
+
+        onCloseRequested: window.chatOpen = false
+
+        onSendRequested: function (text) {
+            // 还没接真实模型：给一句说明，避免让人以为已经通了
+            Qt.callLater(function () {
+                chatPanel.appendAssistant(
+                    "（界面演示）收到：「" + text + "」。\n"
+                    + "真实对话需要先接入 " + Ai.provider.name + " 的 API Key，"
+                    + "这一步还没做——目前只有界面。");
+            });
         }
     }
 
     // 点空白处收起菜单
     MouseArea {
         anchors.fill: parent
-        enabled: window.accountMenuOpen || window.aiMenuOpen
+        enabled: window.accountMenuOpen
         z: -1
-        onClicked: {
-            window.accountMenuOpen = false;
-            window.aiMenuOpen = false;
-        }
+        onClicked: window.accountMenuOpen = false
     }
 }

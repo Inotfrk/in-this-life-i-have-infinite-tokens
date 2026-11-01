@@ -29,7 +29,8 @@ qt_add_resources(infinite-tokens "qml"
         src/ui/qml/HeaderButton.qml
         src/ui/qml/AiButton.qml
         src/ui/qml/AiGlyph.qml
-        src/ui/qml/AiProviderMenu.qml
+        src/ui/qml/ChatPanel.qml
+        src/ui/qml/SettingsPanel.qml
         src/ui/qml/SubjectRow.qml
         src/ui/qml/SubjectGlyph.qml
         src/ui/qml/Avatar.qml
