@@ -58,10 +58,27 @@
 2. 去掉空格与非法字符，保留大小写。
 3. 直接拼进分支名，**不需要登记、不需要查表**；判断当前分支属不属于自己只看账号段。
 
+### 2.2.1 远端名因机器而异（不要假设叫 `origin`）
+
+团队里每台机器 clone 的习惯不同，**远端（remote）的名字不统一**：有人是 `origin`，
+有人是 `github`、`gitee`、`upstream`，甚至同一台机器上挂着多个远端。文档与脚本里凡是
+出现 `origin` 的地方，都要理解成「**指向本仓库的那个远端**」，而不是字面名字。
+
+- **先看自己机器上叫什么**：`git remote -v`，选 push 地址指向
+  `Inotfrk/in-this-life-i-have-infinite-tokens` 的那个名字。
+- **不要因为远端名不同就去改仓库设置或改名**：名字是各机本地配置，不影响分支规则与归属。
+- 下文命令为了可读性仍写 `<远端>`，请按 `git remote -v` 的结果替换；
+  只有本机确实叫 `origin` 时才能照抄成 `origin`。
+- `scripts/release.ps1` / `scripts/release.sh` 已改成**自动探测**：
+  优先选 push URL 指向本仓库的远端，其次 `origin`，再其次唯一的远端；找不到就报错并提示。
+  所以它们不再依赖本机把远端命名为 `origin`。
+- 顺带说明：**端口之外的凭据也不统一**。有人用 GitHub 用户名 + PAT，有人用 Git Credential
+  Manager；`git push` 被要求输入凭据属正常，不要写进文档或提交里。
+
 ### 2.3 第一次在某台电脑上工作
 
-1. `git fetch origin && git switch -c <账号段>-<电脑段>-Main origin/develop`（从最新 `develop` 切出）。
-2. `git push -u origin <账号段>-<电脑段>-Main`。
+1. `git fetch <远端> && git switch -c <账号段>-<电脑段>-Main <远端>/develop`（从最新 `develop` 切出）。
+2. `git push -u <远端> <账号段>-<电脑段>-Main`。
 3. 之后按 2.4 切子分支。
 
 ### 2.4 父子关系与多分支
@@ -85,11 +102,13 @@
 
 | # | 时机 | 动作 |
 | --- | --- | --- |
-| 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push origin HEAD` |
-| 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push origin HEAD` |
+| 1 | 每轮迭代（一次改动 / 一次答复）完成并通过验证 | commit 并 push 到**第三层当前分支**：`git push <远端> HEAD` |
+| 2 | 一个子分支做完、测试全绿 | 合并回 `-Main` 并 push：`git switch <账号段>-<电脑段>-Main && git merge --no-ff <子分支> && git push <远端> HEAD` |
 | 3 | `-Main` 攒够一批改动、测试全绿 | **开 PR** 合并进**第二层** `develop`（不能直推，见 2.5.2） |
 | 4 | `develop` 收到新提交 | **自动**推进到**第一层** `master`：本地跑 `scripts/release`，或由 `.github/workflows/release.yml` 开 PR 合并（见第 8 节） |
-| 5 | 推送冲突 / 被拒绝 | 先 `git fetch origin` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+| 5 | 推送冲突 / 被拒绝 | 先 `git fetch <远端>` 再看差异；**不许 force push**，冲突解决不了就保留现场并报告 |
+
+> `<远端>` 按 `git remote -v` 填（见 2.2.1），本机叫 `origin` 就写 `origin`。
 
 #### 冲突处理（硬性）
 

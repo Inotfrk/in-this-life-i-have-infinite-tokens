@@ -1,4 +1,4 @@
-# Sandbox runner: keeps a long-lived named container so any run can be inspected
+﻿# Sandbox runner: keeps a long-lived named container so any run can be inspected
 # or reproduced afterwards instead of disappearing with --rm.
 #
 # Resource caps: the container is created with --memory/--memory-swap/--cpus
@@ -23,10 +23,10 @@ param(
     # test = 只跑测试的轻量镜像；view = 额外带 noVNC 桌面的可视镜像
     [ValidateSet('test', 'view')]
     [string]$Target = 'test',
-    [string]$Image = 'calculator-sandbox:local',
-    [string]$ViewImage = 'calculator-sandbox:view',
-    [string]$Container = 'calculator-sandbox',
-    [string]$Command = 'xvfb-run -a bash scripts/build.sh test',
+    [string]$Image = 'infinite-tokens-sandbox:local',
+    [string]$ViewImage = 'infinite-tokens-sandbox:view',
+    [string]$Container = 'infinite-tokens-sandbox',
+    [string]$Command = 'bash scripts/build.sh test',
     # Hard cap so a runaway build cannot take the whole host down (16 GB host,
     # Docker defaults to roughly half of it and never pages back reliably).
     [string]$Memory = '2g',

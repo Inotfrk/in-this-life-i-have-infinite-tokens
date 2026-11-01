@@ -12,14 +12,14 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TARGET="${TARGET:-test}"
 if [ "$TARGET" = "view" ]; then
-  IMAGE="${IMAGE:-calculator-sandbox:view}"
+  IMAGE="${IMAGE:-infinite-tokens-sandbox:view}"
 else
-  IMAGE="${IMAGE:-calculator-sandbox:local}"
+  IMAGE="${IMAGE:-infinite-tokens-sandbox:local}"
 fi
-VIEW_IMAGE="${VIEW_IMAGE:-calculator-sandbox:view}"
-CONTAINER="${CONTAINER:-calculator-sandbox}"
+VIEW_IMAGE="${VIEW_IMAGE:-infinite-tokens-sandbox:view}"
+CONTAINER="${CONTAINER:-infinite-tokens-sandbox}"
 VIEW_PORT="${VIEW_PORT:-6080}"
-COMMAND="${COMMAND:-xvfb-run -a bash scripts/build.sh test}"
+COMMAND="${COMMAND:-bash scripts/build.sh test}"
 # Hard cap so a runaway build cannot take the whole host down.
 MEMORY="${MEMORY:-2g}"
 CPUS="${CPUS:-2}"
