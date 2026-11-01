@@ -243,11 +243,30 @@ Window {
         }
     }
 
+    // ---- 设置页（全页覆盖，参考 GitHub 的设置页）---------------------------
+    SettingsPage {
+        id: settingsPage
+        anchors.fill: parent
+        visible: window.settingsOpen
+        z: 100
+        currentTheme: Theme.mode
+        currentProvider: Ai.current
+        providers: Ai.available
+        userName: window.userName
+        avatarSource: window.avatarSource
+
+        onCloseRequested: window.settingsOpen = false
+        onThemeSelected: function (mode) { Theme.mode = mode; }
+        onProviderSelected: function (id) { Ai.current = id; }
+        onChangeAvatarRequested: window.accountMenuOpen = true
+    }
+
     // ---- 账号菜单（点头像弹出）----------------------------------------------
     AccountMenu {
         id: accountMenu
         visible: window.accountMenuOpen
-        x: window.width - width - 20 - 10
+        z: 200
+        x: window.width - width - 20
         y: 20 + card.headerHeight + 6
         userName: window.userName
         avatarSource: window.avatarSource
@@ -255,24 +274,9 @@ Window {
         onSettingsRequested: {
             window.accountMenuOpen = false;
             window.settingsOpen = true;
+            settingsPage.activeNav = 0;
         }
-    }
-
-    // ---- 设置页（从账号菜单进入）-------------------------------------------
-    SettingsPanel {
-        id: settingsPanel
-        visible: window.settingsOpen
-        width: 380
-        height: window.height - 40
-        x: window.width - width - 20
-        y: 20
-        currentProvider: Ai.current
-        providers: Ai.available
-
-        onProviderSelected: function (id) {
-            Ai.current = id;
-        }
-        onCloseRequested: window.settingsOpen = false
+        onChangeAvatarRequested: window.accountMenuOpen = false
     }
 
     // ---- AI 对话面板（点 AI 按钮从右侧滑出，参考 Copilot 聊天面板）----------

@@ -29,6 +29,11 @@ public:
     QStringList availableModes() const;
     QVariantMap palette() const;
 
+    // 指定主题的配色，用于设置页里的主题缩略图预览
+    Q_INVOKABLE QVariantMap preview(const QString &mode) const;
+    // 主题的展示名，避免 QML 里维护一份翻译表
+    Q_INVOKABLE QString displayName(const QString &mode) const;
+
 signals:
     void modeChanged();
 

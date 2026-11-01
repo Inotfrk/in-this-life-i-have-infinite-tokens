@@ -252,6 +252,21 @@
 
 ## 已完成
 
+### T-028 账号菜单与全页设置（仿 GitHub 操作逻辑）
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-025
+- 涉及文件：`src/ui/qml/AccountMenu.qml`、`src/ui/qml/SettingsPage.qml`、
+  `src/ui/qml/Main.qml`、`src/ui/theme.h/.cpp`、`src/ui/qml/GlyphIcon.qml`
+- 验收：点头像弹分组菜单 → 点「设置…」进入全页设置 → 左侧导航可切换四个分区
+- 说明：按作者要求**照 GitHub 的操作逻辑**做，去掉通讯/社交类项目。
+  菜单分三组（账号信息 / 更换头像·设置·切换账号 / 退出登录危险色），
+  设置页是**整页覆盖 + 左侧导航 + 右侧内容**，与 GitHub `/settings` 同构。
+  新增 Theme.preview() / displayName() 供设置页画主题缩略图。
+  已用 xdotool 实际点击验证整条链路。
+
 ### T-013 废弃计算器实现与设计
 
 - 状态：done

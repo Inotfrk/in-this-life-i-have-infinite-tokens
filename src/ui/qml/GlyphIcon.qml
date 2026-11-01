@@ -188,6 +188,32 @@ Canvas {
                 ctx.lineTo(10 + Math.cos(ak) * 6.6, 10 + Math.sin(ak) * 6.6);
                 ctx.stroke();
             }
+        } else if (name === "sortlist") {
+            ctx.beginPath();
+            ctx.moveTo(4, 6); ctx.lineTo(16, 6);
+            ctx.moveTo(6, 10); ctx.lineTo(14, 10);
+            ctx.moveTo(8, 14); ctx.lineTo(12, 14);
+            ctx.stroke();
+        } else if (name === "appearance") {
+            // 半明半暗的圆：外观设置
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.4, -Math.PI / 2, Math.PI / 2, false);
+            ctx.closePath();
+            ctx.fill();
+        } else if (name === "info") {
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.8, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(10, 6.9, 0.85, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(10, 9.6);
+            ctx.lineTo(10, 13.6);
+            ctx.stroke();
         } else if (name === "check") {
             ctx.beginPath();
             ctx.moveTo(4.5, 10.5);
