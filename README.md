@@ -41,6 +41,7 @@ scripts/
     sandbox.sh          长驻 Docker 沙箱（macOS / Linux）
     desktop.sh          容器内起 Xvfb + noVNC，用浏览器看真实界面
 docs/design-study-app-ui.md  主页面设计说明
+docs/server-plan.md          服务端方案（账号 / 同步 / 配置下发，未实现）
 ```
 
 #### 安装教程
