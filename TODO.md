@@ -144,17 +144,32 @@
   **阻塞**：用户能否否决 AI 的判断未定（7.2 第 23 条）、生词归属当前学科还是全局未定（第 24 条）、
   结束后自动进背诵还是仅提示未定（第 25 条）。
 
-### T-021 AI 入口的实际能力（让 AI 操作软件）
+### T-021 AI 对话与指令执行协议
 
-- 状态：blocked
+- 状态：done
 - 目标分支：`inotfrk-Fairy-qt-design`
-- 优先级：P2
-- 依赖：T-011
-- 涉及文件：`src/ui/qml/AiButton.qml`、新增 AI 调度层
-- 验收：点 AI 能发起一次让 AI 操作软件的交互（如换学科、导入资料）
-- 说明：对应文档 4.2 的 AI 入口注释（作者口述：点它就能对软件做任何操作）。
-  当前**只有按钮外观与服务商切换**，没有任何真实的 AI 调用。
-  阻塞原因：AI 服务端方案与 API Key 策略尚未定，属于「服务端后面再说」的范围。
+- 优先级：P0
+- 依赖：T-025
+- 涉及文件：`src/ui/ai_client.h/.cpp`、`src/ui/control_command.h/.cpp`、
+  `src/ui/qml/ChatPanel.qml`、`src/ui/qml/Main.qml`、`docs/design-ai-protocol.md`
+- 验收：本地假服务器下发 `ui.set_subject` / `ui.set_theme`，客户端真的切换学科与主题
+- 说明：对应 C24。**架构按作者要求定为「全部请求经我们的服务器」**：
+  客户端不直连任何厂商、不存厂商 Key；服务器回复 `{reply, commands}`，
+  客户端只执行**白名单**里的指令。已用假服务器端到端验证通过（见 docs 截图）。
+  服务器本身尚未实现。
+
+### T-027 AI 服务端实现
+
+- 状态：queued
+- 目标分支：<待定，可能独立仓库>
+- 优先级：P1
+- 依赖：T-021
+- 涉及文件：新增服务端（语言与部署方式待定）
+- 验收：客户端配置该地址后能正常对话并返回合法指令
+- 说明：协议已在 [docs/design-ai-protocol.md](docs/design-ai-protocol.md) 定义完毕，
+  客户端侧已按协议实现并验证。服务端职责：接收 `{message, context}` →
+  调用所选厂商 → 把模型输出规整成 `{reply, commands}`。
+  **待定**：认证方式、限额与计费、是否中转用户自备 Key（协议文档第 6 节）。
 
 ### T-025 AI 服务商注册表与图标
 
@@ -170,17 +185,18 @@
   注册表内置六项，每项带展示名、缩写、品牌色；新增服务商只需在注册表与 `AiGlyph.qml`
   各加一处，界面代码不动。图标用形状与配色表达，不内嵌商标文件。
 
-### T-026 AI 服务商设置页与持久化
+### T-026 AI 服务商设置页与凭据持久化
 
 - 状态：blocked
 - 目标分支：`inotfrk-Fairy-qt-design`
 - 优先级：P1
 - 依赖：T-025
-- 涉及文件：新增设置页、`src/ui/ai_provider.cpp`（读写配置）
-- 验收：在设置里选服务商，重启后仍然保持；能填各家的 API Key
-- 说明：服务商数据层已完成，但**设置页面还不存在**，选择也不持久化（重启回到 DeepSeek）。
-  **阻塞**：设置页的入口与分组未定（7.2 第 5 条）；API Key 存哪、要不要加密、
-  是否跟随账号同步（T-024）都未定。
+- 涉及文件：`src/ui/qml/SettingsPanel.qml`、`src/ui/ai_provider.cpp`（读写配置）
+- 验收：在设置里选服务商并填 API Key，重启后仍然保持
+- 说明：设置页界面已完成（AI 服务商单选 + API 凭据说明区），但**不持久化**，
+  且**还没有 API Key 输入框**。
+  **阻塞**：API Key 存哪、要不要加密、是否跟随账号同步（T-024）；
+  「使用我们提供的服务端」这条路怎么走（C25）也还没有方案。
 
 ### T-022 新增学科入口与学科数据模型
 
@@ -248,6 +264,21 @@
   `--screenshot` + `QT_QPA_PLATFORM=offscreen`，不再依赖 `xvfb-run`。
 
 ## 已完成
+
+### T-028 账号菜单与全页设置（仿 GitHub 操作逻辑）
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-qt-design`
+- 优先级：P0
+- 依赖：T-025
+- 涉及文件：`src/ui/qml/AccountMenu.qml`、`src/ui/qml/SettingsPage.qml`、
+  `src/ui/qml/Main.qml`、`src/ui/theme.h/.cpp`、`src/ui/qml/GlyphIcon.qml`
+- 验收：点头像弹分组菜单 → 点「设置…」进入全页设置 → 左侧导航可切换四个分区
+- 说明：按作者要求**照 GitHub 的操作逻辑**做，去掉通讯/社交类项目。
+  菜单分三组（账号信息 / 更换头像·设置·切换账号 / 退出登录危险色），
+  设置页是**整页覆盖 + 左侧导航 + 右侧内容**，与 GitHub `/settings` 同构。
+  新增 Theme.preview() / displayName() 供设置页画主题缩略图。
+  已用 xdotool 实际点击验证整条链路。
 
 ### T-013 废弃计算器实现与设计
 

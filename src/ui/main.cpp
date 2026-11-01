@@ -8,13 +8,16 @@
 
 #include <cstdio>
 
+#include "ai_client.h"
 #include "ai_provider.h"
+#include "control_command.h"
 #include "theme.h"
 
 // 桌面入口。除了正常启动，还支持几个只服务于「无显示器确认界面」的参数：
 //   --screenshot <文件>   把界面渲染成 PNG 后退出
 //   --theme <名字>        启动时指定主题（dark / light / star）
 //   --ai <服务商>          启动时指定 AI 服务商（deepseek / claude / gpt / …）
+//   --endpoint <URL>        指定 AI 服务器地址
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
@@ -38,9 +41,17 @@ int main(int argc, char *argv[])
     if (aiIndex >= 0 && aiIndex + 1 < args.size())
         ai.setCurrent(args.at(aiIndex + 1));
 
+    CommandBus commands;
+    AiClient aiClient;
+    const int endpointIndex = args.indexOf(QStringLiteral("--endpoint"));
+    if (endpointIndex >= 0 && endpointIndex + 1 < args.size())
+        aiClient.setEndpoint(args.at(endpointIndex + 1));
+
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty(QStringLiteral("Theme"), &theme);
     engine.rootContext()->setContextProperty(QStringLiteral("Ai"), &ai);
+    engine.rootContext()->setContextProperty(QStringLiteral("Commands"), &commands);
+    engine.rootContext()->setContextProperty(QStringLiteral("AiClient"), &aiClient);
     engine.load(QUrl(QStringLiteral("qrc:/src/ui/qml/Main.qml")));
     if (engine.rootObjects().isEmpty())
         return -1;

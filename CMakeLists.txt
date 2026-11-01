@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Theme 是带 Q_OBJECT 的 QObject 子类，需要 moc 处理它的头文件。
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.2 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.2 REQUIRED COMPONENTS Quick Network)
 
 qt_add_executable(infinite-tokens
     src/ui/main.cpp
@@ -18,6 +18,10 @@ qt_add_executable(infinite-tokens
     src/ui/theme.h
     src/ui/ai_provider.cpp
     src/ui/ai_provider.h
+    src/ui/ai_client.cpp
+    src/ui/ai_client.h
+    src/ui/control_command.cpp
+    src/ui/control_command.h
 )
 
 # QML 走资源文件：路径固定为 qrc:/src/ui/qml/Main.qml，
@@ -29,7 +33,8 @@ qt_add_resources(infinite-tokens "qml"
         src/ui/qml/HeaderButton.qml
         src/ui/qml/AiButton.qml
         src/ui/qml/AiGlyph.qml
-        src/ui/qml/AiProviderMenu.qml
+        src/ui/qml/ChatPanel.qml
+        src/ui/qml/SettingsPage.qml
         src/ui/qml/SubjectRow.qml
         src/ui/qml/SubjectGlyph.qml
         src/ui/qml/Avatar.qml
@@ -38,7 +43,7 @@ qt_add_resources(infinite-tokens "qml"
 )
 
 target_include_directories(infinite-tokens PRIVATE src/ui)
-target_link_libraries(infinite-tokens PRIVATE Qt6::Quick)
+target_link_libraries(infinite-tokens PRIVATE Qt6::Quick Qt6::Network)
 
 set_target_properties(infinite-tokens PROPERTIES
     WIN32_EXECUTABLE TRUE

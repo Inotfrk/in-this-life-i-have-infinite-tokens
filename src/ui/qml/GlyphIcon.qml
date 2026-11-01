@@ -177,11 +177,67 @@ Canvas {
             ctx.lineTo(3, 15.5);
             ctx.closePath();
             ctx.stroke();
+        } else if (name === "settings") {
+            ctx.beginPath();
+            ctx.arc(10, 10, 2.6, 0, Math.PI * 2);
+            ctx.stroke();
+            for (var k = 0; k < 8; ++k) {
+                var ak = k * Math.PI / 4;
+                ctx.beginPath();
+                ctx.moveTo(10 + Math.cos(ak) * 4.6, 10 + Math.sin(ak) * 4.6);
+                ctx.lineTo(10 + Math.cos(ak) * 6.6, 10 + Math.sin(ak) * 6.6);
+                ctx.stroke();
+            }
+        } else if (name === "sortlist") {
+            ctx.beginPath();
+            ctx.moveTo(4, 6); ctx.lineTo(16, 6);
+            ctx.moveTo(6, 10); ctx.lineTo(14, 10);
+            ctx.moveTo(8, 14); ctx.lineTo(12, 14);
+            ctx.stroke();
+        } else if (name === "appearance") {
+            // 半明半暗的圆：外观设置
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.4, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.4, -Math.PI / 2, Math.PI / 2, false);
+            ctx.closePath();
+            ctx.fill();
+        } else if (name === "info") {
+            ctx.beginPath();
+            ctx.arc(10, 10, 6.8, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(10, 6.9, 0.85, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.moveTo(10, 9.6);
+            ctx.lineTo(10, 13.6);
+            ctx.stroke();
         } else if (name === "check") {
             ctx.beginPath();
             ctx.moveTo(4.5, 10.5);
             ctx.lineTo(8, 14);
             ctx.lineTo(15.5, 6);
+            ctx.stroke();
+        } else if (name === "close") {
+            ctx.beginPath();
+            ctx.moveTo(5, 5);
+            ctx.lineTo(15, 15);
+            ctx.moveTo(15, 5);
+            ctx.lineTo(5, 15);
+            ctx.stroke();
+        } else if (name === "send") {
+            ctx.beginPath();
+            ctx.moveTo(3.5, 10);
+            ctx.lineTo(16.5, 3.5);
+            ctx.lineTo(12, 16.5);
+            ctx.lineTo(9.8, 11.2);
+            ctx.closePath();
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(9.8, 11.2);
+            ctx.lineTo(16.5, 3.5);
             ctx.stroke();
         }
 

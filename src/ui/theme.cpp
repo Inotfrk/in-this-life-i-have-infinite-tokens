@@ -123,3 +123,20 @@ QVariantMap Theme::palette() const
     const auto it = Themes().constFind(m_mode);
     return ToMap(it == Themes().constEnd() ? kDark : it.value());
 }
+
+QVariantMap Theme::preview(const QString &mode) const
+{
+    const auto it = Themes().constFind(mode);
+    return ToMap(it == Themes().constEnd() ? kDark : it.value());
+}
+
+QString Theme::displayName(const QString &mode) const
+{
+    if (mode == QLatin1String("dark"))
+        return QStringLiteral("深色");
+    if (mode == QLatin1String("light"))
+        return QStringLiteral("浅色");
+    if (mode == QLatin1String("star"))
+        return QStringLiteral("星空");
+    return mode;
+}

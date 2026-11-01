@@ -13,6 +13,8 @@ Item {
     width: 32
     height: 32
 
+    signal clicked()
+
     Rectangle {
         anchors.fill: parent
         radius: 6
@@ -45,5 +47,6 @@ Item {
         cursorShape: Qt.PointingHandCursor
         onEntered: headerButton.hovered = true
         onExited: headerButton.hovered = false
+        onClicked: headerButton.clicked()
     }
 }
