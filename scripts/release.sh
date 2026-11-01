@@ -5,7 +5,6 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REMOTE="origin"
 DEV_BRANCH="develop"
 REL_BRANCH="master"
 OWNER="Inotfrk"
@@ -20,6 +19,23 @@ for arg in "$@"; do
     *) echo "用法: scripts/release.sh [--dry-run] [--skip-tests]" >&2; exit 1 ;;
   esac
 done
+
+# 每台机器 clone 时给远端起的名字可能不同（origin / github / upstream ...），
+# 不能硬编码 'origin'。优先取 push URL 指向本仓库的那个远端，再退回 origin / 唯一的远端。
+resolve_remote() {
+  local name url
+  while read -r name url _; do
+    case "$url" in
+      *"$OWNER/$REPO_NAME"*) echo "$name"; return 0 ;;
+    esac
+  done < <(git -C "$ROOT" remote -v | awk '$3 == "(push)"')
+  if git -C "$ROOT" remote | grep -qx 'origin'; then echo 'origin'; return 0; fi
+  if [ "$(git -C "$ROOT" remote | wc -l)" -eq 1 ]; then git -C "$ROOT" remote; return 0; fi
+  echo "错误：找不到指向 $OWNER/$REPO_NAME 的远端；请先 git remote add <名字> <仓库地址>" >&2
+  return 1
+}
+
+REMOTE="$(resolve_remote)" || exit 1
 
 START_BRANCH="$(git -C "$ROOT" rev-parse --abbrev-ref HEAD)"
 if [[ "$START_BRANCH" == "$REL_BRANCH" || "$START_BRANCH" == "$DEV_BRANCH" ]]; then

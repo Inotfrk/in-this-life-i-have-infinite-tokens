@@ -1,4 +1,4 @@
-# 配置、构建、界面检查（Windows）。仅需 CMake + Qt 6 + MSVC。
+﻿# 配置、构建、界面检查（Windows）。仅需 CMake + Qt 6 + MSVC。
 # 用法: powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test
 param(
     [ValidateSet('build', 'test', 'run', 'clean')]
