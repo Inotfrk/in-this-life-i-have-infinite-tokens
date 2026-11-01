@@ -7,10 +7,15 @@ project(infinite_tokens VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Theme 是带 Q_OBJECT 的 QObject 子类，需要 moc 处理它的头文件。
+set(CMAKE_AUTOMOC ON)
+
 find_package(Qt6 6.2 REQUIRED COMPONENTS Quick)
 
 qt_add_executable(infinite-tokens
     src/ui/main.cpp
+    src/ui/theme.cpp
+    src/ui/theme.h
 )
 
 # QML 走资源文件：路径固定为 qrc:/src/ui/qml/Main.qml，
@@ -23,9 +28,9 @@ qt_add_resources(infinite-tokens "qml"
         src/ui/qml/HeaderButton.qml
         src/ui/qml/SubjectRow.qml
         src/ui/qml/GlyphIcon.qml
-        src/ui/qml/Theme.js
 )
 
+target_include_directories(infinite-tokens PRIVATE src/ui)
 target_link_libraries(infinite-tokens PRIVATE Qt6::Quick)
 
 set_target_properties(infinite-tokens PROPERTIES

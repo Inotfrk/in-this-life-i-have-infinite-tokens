@@ -121,6 +121,13 @@ Canvas {
             ctx.moveTo(3.5, 14);
             ctx.lineTo(16.5, 14);
             ctx.stroke();
+        } else if (name === "plus") {
+            ctx.beginPath();
+            ctx.moveTo(10, 4);
+            ctx.lineTo(10, 16);
+            ctx.moveTo(4, 10);
+            ctx.lineTo(16, 10);
+            ctx.stroke();
         } else if (name === "folder") {
             ctx.beginPath();
             ctx.moveTo(3, 6.5);
@@ -130,12 +137,6 @@ Canvas {
             ctx.lineTo(17, 15.5);
             ctx.lineTo(3, 15.5);
             ctx.closePath();
-            ctx.stroke();
-        } else if (name === "chevron") {
-            ctx.beginPath();
-            ctx.moveTo(6.5, 8.5);
-            ctx.lineTo(10, 12);
-            ctx.lineTo(13.5, 8.5);
             ctx.stroke();
         }
 

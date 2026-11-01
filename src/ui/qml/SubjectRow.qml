@@ -1,5 +1,4 @@
 import QtQuick
-import "Theme.js" as Theme
 
 // 学科侧栏的一行。只有悬停与选中两种视觉状态，点选不加载任何内容。
 Item {
@@ -22,15 +21,15 @@ Item {
         anchors.leftMargin: 8
         anchors.rightMargin: 8
         radius: 6
-        color: subjectRow.selected ? Theme.activeBg
-                                   : (subjectRow.hovered ? Theme.hoverBg : "transparent")
+        color: subjectRow.selected ? Theme.palette.activeBg
+                                   : (subjectRow.hovered ? Theme.palette.hoverBg : "transparent")
 
         Rectangle {
             visible: subjectRow.selected
             width: 2
             height: 16
             radius: 1
-            color: Theme.accent
+            color: Theme.palette.accent
             x: subjectRow.indicatorInset
             anchors.verticalCenter: parent.verticalCenter
         }
@@ -45,7 +44,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             color: "transparent"
             border.width: 1.4
-            border.color: subjectRow.selected ? Theme.accent : Theme.textFaint
+            border.color: subjectRow.selected ? Theme.palette.accent : Theme.palette.textFaint
         }
 
         Text {
@@ -55,7 +54,7 @@ Item {
             anchors.rightMargin: 8
             anchors.verticalCenter: parent.verticalCenter
             text: subjectRow.name + "  " + subjectRow.title
-            color: subjectRow.selected ? Theme.text : Theme.textMuted
+            color: subjectRow.selected ? Theme.palette.text : Theme.palette.textMuted
             font.pixelSize: 13
             elide: Text.ElideRight
         }
