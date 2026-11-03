@@ -1,0 +1,43 @@
+# 本地验证用：一次起好 PostgreSQL + 后端 + 测试。
+#
+#   docker compose up -d --build
+#   docker compose run --rm tester
+#   docker compose down -v
+services:
+  db:
+    # 本机 Docker 直连 Docker Hub 会 401/超时，统一走国内加速镜像。
+    image: docker.m.daocloud.io/library/postgres:16-alpine
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app_pw
+      POSTGRES_DB: usercenter
+    # 只在宿主机回环上暴露，方便本地排查；生产不需要。
+    ports:
+      - '127.0.0.1:55432:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U app -d usercenter']
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+  api:
+    build: .
+    environment:
+      DATABASE_URL: postgres://app:app_pw@db:5432/usercenter
+      JWT_SECRET: local-dev-secret-do-not-use-in-production
+      PORT: '3000'
+    ports:
+      - '127.0.0.1:3000:3000'
+    depends_on:
+      db:
+        condition: service_healthy
+
+  tester:
+    build: .
+    environment:
+      API_BASE: http://api:3000
+    depends_on:
+      api:
+        condition: service_started
+    command: sh -c 'sleep 3 && node test/run-tests.js'
+    profiles: ['test']
