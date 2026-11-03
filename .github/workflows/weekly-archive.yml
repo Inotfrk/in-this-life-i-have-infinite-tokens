@@ -1,0 +1,109 @@
+name: weekly-archive
+
+# 每周一北京时间 06:00 给仓库打一个存档分支 archive/<日期>。
+#   分支内容 = master 的快照 + 根目录 ARCHIVE.md（本周 develop 上每个人提交的改动简介）。
+#   存档分支对所有人可读（仓库是 public），但只有拥有者与 Actions 能建/改/删，
+#   规则来源是 scripts/github-rulesets.ps1 的 archive-owner-only。
+
+on:
+  schedule:
+    # GitHub 的 cron 只认 UTC：UTC 周日 22:00 = 北京时间周一 06:00（UTC+8）。
+    - cron: '0 22 * * 0'
+  workflow_dispatch:
+    inputs:
+      date:
+        description: '存档日期（YYYY-MM-DD，留空用北京时间当天）'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+# 两次运行同时建同一条分支会互相打架，排队执行即可。
+concurrency:
+  group: weekly-archive
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    name: snapshot master
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          # 需要完整历史才能按时间窗口统计 develop 上的提交。
+          fetch-depth: 0
+
+      - name: Create archive branch
+        env:
+          INPUT_DATE: ${{ inputs.date }}
+        run: |
+          set -euo pipefail
+
+          # runner 没有装 tzdata，用 UTC+8 运算代替 TZ，避免 date 静默忽略时区。
+          DATE="${INPUT_DATE:-$(date -u -d '+8 hours' +%F)}"
+          BRANCH="archive/$DATE"
+          SINCE="$(date -u -d '7 days ago' '+%Y-%m-%dT%H:%M:%SZ')"
+          GENERATED="$(date -u -d '+8 hours' '+%Y-%m-%d %H:%M:%S') +0800"
+
+          git fetch origin master develop
+          SNAPSHOT="$(git rev-parse --short origin/master)"
+
+          # 每周只留一条存档，重跑不覆盖已经打好的历史存档。
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null 2>&1; then
+            echo "存档分支 $BRANCH 已存在，本次跳过"
+            exit 0
+          fi
+
+          # 按作者分组列出 develop 上本周的提交标题（旧的在前）。
+          # 发布回合、机器人、纯合并提交不算「功能变更」，只保留真人写的改动。
+          LIST="$(git log origin/develop --since="$SINCE" --no-merges --reverse \
+                    --pretty=format:'%an%x09%s' \
+            | awk -F'\t' '
+                $1 ~ /github-actions\[bot\]/            { next }
+                $1 ~ /^(Seed|GitHub)$/                  { next }
+                $2 ~ /^(release:|Merge |chore: 合并发布前自动提交)/ { next }
+                NF == 2                                 { print }
+              ')"
+
+          if [ -z "$LIST" ]; then
+            BODY="_本周 \`develop\` 上没有新提交。_"
+            TOTAL=0
+            AUTHORS=0
+          else
+            BODY="$(printf '%s\n' "$LIST" \
+              | LC_ALL=C sort -s -t $'\t' -k1,1 \
+              | awk -F'\t' '
+                  { if ($1 != author) { if (author != "") print ""; print "### " $1; author = $1 }
+                    print "- " $2 }
+                ')"
+            TOTAL="$(printf '%s\n' "$LIST" | wc -l | tr -d ' ')"
+            AUTHORS="$(printf '%s\n' "$LIST" | cut -f1 | sort -u | wc -l | tr -d ' ')"
+          fi
+
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          # 存档分支不跟踪 master，避免后续 checkout 时被当成主线的工作分支。
+          git switch -c "$BRANCH" --no-track origin/master
+
+          {
+            echo "# 每周存档 $DATE"
+            echo
+            echo "- 快照来源：\`master\` @ \`$SNAPSHOT\`"
+            echo "- 生成时间：$GENERATED"
+            echo "- 统计窗口：$SINCE 起，\`develop\` 上所有成员的提交（$TOTAL 条 / $AUTHORS 位提交者）"
+            echo
+            echo "> 存档分支是**只读快照**，不要在这些分支上直接改代码；"
+            echo "> 需要改动请回自己的 \`<账号段>-<电脑段>-*\` 分支（见 AGENTS.md 第 9 节）。"
+            echo
+            echo "## 本周新增与更改"
+            echo
+            echo "$BODY"
+          } > ARCHIVE.md
+
+          git add ARCHIVE.md
+          git commit -m "chore: 每周存档 $DATE"
+          git push origin "HEAD:refs/heads/$BRANCH"
+
+          echo "已创建存档分支 $BRANCH"

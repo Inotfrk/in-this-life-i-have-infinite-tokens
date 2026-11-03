@@ -133,8 +133,9 @@ GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕。配�
 | --- | --- | --- | --- |
 | `main-pr-only` | `master` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
 | `develop-pr-only` | `develop` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
-| `no-unowned-branches` | 除以下之外的所有分支 | `creation` | 只能新建 `master`、`develop`、`release/*`、`<账号段>-*` 这几种名字，杜绝乱命名 |
+| `no-unowned-branches` | 除以下之外的所有分支 | `creation` | 只能新建 `master`、`develop`、`release/*`、`archive/*`、`<账号段>-*` 这几种名字，杜绝乱命名 |
 | `<账号段>-owner-only` | `<账号段>-*` | `creation` + `update` + `deletion` | 只有该账号段本人能建、能推、能删这条前缀的分支 |
+| `archive-owner-only` | `archive/*` | `creation` + `update` + `deletion` + `non_fast_forward` | 每周存档分支，所有人可读，只有拥有者与 Actions 能建、能推、能删（见第 9 节） |
 
 PR 规则设的是 `required_approving_review_count = 0`：**不需要人工批准**，但必须走 PR 这个入口，
 所以合并记录、CI 结果都留在 PR 页面上；`require_extra_approval_for_unattributed_changes` 关掉了，
@@ -261,3 +262,24 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
   推送即触发，不需要手动开启；Actions 不可用时以本地脚本为准。
 - 自动推进禁止强推；冲突时停下来报告，由人决定。
 - 发布完成后必须把 `master` 的合并提交回合到 `develop`，否则每次合并都会在两层之间留下永久偏移。
+
+## 9. 每周存档分支（archive/*）
+
+除了三层流，仓库还有一类**只读的存档分支** `archive/<日期>`，例如 `archive/2026-11-03`。
+
+| 项 | 约定 |
+| --- | --- |
+| 创建者 | `.github/workflows/weekly-archive.yml`，每周一北京时间 **06:00**（UTC cron `0 22 * * 0`）自动创建 |
+| 内容 | `master` 当时的快照，外加一份根目录 `ARCHIVE.md`：本周 `develop` 上每位成员的提交标题 |
+| 日期 | 取北京时间当天，形如 `archive/2026-11-03`；同一天重复运行会**跳过**，不覆盖已有存档 |
+| 读取 | 仓库是 public，所有人可读、可 clone、可对比差异 |
+| 写入 | **只有仓库拥有者与 GitHub Actions** 能新建 / 推送 / 删除，其他人一律被 `archive-owner-only` 规则拒绝 |
+
+- 存档分支**不是开发分支**：不要在 `archive/*` 上提交、开 PR 或合并回主线，需要改动请回自己的
+  `<账号段>-<电脑段>-*`。
+- 手工补跑：Actions 页面 → `weekly-archive` → **Run workflow**，可选填 `date`（`YYYY-MM-DD`）。
+- 规则来源是 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1) 的 `archive-owner-only`：
+  放行 `Integration`（GitHub Actions，actor id 15368）与仓库拥有者，其余人只能读。
+  调整规则请改脚本后重跑，不要只在网页上点。
+- `ARCHIVE.md` 里的简介按提交作者分组，自动过滤机器人提交、`release:` 回合与纯合并提交，
+  只保留真人写的功能 / 修复 / 文档改动说明。

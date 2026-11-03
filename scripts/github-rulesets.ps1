@@ -1,7 +1,8 @@
 ﻿# 在 GitHub 仓库上创建/更新分支规则（Rulesets）。
-# 规则目标见 AGENTS.md 第 2.1、2.5、7 节：
+# 规则目标见 AGENTS.md 第 2.1、2.5、7、9 节：
 #   - master / develop：禁止直接推送，只允许 Pull Request 合并（AGENTS.md 2.5）
 #   - <账号段>-*：只允许该账号段的主人推送、删除（AGENTS.md 2.1 归属规则）
+#   - archive/*：每周存档分支，只有仓库拥有者与 Actions 能建/改/删（AGENTS.md 第 9 节）
 #
 # 用法：
 #   powershell -ExecutionPolicy Bypass -File scripts\github-rulesets.ps1 [-DryRun]
@@ -15,6 +16,12 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+
+# 每周存档分支的放行者：仓库拥有者 + GitHub Actions（workflow 用它自己的令牌推 archive/*）。
+# GitHub Actions 的固定 actor id 是 15368，见 Rulesets API 文档。
+$archiveKeepers = @(
+    @{ actor_id = 15368; actor_type = 'Integration'; bypass_mode = 'always' }
+)
 
 # 账号段 -> GitHub 用户名（与 .agents/branch-registry.md 的账号表保持一致）
 $accounts = [ordered]@{
@@ -73,6 +80,8 @@ function Get-UserId([string]$login) {
     }
 }
 
+$OwnerId = Get-UserId $Owner
+
 $prRule = @{
     type       = 'pull_request'
     parameters = @{
@@ -104,6 +113,27 @@ function New-OwnerRuleset([string]$prefix, [string]$login) {
     }
 }
 
+# 每周存档分支：所有人可读（public 仓库），只有拥有者和 Actions 能建、能推、能删
+function New-ArchiveRuleset() {
+    $bypass = @()
+    if ($OwnerId) {
+        $bypass += @{ actor_id = $OwnerId; actor_type = 'User'; bypass_mode = 'always' }
+    }
+    else {
+        Write-Warning "跳过 archive/* 的拥有者放行：GitHub 上没有 $Owner 这个账号"
+    }
+    $bypass += $archiveKeepers
+
+    return @{
+        name          = 'archive-owner-only'
+        target        = 'branch'
+        enforcement   = 'active'
+        conditions    = @{ ref_name = @{ include = @('refs/heads/archive/*'); exclude = @() } }
+        bypass_actors = $bypass
+        rules         = @(@{ type = 'creation' }, @{ type = 'update' }, @{ type = 'deletion' }, @{ type = 'non_fast_forward' })
+    }
+}
+
 $desired = @(
     @{
         name          = 'main-pr-only'
@@ -122,7 +152,7 @@ $desired = @(
         rules         = @(@{ type = 'deletion' }, @{ type = 'non_fast_forward' }, $prRule)
     },
     @{
-        # 分支名必须落在「自己的账号段」或发布脚本的 release/* 里，别的名字一律不允许新建。
+        # 分支名必须落在「自己的账号段」、发布脚本的 release/* 或每周存档 archive/* 里，别的名字一律不允许新建。
         name          = 'no-unowned-branches'
         target        = 'branch'
         enforcement   = 'active'
@@ -133,13 +163,15 @@ $desired = @(
                     'refs/heads/master'
                     'refs/heads/develop'
                     'refs/heads/release/*'
+                    'refs/heads/archive/*'
                     foreach ($kv in $accounts.GetEnumerator()) { "refs/heads/$($kv.Key)-*" }
                 )
             }
         }
         bypass_actors = @()
         rules         = @(@{ type = 'creation' })
-    }
+    },
+    (New-ArchiveRuleset)
 )
 foreach ($kv in $accounts.GetEnumerator()) {
     $set = New-OwnerRuleset $kv.Key $kv.Value

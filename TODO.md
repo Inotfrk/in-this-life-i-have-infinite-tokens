@@ -265,6 +265,24 @@
 
 ## 已完成
 
+### T-030 每周一自动存档分支 archive/<日期>
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-Main`
+- 优先级：P1
+- 依赖：无
+- 涉及文件：新增 `.github/workflows/weekly-archive.yml`；修改 `scripts/github-rulesets.ps1`、
+  `AGENTS.md`（新增第 9 节）、`.github/copilot-instructions.md`、`.agents/branch-registry.md`
+- 验收：workflow YAML 可被 `yaml.safe_load` 解析；步骤脚本在本地裸仓库上跑通，
+  生成 `archive/2026-11-03` + `ARCHIVE.md`（按作者分组、过滤机器人 / `release:` / 合并提交），
+  重复运行输出「已存在，本次跳过」；`github-rulesets.ps1 -DryRun` 输出 `archive-owner-only`
+  规则且 `bypass_actors` 含拥有者与 `Integration` 15368
+- 说明：每周一北京时间 06:00（UTC cron `0 22 * * 0`）从 `master` 切快照分支
+  `archive/<北京时间日期>`，附 `ARCHIVE.md` 汇总本周各成员在 `develop` 上的改动简介。
+  所有人可读，只有拥有者与 GitHub Actions 能建 / 推 / 删（规则 `archive-owner-only`）。
+
+## 已完成
+
 ### T-028 账号菜单与全页设置（仿 GitHub 操作逻辑）
 
 - 状态：done
