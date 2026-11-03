@@ -222,6 +222,21 @@
   远程配置下发、以及「资料文件本体首期不同步」的理由。**AI Key 走自填还是官方代转仍需作者拍板**（见文档第 7 节）。
   服务端实现另开任务，本文只定契约。
 
+### T-028 用户中心后端代码与本地验证
+
+- 状态：done
+- 目标分支：`inotfrk-Fairy-server`
+- 优先级：P0
+- 依赖：T-027
+- 涉及文件：`server/`（新增：`src/`、`test/`、`Dockerfile`、`docker-compose.yml`、`README.md`）、
+  `docs/server-plan.md`
+- 验收：`docker compose run --rm tester` 全绿
+- 说明：为了让扣子少烧积分，把后端代码改在本地写、本地 Docker 验证，再交给扣子部署。
+  6 个接口（health / register / login / verify / profile GET / profile PUT）+ bcrypt 密码哈希 +
+  JWT 7 天 + 三类限流（用户名 5 次/15 分、IP 20 次/15 分、注册 IP 10 次/小时），
+  计数持久化到 `rate_limits` 表。容器内 **63 项测试全绿**，另用 curl 从宿主机验证过真实 HTTP 与 UTF-8。
+  **服务端尚未部署到生产。**
+
 ### T-023 侧栏底部预留区的内容
 
 - 状态：blocked

@@ -1,10 +1,10 @@
-# 服务端方案（账号 · 同步 · 配置下发）
+﻿# 服务端方案（账号 · 同步 · 配置下发）
 
-> 状态：**方案阶段（未实现）**。本文只把 [design-study-app-ui.md](design-study-app-ui.md) 7.2 里
-> 与服务端相关的未决问题（第 26~30 条）收成可执行的决策与接口契约，**不写任何实现代码**。
+> 状态：**方案 + 本地实现阶段**。本文把 [design-study-app-ui.md](design-study-app-ui.md) 7.2 里
+> 与服务端相关的未决问题（第 26~30 条）收成可执行的决策与接口契约。
 >
-> 首期目标平台：**Cloudflare Workers + D1**。契约本身与平台无关，将来迁阿里云函数计算 / 腾讯云
-> 云函数时客户端不用改（只需换 `baseUrl`）。
+> 平台已从最初的 Cloudflare Workers 改为 **扣子编程项目**（见第 2 节）；
+> 可运行的后端代码在 [server/](../server/README.md)，本地 Docker 已跑通 **63 项测试**。
 >
 > 规则优先级最高：`AGENTS.md`、分支三层流、`.github/workflows/release.yml`、`scripts/release.*`
 > 等仓库治理文件**一律不动**，本文只谈软件本体的服务端部分。
@@ -36,58 +36,66 @@
 
 ## 2. 平台选择
 
-### 2.1 首期：Cloudflare Workers + D1
+### 2.1 现状：扣子编程项目
 
 | 项 | 内容 |
 | --- | --- |
-| 计算 | Workers，免费档每日 10 万请求、单次 CPU 10ms |
-| 数据库 | D1（SQLite），免费档 5GB 存储、每日 500 万行读 / 10 万行写 |
-| 对象存储 | R2（将来真要传文件时用），免费档 10GB + 免出网流量费 |
-| 门槛 | **不需要实名、不需要信用卡**，注册即可用 |
-| 地址 | 默认 `https://<name>.workers.dev`；绑自有域名**不需要备案**（服务器在境外），但国内访问延迟约 100~200ms |
+| 计算 | 扣子「编程项目」部署后的常驻服务，Node.js + Express |
+| 数据库 | 扣子空间的 PostgreSQL（底层 Supabase） |
+| 公网地址 | 部署后返回固定域名（`deploy` 的 `domain` 字段） |
+| 数据可迁移 | 支持 schema / 全量导出，有 PITR 时间点回滚 |
+| 门槛 | 需要扣子账号实名；搭建与部署消耗积分 |
 
-> 上一轮讨论里把「绑域名要备案」当成通用限制，那只对**境内节点**成立。Cloudflare 不在此列。
+> 官方文档没有 SLA 承诺，只能说「部署后常驻、不因会话结束而停」。先跑通、实测几天再压关键业务。
 
-### 2.2 备选：阿里云函数计算 FC / 腾讯云云函数 SCF
+### 2.2 备选：Cloudflare Workers + D1
+
+免实名免卡、免费额度大，但本机 Docker 直连 Docker Hub 会 401 / TLS 超时，
+国内网络下部署体验一般。契约相同，换平台只改客户端 `baseUrl`。
+
+### 2.3 备选：阿里云函数计算 FC / 腾讯云云函数 SCF
 
 国内节点延迟低、按调用计费且每月有免费额度，但需要**实名认证 + 绑定支付方式**；
 绑自有域名做对外服务需要 **ICP 备案**（1~3 周）。
-迁移成本：本契约是纯 HTTP/JSON，换平台只改客户端 `baseUrl` 与部署脚本。
 
-### 2.3 为什么不用现成 BaaS
+### 2.4 契约与平台无关
 
-Supabase / Firebase 能省事，但都是「境外注册 + 后续想自托就难搬」，
-而本产品的同步模型（按文档版本号合并）比通用 BaaS 的权限模型简单，自己写一层反而更省。
+本文定义的是纯 HTTP/JSON 契约，两个实现都对着它写：
+
+- 扣子编程项目里已有一份（Express + Supabase），沙箱自测通过，**尚未部署**
+- [server/](../server/README.md) 是本地可复现版本，Docker 内 **63 项测试全绿**，比扣子版多了限流
 
 ---
 
 ## 3. 账号模型
 
-### 3.1 匿名设备账号起步
-
-设计文档的产品立场是「**本地优先，不依赖账号体系**」（[design-study-app-ui.md](design-study-app-ui.md) 第 1 节）。
-所以首期**不设注册表单**：
+### 3.1 用户名 + 密码（首期最简版）
 
 ```
-客户端首次需要同步
-  └─ POST /v1/auth/anon  { deviceName }
-       └─ 服务端建一个匿名账号，返回 { userId, token }
-            └─ token 存本地（QSettings），之后所有请求带上
+客户端注册 / 登录
+  └─ POST /api/auth/register  { username, password }
+  └─ POST /api/auth/login     { username, password }
+       └─ 返回 token（JWT，7 天）
+            └─ token 存本地（QSettings），之后请求带 Authorization: Bearer <token>
 ```
 
-用户在意「这是哪台机器」时，才在需要时补邮箱/手机号升级成正式账号（本期不实现，接口先留位）。
+- 密码由服务端 **bcrypt（rounds=10）** 哈希，数据库不存明文
+- `username` 最长 64 字符，全局唯一
+- 注册成功自动建一条空 `profile`
+
+> 早先设想的「匿名设备账号」没有采用：既然已经有注册表单，
+> 匿名账号反而多一层合并逻辑，首期不引入。
 
 ### 3.2 Token
 
-- 服务端生成 **32 字节随机串**（base64url），**不签发 JWT**：无状态 JWT 省一次查询，
-  但要维护签名密钥轮换与吊销黑名单，对单机小服务不划算。
-- 库里只存 `sha256(token)`，泄露库不等于泄露 token。
-- 有效期 90 天，每次成功请求滑动续期（`expires_at` 顺延）。
-- 客户端登出 = 本地删 token；服务端另提供 `POST /v1/auth/revoke` 立即作废。
+- **签发 JWT**（HS256），有效期 **7 天**，密钥来自 `JWT_SECRET`
+- 服务端不存 token、不维护吊销列表：登出 = 客户端删掉本地 token
+- token 泄露的止损手段是轮换 `JWT_SECRET`（会让所有人重新登录）
+- 校验走 `POST /api/auth/verify`，客户端启动时用它确认 token 还有效
 
 ### 3.3 多账号
 
-「切换账号」在客户端侧就是**本地保存多组 `userId + token`，切换时换用另一组**，
+「切换账号」在客户端侧就是**本地保存多组 `user_id + token`，切换时换用另一组**，
 服务端不需要任何额外概念。对应 UI 里已实现的 `AccountMenu.qml`（切换账号 / 退出登录）。
 登录后图标变头像这一条已由 `Avatar.qml`（照片 + 首字母兜底）实现，本文不改。
 
@@ -95,96 +103,45 @@ Supabase / Firebase 能省事，但都是「境外注册 + 后续想自托就难
 
 ## 4. 接口契约
 
-统一前缀 `/v1`，全部 `Content-Type: application/json; charset=utf-8`，UTF-8 无 BOM。
-错误统一返回 `{ "error": { "code": "...", "message": "中文说明" } }`，`code` 供程序判断、`message` 可直接展示。
+统一前缀 `/api`，全部 `Content-Type: application/json`，UTF-8。
+错误统一返回 `{ "error": { "code": "...", "message": "中文说明" } }`，
+`code` 供程序判断、`message` 可直接展示。
 
-### 4.1 `GET /v1/health`
+**完整参数、响应示例、错误码见 [server/README.md](../server/README.md)**，这里只列清单。
 
-无鉴权。返回 `{ "ok": true, "version": "..." }`，用于客户端「测试服务器地址」按钮。
+| 方法 | 路径 | 需要 token | 说明 |
+| --- | --- | --- | --- |
+| GET | `/api/health` | 否 | 健康检查（含一次数据库查询） |
+| POST | `/api/auth/register` | 否 | 注册 |
+| POST | `/api/auth/login` | 否 | 登录，返回 token |
+| POST | `/api/auth/verify` | 是 | 校验 token |
+| GET | `/api/profile` | 是 | 读资料 |
+| PUT | `/api/profile` | 是 | 写资料（`data` 整体覆盖） |
 
-### 4.2 `POST /v1/auth/anon`
+### 4.1 限流
 
-```json
-// 请求
-{ "deviceName": "Fairy-PC" }
-// 200
-{ "userId": "u_7f3a...", "token": "…32字节…", "expiresAt": "2027-01-30T00:00:00Z" }
-```
+| 规则 | 窗口 | 上限 | 锁定 |
+| --- | --- | --- | --- |
+| 同一用户名登录失败 | 15 分钟 | 5 次 | 15 分钟 |
+| 同一 IP 登录失败 | 15 分钟 | 20 次 | 15 分钟 |
+| 同一 IP 注册 | 1 小时 | 10 次 | 到窗口结束 |
 
-### 4.3 `POST /v1/auth/revoke`
+超限返回 `429 TOO_MANY_ATTEMPTS` + `Retry-After` 头。
+计数持久化在数据库，服务重启不丢。
 
-需要 `Authorization: Bearer <token>`，返回 `204`。
+### 4.2 尚未实现的接口
 
-### 4.4 `GET /v1/me`
-
-需要鉴权。返回 `{ "userId": "...", "displayName": "Learner", "createdAt": "..." }`。
-客户端启动时用它校验 token 是否还有效。
-
-### 4.5 同步：`GET /v1/sync/changes?since=<cursor>`
-
-需要鉴权。`since` 省略表示全量。返回该账号下**自 cursor 以来变化过的文档清单**（不含正文）：
-
-```json
-{
-  "cursor": 1287,
-  "more": false,
-  "docs": [
-    { "key": "settings",   "rev": 4,  "updatedAt": "2026-11-01T09:12:00Z", "hash": "sha256:…" },
-    { "key": "subjects",   "rev": 11, "updatedAt": "2026-11-01T09:30:00Z", "hash": "sha256:…" }
-  ]
-}
-```
-
-客户端拿 `hash` 比对本地值，只对不一致的文档发 `GET /v1/doc/{key}`。
-`more: true` 时用返回的 `cursor` 继续拉。
-
-### 4.6 单文档读写
-
-| 方法 | 路径 | 说明 |
+| 路径 | 用途 | 状态 |
 | --- | --- | --- |
-| `GET` | `/v1/doc/{key}` | 返回 `{ key, rev, updatedAt, payload }` |
-| `PUT` | `/v1/doc/{key}` | 请求体 `{ "baseRev": 4, "payload": {...} }` |
-| `DELETE` | `/v1/doc/{key}` | 软删除，带 `baseRev` |
+| `GET/PUT /api/doc/{key}` | 按文档 key 增量同步 | 未实现，见第 5 节 |
+| `GET /api/config/app` | 版本下发 / 远程开关 | 未实现 |
 
-`PUT` 的成功 / 冲突：
+### 4.3 已作废的原计划
 
-```json
-// 200：写入成功，rev 自增
-{ "key": "settings", "rev": 5, "updatedAt": "…" }
-
-// 409：baseRev 与服务端当前 rev 不一致，payload 里带服务端当前版本，交给用户选
-{ "error": { "code": "conflict", "message": "云端版本比本地新" },
-  "server": { "rev": 7, "updatedAt": "…", "payload": { ... } } }
-```
-
-> **这是整个同步的地基**：不做「后到覆盖」，一律按 `baseRev` 乐观锁。冲突时客户端弹
-> 「保留本地 / 用云端 / 都保留」三选一，绝不静默覆盖。这与早期讨论里担心的「存档被覆盖」是同一件事。
-
-### 4.7 `GET /v1/config/app`
-
-无鉴权（客户端启动即可拉）。返回远程开关与版本门槛：
-
-```json
-{
-  "latestVersion": "0.2.0",
-  "minVersion": "0.1.0",
-  "forceUpdate": false,
-  "updateUrl": "https://github.com/Inotfrk/in-this-life-i-have-infinite-tokens/releases",
-  "flags": { "enableSync": true, "enableAi": true },
-  "notice": ""
-}
-```
-
-`minVersion` 低于它就强制更新；`flags` 是远程关功能用的救命开关（某功能出事时不用发新版）。
-客户端必须**本地缓存 + 拉取失败就沿用上次值**，不能因为服务端挂了就打不开软件。
-
-### 4.8 `POST /v1/log`（可选，默认关）
-
-批量埋点：`{ "events": [ { "t": "…", "name": "app_start", "props": {} } ] }`，单次最多 100 条。
-服务端只落盘不做同步处理。**客户端必须异步发送、失败静默**，不许阻塞 UI。
+早先按 Cloudflare 方案设计过 `/v1/auth/anon`、`/v1/sync/changes`、`/v1/me` 等路径，
+实际实现改用了 `/api/*` 前缀与用户名密码体系，这些路径**不再实施**。
 
 ---
-
 ## 5. 同步模型
 
 ### 5.1 文档式同步（不是整块 blob）
@@ -206,11 +163,11 @@ Supabase / Firebase 能省事，但都是「境外注册 + 后续想自托就难
 「把任意学习资料丢进来」意味着可能有几百 MB 的 PDF / 课件。首期不同步的理由：
 
 1. **隐私**：用户的课件可能含个人信息，上云需要用户明确同意，而不是默认。
-2. **成本**：R2 免费额度 10GB 看着够，但一旦要下载回来就是流量与时间成本。
+2. **成本**：对象存储看着够用，但一旦要下载回来就是流量与时间成本。
 3. **可行性**：同步的是**资料索引**（文件名、学科归属、最近打开位置），
    换机器后提示「请重新选择该资料所在文件夹」，比默默传 500MB 体验更好。
 
-将来要做时，接口已在 `/v1/doc/{key}` 之外单开 `/v1/blob/{hash}`（内容寻址 + 去重），不破坏现有契约。
+将来要做时，在这两个键之外单开 `/api/blob/{hash}`（内容寻址 + 去重），不破坏现有契约。
 
 ### 5.3 未登录也能用（对应 7.2 第 30 条）
 
@@ -219,7 +176,7 @@ Supabase / Firebase 能省事，但都是「境外注册 + 后续想自托就难
    │
    └─ 登录后首次同步：
         ├─ 云账号是空的  → 本地数据整体上推
-        ├─ 云端已有数据  → 按文档逐个比对 updatedAt：本地较新则推 / 云端较新则拉 / 两侧都改过则按 4.6 的 409 让用户选
+        ├─ 云端已有数据  → 按文档逐个比对 updatedAt：本地较新则推 / 云端较新则拉 / 两侧都改过则让用户选
         └─ 之后           → 正常增量同步
 ```
 
@@ -242,7 +199,7 @@ class BackendClient : public QObject
 public:
     explicit BackendClient(QObject *parent = nullptr);
 
-    void setBaseUrl(const QUrl &url);   // 默认 https://<name>.workers.dev
+    void setBaseUrl(const QUrl &url);   // 默认扣子部署后的公网域名
     void setToken(const QString &token);
 
     void health();
@@ -287,74 +244,71 @@ private:
 | **A 用户自填 Key**（与现有设计一致） | Key 存本地 `QSettings`，客户端直连厂商 API | 服务端零成本、零责任；不需要托管密钥 | 每个用户要自己去申请 Key；客户端里有明文 Key，被反编译就会泄露**用户自己的** Key |
 | **B 官方代转** | 客户端只带自己的 `token`，服务端持厂商 Key 转发并计配额 | 用户开箱即用；Key 不出服务端 | 要花钱、要做配额与预算上限、被刷会烧钱；涉及「服务端替用户付费」的商业模式问题 |
 
-**建议**：首期按 **A** 做（与现有设计一致，零成本先跑通），但**契约上先把 `/v1/ai/*` 的位置留出来**，
+**建议**：首期按 **A** 做（与现有设计一致，零成本先跑通），但**契约上先把 `/api/ai/*` 的位置留出来**，
 等真决定做 B 时客户端只换一个开关，不用重构。
 
 ⚠️ 无论选哪条，**厂商 Key 都不得写进仓库或客户端资源文件**。选 B 时用
-`wrangler secret put AI_KEY` 注入环境变量。
+`扣子项目的环境变量面板` 注入，或部署平台提供的 secret 机制。
 
 ---
 
-## 8. 部署与成本
+## 8. 实现与部署
 
-### 8.1 本地开发
+### 8.1 已有代码
 
 ```
-worker/
-  wrangler.toml        绑定 D1 与 KV
-  src/index.ts         路由分发
-  schema.sql           建表语句
-  package.json
+server/
+  src/index.js      入口：等数据库就绪 → 建表 → 监听
+  src/routes.js     6 个接口 + 鉴权中间件
+  src/rateLimit.js  限流规则与计数（持久化到数据库）
+  src/db.js         连接池、建表、启动等待
+  test/run-tests.js 63 项测试
+  Dockerfile
+  docker-compose.yml  db + api + tester
+  README.md          完整接口文档
 ```
+
+本地跑：
 
 ```bash
-npm install
-npx wrangler d1 create infinite-tokens   # 首次
-npx wrangler d1 execute infinite-tokens --file=schema.sql
-npx wrangler dev                          # 本地跑，http://127.0.0.1:8787
-npx wrangler deploy
+cd server
+docker compose up -d --build
+docker compose run --rm tester     # 63 passed, 0 failed
+docker compose down -v
 ```
 
 ### 8.2 数据库
 
 ```sql
-CREATE TABLE users (
-  id          TEXT PRIMARY KEY,
-  display_name TEXT NOT NULL,
-  created_at  TEXT NOT NULL
-);
-
-CREATE TABLE tokens (
-  token_hash  TEXT PRIMARY KEY,   -- sha256(token)
-  user_id     TEXT NOT NULL REFERENCES users(id),
-  expires_at  TEXT NOT NULL
-);
-
-CREATE TABLE docs (
-  user_id     TEXT NOT NULL REFERENCES users(id),
-  doc_key     TEXT NOT NULL,
-  rev         INTEGER NOT NULL,
-  updated_at  TEXT NOT NULL,
-  payload     TEXT NOT NULL,      -- JSON
-  deleted     INTEGER NOT NULL DEFAULT 0,
-  PRIMARY KEY (user_id, doc_key)
-);
-
-CREATE INDEX docs_updated ON docs (user_id, updated_at);
+users        (user_id UUID PK, username VARCHAR(64) UNIQUE, password_hash, created_at)
+profiles     (user_id UUID PK → users, nickname, avatar_url, data JSONB, updated_at)
+rate_limits  (key TEXT PK, count INT, window_start, locked_until)
 ```
 
-### 8.3 免费额度够不够
+建表在服务启动时自动执行，不需要手工迁移。
 
-按「一个用户每天开 2 次、每次同步 10 个请求」估算：免费档每日 10 万请求约等于
-**5000 个日活用户**。D1 的 5GB 对纯结构化数据（KB 级文档）远远够用。
-真正会先撞墙的是 **D1 每日 10 万行写入**，所以 `POST /v1/log` 默认关，别拿它写库。
+### 8.3 部署到扣子
 
-### 8.4 国内访问的现实
+扣子项目里已有等价实现（Supabase PostgreSQL、6 个接口、13 项自测通过），
+但**缺限流**。两种走法：
 
-`*.workers.dev` 在国内**可达但不稳定**，偶发握手超时。所以：
+| 走法 | 做法 | 代价 |
+| --- | --- | --- |
+| A. 用扣子版，后补限流 | 让扣子 AI 再加一次 | 消耗积分，且要重跑自测 |
+| B. 把 `server/` 的代码交给扣子部署 | 代码本地已测好，扣子只负责部署 | 省积分；但需确认扣子项目能接受外部代码 |
 
-1. 客户端所有请求必须有超时 + 重试 + 「离线可用」降级；
-2. 国内用户量起来后，把同一个契约部署到阿里云函数计算，客户端在设置里切 `baseUrl` 即可。
+环境变量沿用扣子已配好的 `DATABASE_URL` / `JWT_SECRET`；
+Supabase 通常要求 TLS，加 `PGSSLMODE=require`。
+
+### 8.4 成本
+
+扣子的积分按任务与部署消耗，具体额度以控制台为准。
+本地 Docker 验证不消耗任何积分——这也是把代码放在本地写的主要原因。
+
+### 8.5 国内访问
+
+扣子的域名在国内可达性取决于其 CDN 策略，实测为准。
+客户端所有请求仍必须有超时 + 重试 + 「离线可用」降级，不能假设服务端永远在线。
 
 ---
 
@@ -362,8 +316,9 @@ CREATE INDEX docs_updated ON docs (user_id, updated_at);
 
 | TODO | 变化 |
 | --- | --- |
-| T-024 账号登录与资料同步 | 解除「同步通道未定」这个阻塞点的一半；**仍 blocked**，剩「服务端要不要真做、什么时候做」 |
-| 新增 T-027 服务端方案文档 | 本文，`done` |
+| T-024 账号登录与资料同步 | 服务端一侧已有可运行实现（本地 63 项测试全绿）；**仍 blocked**，等真正部署并接入客户端 |
+| T-027 服务端方案文档 | 本文，`done` |
+| T-028 用户中心后端代码与本地验证 | `done`，代码在 [server/](../server/README.md) |
 
-**本文不代表马上要实现服务端。** 按设计文档「问题定下来之前不要动手写界面代码」的惯例，
-这里只是把问题定成了一份可执行的契约；真开工前仍需作者确认第 7 节。
+**服务端尚未部署到生产。** 扣子那边停在「加限流 → 部署」这一步，
+积分耗尽时中断；本地已用更省积分的方式补齐了同一份能力。
