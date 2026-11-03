@@ -12,4 +12,6 @@
   `develop` 再自动推进到第一层 `master`（`scripts/release.ps1` 或 GitHub Actions），永不越层。
   **`develop` / `master` 不允许直接 push，只能走 PR。**
 - **冲突**：遇到跨账号、跨主线（`develop` / `master`）的冲突，**不要 force push**，保留现场并提示用户去提 OA。
+- **存档**：`archive/<日期>` 是每周一 06:00 由 `.github/workflows/weekly-archive.yml` 自动生成的只读快照，
+  所有人可读，只有拥有者能写；**不要在这些分支上提交或开 PR**（见 AGENTS.md 第 9 节）。
 - **队列**：[TODO.md](../TODO.md) 是唯一待完成清单，夜间 / 空闲 agent 按其中协议领取 `queued` 任务执行。
