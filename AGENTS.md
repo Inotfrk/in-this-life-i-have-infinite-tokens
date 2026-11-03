@@ -135,7 +135,7 @@ GitHub 侧已经把这些规则落成机器的检查，agent 只读不绕。配�
 | `develop-pr-only` | `develop` | `pull_request` + `non_fast_forward` + `deletion` | 只能通过 PR 合并；禁止强推、禁止删除 |
 | `no-unowned-branches` | 除以下之外的所有分支 | `creation` | 只能新建 `master`、`develop`、`release/*`、`archive/*`、`<账号段>-*` 这几种名字，杜绝乱命名 |
 | `<账号段>-owner-only` | `<账号段>-*` | `creation` + `update` + `deletion` | 只有该账号段本人能建、能推、能删这条前缀的分支 |
-| `archive-owner-only` | `archive/*` | `creation` + `update` + `deletion` + `non_fast_forward` | 每周存档分支，所有人可读，只有拥有者与 Actions 能建、能推、能删（见第 9 节） |
+| `archive-owner-only` | `archive/*` | `creation` + `update` + `deletion` + `non_fast_forward` | 每周存档分支，所有人可读，只有拥有者能建、能推、能删（见第 9 节） |
 
 PR 规则设的是 `required_approving_review_count = 0`：**不需要人工批准**，但必须走 PR 这个入口，
 所以合并记录、CI 结果都留在 PR 页面上；`require_extra_approval_for_unattributed_changes` 关掉了，
@@ -273,13 +273,23 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
 | 内容 | `master` 当时的快照，外加一份根目录 `ARCHIVE.md`：本周 `develop` 上每位成员的提交标题 |
 | 日期 | 取北京时间当天，形如 `archive/2026-11-03`；同一天重复运行会**跳过**，不覆盖已有存档 |
 | 读取 | 仓库是 public，所有人可读、可 clone、可对比差异 |
-| 写入 | **只有仓库拥有者与 GitHub Actions** 能新建 / 推送 / 删除，其他人一律被 `archive-owner-only` 规则拒绝 |
+| 写入 | **只有仓库拥有者**能新建 / 推送 / 删除；其他人一律被 `archive-owner-only` 规则拒绝 |
 
 - 存档分支**不是开发分支**：不要在 `archive/*` 上提交、开 PR 或合并回主线，需要改动请回自己的
   `<账号段>-<电脑段>-*`。
 - 手工补跑：Actions 页面 → `weekly-archive` → **Run workflow**，可选填 `date`（`YYYY-MM-DD`）。
 - 规则来源是 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1) 的 `archive-owner-only`：
-  放行 `Integration`（GitHub Actions，actor id 15368）与仓库拥有者，其余人只能读。
+  `creation` + `update` + `deletion` + `non_fast_forward` 全部只放行仓库拥有者，其余人只能读。
   调整规则请改脚本后重跑，不要只在网页上点。
+- **为什么 workflow 需要 `ARCHIVE_TOKEN`**：个人（非组织）仓库的 ruleset 不允许把 GitHub Actions
+  列为豁免者（API 422 `Actor GitHub Actions integration must be part of the ruleset source or owner
+  organization`），内置 `GITHUB_TOKEN` 以 `github-actions[bot]` 身份推送会被规则拒绝。因此需要在
+  仓库 **Settings → Secrets and variables → Actions** 里加一个 `ARCHIVE_TOKEN`：拥有者的
+  fine-grained PAT，仅授权本仓库、权限 `Contents: Read and write`。没配这个 secret 时 workflow
+  会在推送步骤报错并提示，不会静默留下半成品。
+- 如果确实不想维护 PAT，可以用
+  `powershell -File scripts\github-rulesets.ps1 -AllowArchiveCreation` 重新下发规则：此时
+  `archive/*` 只锁 `update` / `deletion` / `non_fast_forward`，允许有写权限的人**新建**存档分支
+  （已有的存档仍然只有拥有者能改、能删），workflow 也就能退回内置 `GITHUB_TOKEN`。
 - `ARCHIVE.md` 里的简介按提交作者分组，自动过滤机器人提交、`release:` 回合与纯合并提交，
   只保留真人写的功能 / 修复 / 文档改动说明。

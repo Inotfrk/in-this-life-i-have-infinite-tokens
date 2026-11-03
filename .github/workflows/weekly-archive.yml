@@ -2,8 +2,14 @@ name: weekly-archive
 
 # 每周一北京时间 06:00 给仓库打一个存档分支 archive/<日期>。
 #   分支内容 = master 的快照 + 根目录 ARCHIVE.md（本周 develop 上每个人提交的改动简介）。
-#   存档分支对所有人可读（仓库是 public），但只有拥有者与 Actions 能建/改/删，
+#   存档分支对所有人可读（仓库是 public），但只有拥有者能建/改/删，
 #   规则来源是 scripts/github-rulesets.ps1 的 archive-owner-only。
+#
+# 推送用 secret ARCHIVE_TOKEN（拥有者的 fine-grained PAT，权限：Contents: Read and write）。
+# 之所以不用内置 GITHUB_TOKEN：个人仓库的 ruleset 不允许把 GitHub Actions 列为豁免者
+# （API 422 "Actor GitHub Actions integration must be part of the ruleset source or owner
+# organization"），内置令牌以 github-actions[bot] 身份推 archive/* 会被规则拒绝。
+# 没有这个 secret 时 workflow 会在第一步就失败并给出提示，不会静默留下半成品。
 
 on:
   schedule:
@@ -29,11 +35,26 @@ jobs:
     name: snapshot master
     runs-on: ubuntu-latest
     steps:
+      - name: Require owner token
+        env:
+          ARCHIVE_TOKEN: ${{ secrets.ARCHIVE_TOKEN }}
+        run: |
+          set -euo pipefail
+          # 严格模式下 archive/* 只有拥有者能建；内置 GITHUB_TOKEN 的身份是 github-actions[bot]，
+          # 会被 archive-owner-only 规则拒绝，所以提前给出可操作的提示，而不是等推送时撞规则。
+          if [ -z "${ARCHIVE_TOKEN:-}" ]; then
+            echo "::error::缺少 secret ARCHIVE_TOKEN（拥有者的 fine-grained PAT，Contents: Read and write）。"
+            echo "::error::在 Settings → Secrets and variables → Actions 里添加后重跑；"
+            echo "::error::或改用 scripts/github-rulesets.ps1 -AllowArchiveCreation 下发规则并退回内置令牌。"
+            exit 1
+          fi
+
       - name: Checkout
         uses: actions/checkout@v4
         with:
           # 需要完整历史才能按时间窗口统计 develop 上的提交。
           fetch-depth: 0
+          token: ${{ secrets.ARCHIVE_TOKEN }}
 
       - name: Create archive branch
         env:

@@ -2,26 +2,29 @@
 # 规则目标见 AGENTS.md 第 2.1、2.5、7、9 节：
 #   - master / develop：禁止直接推送，只允许 Pull Request 合并（AGENTS.md 2.5）
 #   - <账号段>-*：只允许该账号段的主人推送、删除（AGENTS.md 2.1 归属规则）
-#   - archive/*：每周存档分支，只有仓库拥有者与 Actions 能建/改/删（AGENTS.md 第 9 节）
+#   - archive/*：每周存档分支，只有仓库拥有者能建/改/删（AGENTS.md 第 9 节）
 #
 # 用法：
-#   powershell -ExecutionPolicy Bypass -File scripts\github-rulesets.ps1 [-DryRun]
+#   powershell -ExecutionPolicy Bypass -File scripts\github-rulesets.ps1 [-DryRun] [-AllowArchiveCreation]
 # 令牌来源：环境变量 GH_TOKEN / GITHUB_TOKEN，否则取 git credential 里 github.com 的凭据。
 # 重复执行是安全的：同名的规则会被更新，不会重复创建。
 
 param(
     [switch]$DryRun,
+    # 允许「任何人（有写权限的协作组员）」新建 archive/* 分支，只锁住 update/deletion。
+    # 默认不用：严格模式（不传本开关）连新建都只给拥有者，workflow 必须用拥有者的 PAT 推送。
+    [switch]$AllowArchiveCreation,
     [string]$Owner = 'Inotfrk',
     [string]$Repo = 'in-this-life-i-have-infinite-tokens'
 )
 
 $ErrorActionPreference = 'Stop'
 
-# 每周存档分支的放行者：仓库拥有者 + GitHub Actions（workflow 用它自己的令牌推 archive/*）。
-# GitHub Actions 的固定 actor id 是 15368，见 Rulesets API 文档。
-$archiveKeepers = @(
-    @{ actor_id = 15368; actor_type = 'Integration'; bypass_mode = 'always' }
-)
+# 每周存档分支的放行者：仓库拥有者 +（仅组织仓库）GitHub Actions。
+# GitHub Actions 的固定 actor id 是 15368，但个人仓库不允许它作为 ruleset 豁免者
+# （API 返回 422 "Actor GitHub Actions integration must be part of the ruleset source or
+# owner organization"）。所以个人仓库下由 workflow 用拥有者的 PAT 推送，见 AGENTS.md 第 9 节。
+$archiveIntegrationActor = @{ actor_id = 15368; actor_type = 'Integration'; bypass_mode = 'always' }
 
 # 账号段 -> GitHub 用户名（与 .agents/branch-registry.md 的账号表保持一致）
 $accounts = [ordered]@{
@@ -81,6 +84,14 @@ function Get-UserId([string]$login) {
 }
 
 $OwnerId = Get-UserId $Owner
+$OwnerIsOrg = $false
+if (-not $DryRun) {
+    try {
+        $ownerInfo = Invoke-Api GET "https://api.github.com/users/$Owner"
+        $OwnerIsOrg = ($ownerInfo.type -eq 'Organization')
+    }
+    catch { Write-Warning "查不到 $Owner 的类型，按个人仓库处理（archive/* 不放行 Actions）" }
+}
 
 $prRule = @{
     type       = 'pull_request'
@@ -113,7 +124,7 @@ function New-OwnerRuleset([string]$prefix, [string]$login) {
     }
 }
 
-# 每周存档分支：所有人可读（public 仓库），只有拥有者和 Actions 能建、能推、能删
+# 每周存档分支：所有人可读（public 仓库），只有拥有者（组织仓库时还包括 Actions）能建、能推、能删
 function New-ArchiveRuleset() {
     $bypass = @()
     if ($OwnerId) {
@@ -122,7 +133,7 @@ function New-ArchiveRuleset() {
     else {
         Write-Warning "跳过 archive/* 的拥有者放行：GitHub 上没有 $Owner 这个账号"
     }
-    $bypass += $archiveKeepers
+    if ($OwnerIsOrg) { $bypass += $archiveIntegrationActor }
 
     return @{
         name          = 'archive-owner-only'
@@ -130,7 +141,13 @@ function New-ArchiveRuleset() {
         enforcement   = 'active'
         conditions    = @{ ref_name = @{ include = @('refs/heads/archive/*'); exclude = @() } }
         bypass_actors = $bypass
-        rules         = @(@{ type = 'creation' }, @{ type = 'update' }, @{ type = 'deletion' }, @{ type = 'non_fast_forward' })
+        # 默认不给 creation：谁都不能自己建 archive/*，只能由 workflow 用拥有者的 PAT 建。
+        rules         = @(
+            if (-not $AllowArchiveCreation) { @{ type = 'creation' } }
+            @{ type = 'update' }
+            @{ type = 'deletion' }
+            @{ type = 'non_fast_forward' }
+        )
     }
 }
 
