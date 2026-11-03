@@ -43,3 +43,15 @@
 
 分支名里的第二段（电脑段）只用来区分「同一个人用的不同机器」，取本机 `hostname` 规范化即可，
 不需要登记、不需要审批，换机器就换一段。判断一个分支归谁，只看**第一段账号段**。
+
+## 存档分支（不按账号段登记）
+
+`archive/<日期>`（例如 `archive/2026-11-03`）不属于任何账号段，由
+[.github/workflows/weekly-archive.yml](../.github/workflows/weekly-archive.yml) 每周一北京时间 06:00
+自动创建，内容是 `master` 的快照 + 一份 `ARCHIVE.md`（本周各成员在 `develop` 上的改动简介）。
+
+- 所有人可读（仓库 public）；
+- 只有仓库拥有者与 GitHub Actions 能建 / 推 / 删，规则名 `archive-owner-only`；
+- 详见 [AGENTS.md](../AGENTS.md) 第 9 节。
+
+这张账号表只登记**人的账号段**，`archive/*` 不需要往表里加行。
