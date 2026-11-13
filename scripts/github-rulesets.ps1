@@ -33,6 +33,7 @@ $accounts = [ordered]@{
     'shawnwu1086'   = 'Xiao-xiao10'
     'xiao-xiao10'   = 'Xiao-xiao10'
     'qwerty6543210' = 'qwerty6543210'
+    'fairydeepfish' = 'FairyDeepFish'
 }
 
 . "$PSScriptRoot\github-token.ps1"

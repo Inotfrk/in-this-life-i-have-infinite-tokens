@@ -11,6 +11,7 @@
 | QL_Leo | `lihaoyuan114` | `lihaoyuan114` | 管理员 | `lihaoyuan114-*` |
 | 吴泓霄 | `Xiao-xiao10` | `shawnwu1086`、`xiao-xiao10` | 开发者 | `shawnwu1086-*`、`xiao-xiao10-*` |
 | QAqwANG | 未注册 | `qwerty6543210` | 开发者 | 待 GitHub 账号建好并受邀后再加规则 |
+| SuperAgent 机器人 | `FairyDeepFish` | `fairydeepfish` | 自动化 agent（协作组员） | `fairydeepfish-*` |
 
 > 2026-10-27 已在 GitHub 上落地分支规则（见 [AGENTS.md](../AGENTS.md) 2.5.1）：
 > `master`、`develop` 只能通过 PR 合并；每个已存在的账号段各有一条 `<前缀>-owner-only` 规则，
