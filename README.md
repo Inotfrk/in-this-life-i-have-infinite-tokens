@@ -141,3 +141,5 @@ flowchart BT
 
 用到的分支规则由 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1) 创建并维护：
 每个账号段一条 `<前缀>-owner-only`（只有本人能推），`master` / `develop` 各一条只接受 PR 的规则。
+
+second run by gpt-6-luna
