@@ -138,11 +138,65 @@ class OpenAICompatLLM:
         self.timeout = timeout
         self._fallback = RuleBasedLLM()
 
+    #: 单次数值变化的上限，防止模型一时兴起写个 ±999
+    DELTA_LIMIT = 20.0
+
     async def respond(self, agent: "Agent", msg: Message) -> AgentTurn:
         if not self.api_key:
             return await self._fallback.respond(agent, msg)
         text = await asyncio.to_thread(self._call, agent, msg)
-        return AgentTurn(reply=text.strip() or None, value_deltas={})
+        return self.parse_turn(text, agent)
+
+    @classmethod
+    def parse_turn(cls, text: str, agent: "Agent") -> AgentTurn:
+        """把模型输出解析成 AgentTurn：优先 JSON，解析不了就退化成纯文本。
+
+        约定的 JSON 形状是 `{"say": "...", "deltas": {"压力": 6}}`。
+        模型不听话（带代码块、说废话、写不存在的键）都不该让沙盘崩，所以这里全程容错。
+        """
+
+        raw = (text or "").strip()
+        if not raw:
+            return AgentTurn(reply=None, value_deltas={})
+
+        payload = cls._extract_json(raw)
+        if not isinstance(payload, dict):
+            return AgentTurn(reply=raw, value_deltas={})
+
+        reply = payload.get("say") or payload.get("reply") or ""
+        deltas: dict[str, float] = {}
+        raw_deltas = payload.get("deltas") or {}
+        if isinstance(raw_deltas, dict):
+            for key, value in raw_deltas.items():
+                if key not in agent.values:  # 只改这个角色身上已有的键
+                    continue
+                try:
+                    amount = float(value)
+                except (TypeError, ValueError):
+                    continue
+                if amount != amount or amount in (float("inf"), float("-inf")):
+                    continue
+                amount = max(-cls.DELTA_LIMIT, min(cls.DELTA_LIMIT, amount))
+                if amount:
+                    deltas[key] = amount
+        return AgentTurn(reply=str(reply).strip() or None, value_deltas=deltas)
+
+    @staticmethod
+    def _extract_json(text: str) -> dict[str, object] | None:
+        """从可能带 ```json 围栏或多余文字的回复里抠出第一个 JSON 对象。"""
+
+        body = text.strip()
+        if body.startswith("```"):
+            body = body.strip("`").strip()
+            if body[:4].lower() == "json":
+                body = body[4:].lstrip()
+        start, end = body.find("{"), body.rfind("}")
+        if start < 0 or end <= start:
+            return None
+        try:
+            return json.loads(body[start : end + 1])
+        except json.JSONDecodeError:
+            return None
 
     def _call(self, agent: "Agent", msg: Message) -> str:
         payload = {
@@ -172,6 +226,8 @@ class OpenAICompatLLM:
     @staticmethod
     def _system_prompt(agent: "Agent") -> str:
         values = "、".join(f"{k}={v:.0f}" for k, v in agent.values.items()) or "（无）"
+        keys = "、".join(agent.values) or "（无）"
+        limit = int(OpenAICompatLLM.DELTA_LIMIT)
         impressions = "；".join(
             f"{name}：{agent.memory.impression_of(name)}" for name in list(agent.memory.impressions)[:5]
         ) or "（还没有）"
@@ -181,5 +237,8 @@ class OpenAICompatLLM:
             f"【当前数值】{values}\n"
             f"【最近记忆】{agent.memory.brief(4)}\n"
             f"【对别人的印象】{impressions}\n"
-            "用第一人称、两句话以内回应对方，不要解释规则，不要跳出角色。"
+            "用第一人称、两句话以内回应对方，不要解释规则，不要跳出角色。\n"
+            "只输出一个 JSON 对象，不要代码块、不要多余文字：\n"
+            '{"say": "你的回应", "deltas": {"压力": 6}}\n'
+            f"deltas 只能使用这些键：{keys}；每项在 -{limit}~{limit} 之间，没有变化就写 {{}}。"
         )
