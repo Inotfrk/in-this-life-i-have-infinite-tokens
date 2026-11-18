@@ -7,9 +7,13 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import tempfile
 import unittest
+from pathlib import Path
 
 from worldsim import Agent, AgentManager, ScriptedLLM
+from worldsim.env import load_env_file
 from worldsim.llm import RuleBasedLLM
 
 
@@ -230,6 +234,27 @@ class TestValues(unittest.IsolatedAsyncioTestCase):
             self.assertGreater(a.values["信任"], 50.0)
         finally:
             await mgr.close()
+
+
+class TestEnvFile(unittest.TestCase):
+    """本机 key 放在 .env.local 里，读取器只补缺、不覆盖已有环境变量。"""
+
+    def test_missing_file_is_not_an_error(self) -> None:
+        self.assertEqual(load_env_file(Path("/nonexistent/.env.local")), {})
+
+    def test_reads_pairs_and_keeps_existing_env(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / ".env.local"
+            path.write_text("# comment\nWORLDSIM_TEST_A=1\nWORLDSIM_TEST_B='two'\n", encoding="utf-8")
+            os.environ["WORLDSIM_TEST_B"] = "from-shell"
+            try:
+                loaded = load_env_file(path)
+                self.assertEqual(loaded, {"WORLDSIM_TEST_A": "1", "WORLDSIM_TEST_B": "two"})
+                self.assertEqual(os.environ["WORLDSIM_TEST_A"], "1")
+                self.assertEqual(os.environ["WORLDSIM_TEST_B"], "from-shell", "已存在的环境变量不该被文件覆盖")
+            finally:
+                os.environ.pop("WORLDSIM_TEST_A", None)
+                os.environ.pop("WORLDSIM_TEST_B", None)
 
 
 if __name__ == "__main__":
