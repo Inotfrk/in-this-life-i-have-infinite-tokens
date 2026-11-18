@@ -196,7 +196,9 @@ gh pr merge --merge
 
 1. 改动只涉及规则 / 文档时**不跑构建**，但要检查 Markdown 链接、命令示例与 `TODO.md` 状态是否仍然正确；
 2. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`；
-3. 新实现落地时，**同时**恢复构建脚本、沙箱与 CI，并回到本节写清验证命令；在那之前不 pretend 有测试。
+3. **当前唯一的可验证入口**是 worldsim 的离线单测：`python3 -m unittest discover -s tests`（不联网、
+   不需要 API key）；演示用 `python3 -m examples.mvp_demo`。改 `worldsim/` 必须先跑通它；
+4. 新实现落地时，**同时**恢复构建脚本、沙箱与 CI，并回到本节写清验证命令；在那之前不 pretend 有测试。
 
 新实现接回后要恢复的验证标准（照抄即可）：
 
