@@ -390,3 +390,16 @@
 - 验收：Markdown 链接与命令示例正确，Java 构建与测试流程未被改动
 - 说明：按用户要求把仓库说明的技术栈从 Java 改为 C++17 单文件计算器，补齐「仓库怎么用」的
   入门段落，并把 Java 实现标注为历史示例；源码、构建脚本与 CI 未改动。
+
+### T-031 AI 历史沙盘 MVP：多 agent 通信与记忆骨架
+
+- 状态：done
+- 目标分支：`lihaoyuan114-FedoraChan-worldsim`
+- 优先级：P0
+- 依赖：无
+- 涉及文件：`worldsim/`（message / memory / agent / manager / llm / social）、`examples/mvp_demo.py`、
+  `tests/test_worldsim.py`、`docs/worldsim-mvp.md`
+- 验收：`python3 -m unittest discover -s tests` 全绿（14 项，全离线）；`python3 -m examples.mvp_demo` 跑完三轮
+- 说明：参考 Ayaka V2.5 的 `WorldEngine` / `AIThread`，先验证「agent 实例化 + 互相通信 + 独立记忆 +
+  独立数值 + 每实例队列调度」这条骨架。Manager 用名字做 key 管理实例，注册表加 `asyncio.Lock`，
+  每个实例一条队列与专属 worker 保证不串线；趋势层用 DeGroot 占位，后续换理论模型。
