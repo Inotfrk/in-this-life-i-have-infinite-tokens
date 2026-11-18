@@ -1,83 +1,19 @@
 # In this life I have infinite tokens.
 
-一个用 **C++17 + Qt 6（Qt Quick/QML）** 写的跨平台**学习助手**桌面应用，目标覆盖 Windows、macOS、
-Linux，以及后续的 iPadOS 与 Android。它可以把你的学习资料统一扔进来、按学科归类，并接 AI 帮你操作。
-这个仓库同时是「一个小项目该怎么用分支、任务队列和 agent 协作来维护」的样板——
-看懂这份说明，就明白这个仓库怎么用。
-
-> **当前状态**：**页面骨架阶段**。主页面已经能在 Qt 6 里跑起来（`src/ui/qml/Main.qml`），
-> 但**没有任何业务功能**：不读文件、不调 AI、不存 API Key。
-> 界面设计说明见 [docs/design-study-app-ui.md](docs/design-study-app-ui.md)，
-> 后续规划见 [TODO.md](TODO.md)。
-
-#### 功能
-
-现阶段只是界面骨架，实际行为都还没接：
-
-- 左侧全局图标栏（搜索 / 笔记类工具 / 主页 / 协作 / 设置），当前页高亮
-- 内容卡片头部：左侧 `☰` 更多选项，右侧 **AI** 入口（外观将来可在设置里更换）
-- 学科侧栏写死 `math` / `phy` / `che`，可点选高亮、列表可独立滚动
-- 右侧主内容区刻意留空，等后续接入资料阅读
-- 侧栏底部预留区（用途未定）
-
-> 界面风格参考了 GitHub，但那是**作者个人偏好**，不是仓库规范，其他人不必照抄。
-> 早期那个 Java Swing 计算器的设计（[docs/design-cpp-qt.md](docs/design-cpp-qt.md)）已随实现一并淘汰。
-
-#### 软件架构
-
-```
-src/
-    ui/                 QML 界面
-        main.cpp               入口（含 --screenshot 无头截图开关）
-        qml/
-            Main.qml           主页面骨架
-            GlyphIcon.qml      Canvas 画的线性图标（不依赖系统图标字体）
-            Theme.js           配色与间距刻度
-CMakeLists.txt         顶层 CMake 工程（Qt 6 + Qt Quick）
-scripts/
-    build.ps1           Windows 构建 / 界面检查
-    build.sh            macOS / Linux 构建 / 界面检查
-    sandbox.ps1         长驻 Docker 沙箱（Windows）
-    sandbox.sh          长驻 Docker 沙箱（macOS / Linux）
-    desktop.sh          容器内起 Xvfb + noVNC，用浏览器看真实界面
-docs/design-study-app-ui.md  主页面设计说明
-docs/server-plan.md          服务端方案（账号 / 同步 / 配置下发）
-server/                      用户中心后端（Node + Express + PostgreSQL，未部署）
-```
-
-#### 安装教程
-
-需要 **Qt 6**（推荐 6.5 LTS 及以上）与一个支持 C++17 的编译器（MSVC / MinGW-w64 / clang++ / g++），
-以及 **CMake 3.21+**。
-
-```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.1\msvc2022_64
-cmake --build build --config Release
-```
-
-macOS / Linux：
-
-```bash
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel
-```
-
-不想在本机装 Qt 时，用 Docker 沙箱（见 [docs/docker-sandbox.md](docs/docker-sandbox.md)）：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view   # 浏览器里看界面
-```
-
-#### 使用说明（当前可用）
-
-| 操作 | 说明 |
-| --- | --- |
-| 运行桌面版 | 构建产物 `infinite-tokens`（Windows 为 `infinite-tokens.exe`） |
-| 看界面截图（无头） | `infinite-tokens --screenshot out.png`，容器 / CI 里也能出图 |
-| 构建 + 界面检查 | `scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`） |
-
-各平台打包（`windeployqt` / `macdeployqt` / AppImage / `androiddeployqt`）尚未实现，见 [TODO.md](TODO.md)。
+> **仓库当前状态：只剩协作规则与设计文档。**
+> 上一版实现——C++/Qt 界面（`src/`）、Node 用户中心后端（`server/`）、顶层 `CMakeLists.txt`——
+> 已于 2026-11-18 清空，旧代码完整留在 git 历史里，需要时按提交 SHA 翻看。
+>
+> 留下的是**规则**（`AGENTS.md`、`.agents/`、`.github/` 里的 agent 定义与工作流、`scripts/` 的发布脚本）
+> 以及被这些规则直接引用的**说明文档**（`docs/`、`TODO.md`、`NOTE.md`）。
+> 文档之所以也留下：`.github/agents/project-designer.agent.md` 把 `docs/software-guide.md` 等当作编辑对象，
+> 删掉会让 agent 规则指向空处。
+>
+> - 完整规则：[AGENTS.md](AGENTS.md)（每次对话自动加载）
+> - 待办队列：[TODO.md](TODO.md)（唯一清单）
+> - agent 留言板：[NOTE.md](NOTE.md)（只追加）
+> - 分支对照表：[.agents/branch-registry.md](.agents/branch-registry.md)
+> - 验证规矩：见 [AGENTS.md](AGENTS.md) 第 4 节（当前无可测代码；构建脚本、Dockerfile、`.devcontainer/`、沙箱脚本与 `package.yml` 都已随实现删除）
 
 #### 仓库怎么用（同学先看这段）
 
@@ -111,8 +47,8 @@ flowchart BT
    `<用户名>-*` 规则 → 更新 [.agents/branch-registry.md](.agents/branch-registry.md)。
 6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
-7. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
-   不通过不得进入上一层。
+7. **改完先自检**：当前没有可测代码（实现已清空），只检查 Markdown 链接、命令示例与 `TODO.md` 状态，
+   见 [AGENTS.md](AGENTS.md) 第 4 节；自检不过不得进入上一层。新实现接回时同时恢复构建 / 沙箱 / CI。
 
 `master` 与 `develop` 都不接受直接推送：两者都设了「只接受 Pull Request」的规则，
 `develop` 只收第三层的 PR，`master` 只收 `develop` 的 PR（由发布脚本 / Actions 自动开）。

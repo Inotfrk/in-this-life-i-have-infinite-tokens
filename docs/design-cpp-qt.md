@@ -124,7 +124,7 @@ platform/                      AndroidManifest.xml、Info.plist 等各平台元�
 
 ### 3.3 核心逻辑（保留现有语义）
 
-移植自现有 [ExpressionEvaluator.java](../src/main/java/com/helloworld/taiin/calculator/ExpressionEvaluator.java)，
+移植自现有 `ExpressionEvaluator.java`（Java 版实现早已随重构删除，见 git 历史），
 **行为必须与之一致**：
 
 - 支持 `+ - × ÷ % ^`、括号、小数、一元正负号

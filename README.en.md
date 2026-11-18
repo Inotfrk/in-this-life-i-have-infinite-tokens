@@ -1,87 +1,22 @@
 # In this life I have infinite tokens.
 
-A cross-platform **study assistant** desktop app written in **C++17 + Qt 6 (Qt Quick/QML)**, targeting
-Windows, macOS and Linux, with iPadOS and Android later. Throw any learning material at it, sort it by
-subject, and let AI act on your behalf. The repository doubles as a sample of how a small project is kept
-with branches, a task queue and agent collaboration — read this page and you know how the repo is meant
-to be used.
-
-> **Current state:** **page-skeleton phase**. The main page already runs in Qt 6
-> (`src/ui/qml/Main.qml`), but there is **no functionality yet**: no file loading, no AI calls, no API-key
-> storage. The UI design is described in [docs/design-study-app-ui.md](docs/design-study-app-ui.md) and the
-> roadmap lives in [TODO.md](TODO.md).
-
-#### Features
-
-Only the UI skeleton exists so far; no behaviour is wired up:
-
-- Left global icon rail (search / note tools / home / collaboration / settings), current page highlighted
-- Card header: `☰` more options on the left, an **AI** entry point on the right (its look will be
-  configurable in settings)
-- Subject sidebar hard-coded to `math` / `phy` / `che`; selects highlight, the list scrolls on its own
-- Main content area deliberately empty, reserved for the document reader
-- A reserved area at the bottom of the sidebar (purpose undecided)
-
-> The visual style follows GitHub, but that is the **author's personal preference**, not a repository
-> standard — nobody else has to copy it. The earlier Java Swing calculator design
-> ([docs/design-cpp-qt.md](docs/design-cpp-qt.md)) was retired together with its implementation.
-
-#### Software Architecture
-
-```
-src/
-    ui/                 QML UI
-        main.cpp                Entry point (includes a --screenshot headless switch)
-        qml/
-            Main.qml            Main page skeleton
-            GlyphIcon.qml      Canvas-drawn line icons (no system icon font needed)
-            Theme.js            Colours and spacing scale
-CMakeLists.txt         Top-level CMake project (Qt 6 + Qt Quick)
-scripts/
-    build.ps1           Windows build / UI check
-    build.sh            macOS / Linux build / UI check
-    sandbox.ps1         Long-lived Docker sandbox (Windows)
-    sandbox.sh          Long-lived Docker sandbox (macOS / Linux)
-    desktop.sh          Xvfb + noVNC inside the container, view the UI in a browser
-docs/design-study-app-ui.md  Main page design notes
-docs/server-plan.md          Backend plan (accounts / sync / remote config)
-server/                      User-center backend (Node + Express + PostgreSQL, not deployed)
-```
-
-#### Installation
-
-Requires **Qt 6** (6.5 LTS or newer recommended), a C++17 compiler (MSVC / MinGW-w64 / clang++ / g++)
-and **CMake 3.21+**.
-
-```powershell
-cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH=D:\Qt\6.8.1\msvc2022_64
-cmake --build build --config Release
-```
-
-macOS / Linux:
-
-```bash
-cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release
-cmake --build build --parallel
-```
-
-To avoid installing Qt locally, use the Docker sandbox (see [docs/docker-sandbox.md](docs/docker-sandbox.md)):
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 view   # view the UI in a browser
-```
-
-#### Instructions (available now)
-
-| Action | Notes |
-| --- | --- |
-| Run the desktop app | Build output `infinite-tokens` (`infinite-tokens.exe` on Windows) |
-| Headless UI screenshot | `infinite-tokens --screenshot out.png`, works in containers / CI |
-| Build + UI check | `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`) |
-
-Per-platform packaging (`windeployqt` / `macdeployqt` / AppImage / `androiddeployqt`) is not implemented
-yet; see [TODO.md](TODO.md).
+> **Repository state: collaboration rules and design documents only.**
+> The previous implementation — the C++/Qt UI (`src/`), the Node user-center backend (`server/`) and the
+> top-level `CMakeLists.txt` — was cleared on 2026-11-18; the old code stays in the git history and can be
+> inspected by commit SHA whenever needed.
+>
+> What stays: the **rules** (`AGENTS.md`, `.agents/`, the agent definitions and workflows under `.github/`,
+> and the release scripts in `scripts/`) plus the **documents those rules reference** (`docs/`,
+> `TODO.md`, `NOTE.md`). The documents stay because `.github/agents/project-designer.agent.md` treats
+> `docs/software-guide.md` and friends as its editing targets — deleting them would leave the agent rules
+> pointing at nothing.
+>
+> - Full rules: [AGENTS.md](AGENTS.md) (loaded on every conversation)
+> - Backlog: [TODO.md](TODO.md) (the only list)
+> - Agent notes: [NOTE.md](NOTE.md) (append only)
+> - Branch registry: [.agents/branch-registry.md](.agents/branch-registry.md)
+> - Verification policy: [AGENTS.md](AGENTS.md) section 4 (no code to test right now; build scripts, Dockerfile,
+>   `.devcontainer/`, the sandbox scripts and `package.yml` were removed together with the implementation)
 
 #### How to use this repository (read this first)
 
@@ -117,7 +52,9 @@ flowchart BT
    `<username>-*` rule → update [.agents/branch-registry.md](.agents/branch-registry.md).
 6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.
-7. **Verify before promoting**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).
+7. **Self-check before promoting**: there is no code to test right now (the implementation was cleared).
+   Check Markdown links, command examples and `TODO.md` status instead — see [AGENTS.md](AGENTS.md) section 4.
+   When a new implementation lands, restore the build / sandbox / CI pipeline together with it.
 
 Neither `master` nor `develop` takes direct pushes: both require a pull request. `develop` only takes
 layer-3 pull requests, `master` only takes `develop` pull requests opened by the release script / workflow.
