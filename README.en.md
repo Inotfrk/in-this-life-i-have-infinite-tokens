@@ -6,7 +6,7 @@
 > inspected by commit SHA whenever needed.
 >
 > What stays: the **rules** (`AGENTS.md`, `.agents/`, the agent definitions and workflows under `.github/`,
-> and the release / sandbox scripts in `scripts/`) plus the **documents those rules reference** (`docs/`,
+> and the release scripts in `scripts/`) plus the **documents those rules reference** (`docs/`,
 > `TODO.md`, `NOTE.md`). The documents stay because `.github/agents/project-designer.agent.md` treats
 > `docs/software-guide.md` and friends as its editing targets — deleting them would leave the agent rules
 > pointing at nothing.
@@ -15,7 +15,8 @@
 > - Backlog: [TODO.md](TODO.md) (the only list)
 > - Agent notes: [NOTE.md](NOTE.md) (append only)
 > - Branch registry: [.agents/branch-registry.md](.agents/branch-registry.md)
-> - Test environment: [docs/docker-sandbox.md](docs/docker-sandbox.md), [docs/docker-sandbox-install.md](docs/docker-sandbox-install.md)
+> - Verification policy: [AGENTS.md](AGENTS.md) section 4 (no code to test right now; build scripts, Dockerfile,
+>   `.devcontainer/`, the sandbox scripts and `package.yml` were removed together with the implementation)
 
 #### How to use this repository (read this first)
 
@@ -51,7 +52,9 @@ flowchart BT
    `<username>-*` rule → update [.agents/branch-registry.md](.agents/branch-registry.md).
 6. **One backlog**: [TODO.md](TODO.md). Idle / overnight agents claim `queued` tasks following its
    protocol and commit the status change on its own first, so two agents never grab the same task.
-7. **Verify before promoting**: `scripts\build.ps1 -Task test` (macOS / Linux: `scripts/build.sh test`).
+7. **Self-check before promoting**: there is no code to test right now (the implementation was cleared).
+   Check Markdown links, command examples and `TODO.md` status instead — see [AGENTS.md](AGENTS.md) section 4.
+   When a new implementation lands, restore the build / sandbox / CI pipeline together with it.
 
 Neither `master` nor `develop` takes direct pushes: both require a pull request. `develop` only takes
 layer-3 pull requests, `master` only takes `develop` pull requests opened by the release script / workflow.
