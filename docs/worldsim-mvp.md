@@ -81,9 +81,14 @@ python3 -m examples.mvp_demo               # 离线启发式模型跑三轮
 ```bash
 export WORLDSIM_API_KEY=sk-...
 export WORLDSIM_BASE_URL=https://api.deepseek.com/v1
-export WORLDSIM_MODEL=deepseek-chat
+export WORLDSIM_MODEL=deepseek-flash
 python3 -m examples.mvp_demo --online
 ```
+
+也可以把这三行写进仓库根的 `.env.local`（已 gitignore、`chmod 600`），
+`worldsim.env.load_env_file()` 会在构造 `OpenAICompatLLM` 时补进环境变量，已存在的环境变量优先。
+DeepSeek 现在的模型名是 `deepseek-flash` / `deepseek-v4-pro`，V2.5 里硬编码的
+`deepseek-v4-flash` 已经调不通了。
 
 ## 6. 还没做的（下一步）
 

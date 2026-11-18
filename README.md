@@ -112,11 +112,22 @@ docs/worldsim-mvp.md   设计说明与「与 Ayaka V2.5 的对照」
 ```bash
 export WORLDSIM_API_KEY=sk-...
 export WORLDSIM_BASE_URL=https://api.deepseek.com/v1
-export WORLDSIM_MODEL=deepseek-chat
+export WORLDSIM_MODEL=deepseek-flash
 python3 -m examples.mvp_demo --online
 ```
 
+不想每次 export，就把三行写进仓库根的 `.env.local`（已 gitignore，建议 `chmod 600`）：
+
+```ini
+WORLDSIM_API_KEY=sk-...
+WORLDSIM_BASE_URL=https://api.deepseek.com/v1
+WORLDSIM_MODEL=deepseek-flash
+```
+
+启动时会自动补进环境变量，**shell 里已 export 的同名变量优先**，文件不覆盖它。
 没配 key 时 `--online` 会退回离线模型，不会因为缺 key 直接崩。
+
+> 真模型目前只负责「说什么」；数值增量仍由启发式规则给，让模型自己吐增量在路线图里。
 
 ## 和 Ayaka V2.5 的关系
 
