@@ -1,4 +1,4 @@
-﻿# 默认沙箱（Docker）
+# 默认沙箱（Docker）
 
 本仓库的构建与界面检查**默认在 Docker 沙箱里跑**，不在宿主机直接装 Qt 6。
 这样每个人的环境一致，也不会把依赖、缓存、构建产物留在本机。
@@ -146,7 +146,7 @@ CMD ["bash", "-lc", "bash scripts/build.sh test"]
 | [scripts/sandbox.ps1](../scripts/sandbox.ps1) | Windows 长驻容器 runner，带运行留档与 view |
 | [scripts/sandbox.sh](../scripts/sandbox.sh) | macOS / Linux 同款 runner |
 | [scripts/desktop.sh](../scripts/desktop.sh) | 容器内起 Xvfb + fluxbox + x11vnc + noVNC |
-| [src/ui/main.cpp](../src/ui/main.cpp) | 应用入口，含 `--screenshot` 无头截图开关 |
+| `src/ui/main.cpp`（已清空） | 应用入口，含 `--screenshot` 无头截图开关；代码已于 2026-11-18 删除，需要时按 SHA 翻 git 历史 |
 
 ## 注意
 
