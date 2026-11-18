@@ -20,6 +20,7 @@ import zlib
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Protocol, runtime_checkable
 
+from .env import load_env_file
 from .message import Message
 
 if TYPE_CHECKING:  # 只用于类型标注，避免循环导入
@@ -129,6 +130,8 @@ class OpenAICompatLLM:
         model: str | None = None,
         timeout: float = 30.0,
     ) -> None:
+        # 先补 .env.local（仓库根、已 gitignore），再读环境变量；shell 里显式 export 的优先
+        load_env_file()
         self.api_key = api_key or os.environ.get("WORLDSIM_API_KEY", "")
         self.base_url = (base_url or os.environ.get("WORLDSIM_BASE_URL", "https://api.openai.com/v1")).rstrip("/")
         self.model = model or os.environ.get("WORLDSIM_MODEL", "gpt-4o-mini")
