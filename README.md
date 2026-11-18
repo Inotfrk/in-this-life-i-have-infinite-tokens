@@ -4,7 +4,7 @@
 > 上一版实现——C++/Qt 界面（`src/`）、Node 用户中心后端（`server/`）、顶层 `CMakeLists.txt`——
 > 已于 2026-11-18 清空，旧代码完整留在 git 历史里，需要时按提交 SHA 翻看。
 >
-> 留下的是**规则**（`AGENTS.md`、`.agents/`、`.github/` 里的 agent 定义与工作流、`scripts/` 的发布与沙箱脚本）
+> 留下的是**规则**（`AGENTS.md`、`.agents/`、`.github/` 里的 agent 定义与工作流、`scripts/` 的发布脚本）
 > 以及被这些规则直接引用的**说明文档**（`docs/`、`TODO.md`、`NOTE.md`）。
 > 文档之所以也留下：`.github/agents/project-designer.agent.md` 把 `docs/software-guide.md` 等当作编辑对象，
 > 删掉会让 agent 规则指向空处。
@@ -13,7 +13,7 @@
 > - 待办队列：[TODO.md](TODO.md)（唯一清单）
 > - agent 留言板：[NOTE.md](NOTE.md)（只追加）
 > - 分支对照表：[.agents/branch-registry.md](.agents/branch-registry.md)
-> - 测试环境：[docs/docker-sandbox.md](docs/docker-sandbox.md)、[docs/docker-sandbox-install.md](docs/docker-sandbox-install.md)
+> - 验证规矩：见 [AGENTS.md](AGENTS.md) 第 4 节（当前无可测代码；构建脚本、Dockerfile、`.devcontainer/`、沙箱脚本与 `package.yml` 都已随实现删除）
 
 #### 仓库怎么用（同学先看这段）
 
@@ -47,8 +47,8 @@ flowchart BT
    `<用户名>-*` 规则 → 更新 [.agents/branch-registry.md](.agents/branch-registry.md)。
 6. **待办只有一处**：[TODO.md](TODO.md)。空闲 / 夜间 agent 按其中协议认领 `queued` 任务，
    认领时先单独提交一次状态变更，避免两个 agent 抢同一件事。
-7. **改完先验证**：`scripts\build.ps1 -Task test`（macOS / Linux：`scripts/build.sh test`），
-   不通过不得进入上一层。
+7. **改完先自检**：当前没有可测代码（实现已清空），只检查 Markdown 链接、命令示例与 `TODO.md` 状态，
+   见 [AGENTS.md](AGENTS.md) 第 4 节；自检不过不得进入上一层。新实现接回时同时恢复构建 / 沙箱 / CI。
 
 `master` 与 `develop` 都不接受直接推送：两者都设了「只接受 Pull Request」的规则，
 `develop` 只收第三层的 PR，`master` 只收 `develop` 的 PR（由发布脚本 / Actions 自动开）。
