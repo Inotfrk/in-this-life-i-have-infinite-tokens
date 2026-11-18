@@ -189,33 +189,21 @@ gh pr merge --merge
 
 ## 4. 验证
 
-**默认在 Docker 沙箱里跑**，不在宿主机装 JDK；容器里 `UiTest` 靠 `xvfb` 提供虚拟显示，
-不会因为无图形环境被跳过。用长驻容器 runner，每次运行都会留档，失败可以回溯现场。
-容器默认限 `2g` 内存（`--memory-swap` 同步封顶）与 2 CPU，并套一层 `timeout`——
-**不要绕过这些上限**，本机曾因无上限构建整机卡死；确实需要更多资源时用 `-Memory` / `-Cpus` 显式调。
-用法见 [docs/docker-sandbox.md](docs/docker-sandbox.md)：
+**当前仓库没有可测代码**：C++/Qt 实现与 Node 后端已于 2026-11-18 清空（旧内容见 git 历史），
+构建脚本、Dockerfile、`.devcontainer/` 与沙箱脚本/文档随之移除，`package.yml` 也已删除。
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 build   # 首次或基础镜像更新后
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 test    # 跑测试，留档到 .sandbox-runs/
-powershell -ExecutionPolicy Bypass -File scripts\sandbox.ps1 runs    # 回溯历史运行
-```
+所以现在的规矩是：
 
-```bash
-scripts/sandbox.sh build && scripts/sandbox.sh test    # macOS / Linux
-```
+1. 改动只涉及规则 / 文档时**不跑构建**，但要检查 Markdown 链接、命令示例与 `TODO.md` 状态是否仍然正确；
+2. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`；
+3. 新实现落地时，**同时**恢复构建脚本、沙箱与 CI，并回到本节写清验证命令；在那之前不 pretend 有测试。
 
-没有 Docker 或需要原生路径时，退回宿主机脚本（输出应与沙箱一致）：
+新实现接回后要恢复的验证标准（照抄即可）：
 
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\build.ps1 -Task test   # Windows
-```
-
-```bash
-scripts/build.sh test                                                   # macOS / Linux
-```
-
-只改文档时不需要构建，但要检查 Markdown 链接与命令示例是否仍然正确。
+- 默认在 Docker 沙箱里跑，不在宿主机装整套编译环境；用长驻容器 runner，每次运行留档，失败可回溯现场；
+- 容器默认限 `2g` 内存（`--memory-swap` 同步封顶）与 2 CPU，并套一层 `timeout`——**不要绕过这些上限**，
+  本机曾因无上限构建整机卡死；确实需要更多资源时用 `-Memory` / `-Cpus` 显式调；
+- 没有 Docker 或需要原生路径时，退回宿主机构建脚本，输出应与沙箱一致。
 
 ---
 
@@ -257,7 +245,7 @@ Agents可以在 [NOTE.md](NOTE.md)中以 `<ISO8601时间戳>[<分支名>]文本�
   `release/develop-to-master-<标签>` → 用 API 开 PR 并合并进 `master` → 打 `v<日期>` 标签 →
   再开一条 `release/master-to-develop-<标签>` 的 PR 把合并提交回合给 `develop`。
   任何一步失败即中止，不留半成品。令牌优先取 `GH_TOKEN`，否则用 git 已保存的 github.com 凭据。
-- **远端**：`.github/workflows/release.yml`（GitHub Actions）在 `develop` 推送后跑测试，
+- **远端**：`.github/workflows/release.yml`（GitHub Actions）在 `develop` 推送后跑测试（当前是占位 `echo`，见第 4 节），
   用 `GITHUB_TOKEN` 开 PR 合并 `master`、打标签、再开 PR 回合 `develop`。
   推送即触发，不需要手动开启；Actions 不可用时以本地脚本为准。
 - 自动推进禁止强推；冲突时停下来报告，由人决定。

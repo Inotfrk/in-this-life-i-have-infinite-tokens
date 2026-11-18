@@ -31,24 +31,10 @@ jobs:
           fetch-depth: 0
           ref: develop
 
-      - name: Install Qt
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: '6.8.1'
-          cache: true
-
-      - name: Install Linux runtime libraries
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libgl1-mesa-dev libgl1-mesa-dri libxkbcommon-x11-0 \
-            libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
-            libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-xinerama0 \
-            fonts-wqy-zenhei
-
       - name: Run tests
-        # 构建机没有图形环境，界面检查走 offscreen 平台。
-        run: bash scripts/build.sh test
+        # 实现代码已于 2026-11-18 清空（见 AGENTS.md 第 4 节），暂时没有可跑的测试。
+        # 这段保留为将来新实现接回 CI 的入口：恢复时把测试命令填回 run 即可。
+        run: echo '实现已清空，暂无测试可跑'
 
       - name: Open and merge release pull request
         run: |
