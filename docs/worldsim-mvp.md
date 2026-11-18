@@ -90,6 +90,10 @@ python3 -m examples.mvp_demo --online
 DeepSeek 现在的模型名是 `deepseek-flash` / `deepseek-v4-pro`，V2.5 里硬编码的
 `deepseek-v4-flash` 已经调不通了。
 
+真模型的输出约定是一个 JSON：`{"say": "回应", "deltas": {"压力": 6}}`。
+`OpenAICompatLLM.parse_turn()` 负责容错：允许 ```json 围栏，未知键丢弃，
+非数字丢弃，单项截断在 ±20（`DELTA_LIMIT`）；解析不了就退化成纯文本回复，不报错。
+
 ## 6. 还没做的（下一步）
 
 1. **行动系统**：把 `ListAction / RunTask` 的思想搬过来，让角色能自己发起行为而不只是回应；
