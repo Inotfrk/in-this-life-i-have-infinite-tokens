@@ -14,7 +14,7 @@ from pathlib import Path
 
 from worldsim import Agent, AgentManager, ScriptedLLM
 from worldsim.env import load_env_file
-from worldsim.llm import RuleBasedLLM
+from worldsim.llm import OpenAICompatLLM, RuleBasedLLM
 
 
 class TestInstanceIsolation(unittest.IsolatedAsyncioTestCase):
@@ -234,6 +234,45 @@ class TestValues(unittest.IsolatedAsyncioTestCase):
             self.assertGreater(a.values["信任"], 50.0)
         finally:
             await mgr.close()
+
+
+class TestOnlineResponseParsing(unittest.TestCase):
+    """真模型要求输出 JSON；模型不听话时不能把沙盘带崩。"""
+
+    def setUp(self) -> None:
+        self.agent = Agent("阿禾", "码头搬运工", {"信任": 50, "压力": 30})
+
+    def test_fenced_json_is_parsed(self) -> None:
+        text = '```json\n{"say": "这话我信一半。", "deltas": {"压力": 6, "信任": -3}}\n```'
+        turn = OpenAICompatLLM.parse_turn(text, self.agent)
+        self.assertEqual(turn.reply, "这话我信一半。")
+        self.assertEqual(turn.value_deltas, {"压力": 6.0, "信任": -3.0})
+
+    def test_unknown_and_bad_deltas_are_dropped(self) -> None:
+        text = '{"say": "嗯。", "deltas": {"压力": 4, "房價": 9, "信任": "很多"}}'
+        turn = OpenAICompatLLM.parse_turn(text, self.agent)
+        self.assertEqual(turn.value_deltas, {"压力": 4.0})
+
+    def test_deltas_are_clamped(self) -> None:
+        text = '{"say": "崩了。", "deltas": {"压力": 999, "信任": -999}}'
+        turn = OpenAICompatLLM.parse_turn(text, self.agent)
+        limit = OpenAICompatLLM.DELTA_LIMIT
+        self.assertEqual(turn.value_deltas, {"压力": limit, "信任": -limit})
+
+    def test_plain_text_falls_back(self) -> None:
+        turn = OpenAICompatLLM.parse_turn("（放下手里的活）你再说一遍？", self.agent)
+        self.assertEqual(turn.reply, "（放下手里的活）你再说一遍？")
+        self.assertEqual(turn.value_deltas, {})
+
+    def test_broken_json_falls_back_to_text(self) -> None:
+        text = '{"say": "没写完'
+        turn = OpenAICompatLLM.parse_turn(text, self.agent)
+        self.assertEqual(turn.reply, text)
+        self.assertEqual(turn.value_deltas, {})
+
+    def test_empty_output_is_silence(self) -> None:
+        turn = OpenAICompatLLM.parse_turn("   ", self.agent)
+        self.assertIsNone(turn.reply)
 
 
 class TestEnvFile(unittest.TestCase):
