@@ -85,7 +85,7 @@ Content-Type: application/json; charset=utf-8
 | `ui.set_theme` | `dark` / `light` / `star` | 切换主题 |
 | `ai.set_provider` | 服务商 id | 切换 AI 服务商 |
 
-实现见 [src/ui/control_command.cpp](../src/ui/control_command.cpp) 的 `AllowedOps()`。
+实现见 `src/ui/control_command.cpp`（实现已清空，见 git 历史） 的 `AllowedOps()`。
 
 **明确不做的事**（即使 AI 要求也不做）：
 

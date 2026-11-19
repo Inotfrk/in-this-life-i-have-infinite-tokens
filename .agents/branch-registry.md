@@ -37,7 +37,7 @@
 3. 在上表补一行（前缀 = GitHub 用户名小写）。
 
 **没有对应保护规则的前缀不许新建分支。** 账号表里的每个前缀都要有一条
-`<前缀>-owner-only` 规则；新成员进来后重跑一次 [scripts/github-rulesets.ps1](scripts/github-rulesets.ps1)
+`<前缀>-owner-only` 规则；新成员进来后重跑一次 [scripts/github-rulesets.ps1](../scripts/github-rulesets.ps1)
 就能补上他的规则。
 
 ## 电脑段不在这里登记
