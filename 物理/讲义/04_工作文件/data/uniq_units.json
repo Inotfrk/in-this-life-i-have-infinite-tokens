@@ -1,0 +1,9186 @@
+[
+ {
+  "uid": "U1",
+  "text": "Essential Vocabulary & Concepts",
+  "ids": [
+   1
+  ]
+ },
+ {
+  "uid": "U2",
+  "text": "Word / Concept",
+  "ids": [
+   2,
+   4
+  ]
+ },
+ {
+  "uid": "U3",
+  "text": "Meaning",
+  "ids": [
+   3,
+   5
+  ]
+ },
+ {
+  "uid": "U4",
+  "text": "speed",
+  "ids": [
+   6,
+   180,
+   614,
+   1149
+  ]
+ },
+ {
+  "uid": "U5",
+  "text": "distance travelled per unit time",
+  "ids": [
+   7
+  ]
+ },
+ {
+  "uid": "U6",
+  "text": "deceleration",
+  "ids": [
+   8,
+   312
+  ]
+ },
+ {
+  "uid": "U7",
+  "text": "negative acceleration / slowing down",
+  "ids": [
+   9
+  ]
+ },
+ {
+  "uid": "U8",
+  "text": "average speed",
+  "ids": [
+   10
+  ]
+ },
+ {
+  "uid": "U9",
+  "text": "total distance ÷ total time",
+  "ids": [
+   11
+  ]
+ },
+ {
+  "uid": "U10",
+  "text": "velocity",
+  "ids": [
+   12,
+   181,
+   383,
+   615
+  ]
+ },
+ {
+  "uid": "U11",
+  "text": "speed in a stated direction",
+  "ids": [
+   13
+  ]
+ },
+ {
+  "uid": "U12",
+  "text": "distance",
+  "ids": [
+   14,
+   182
+  ]
+ },
+ {
+  "uid": "U13",
+  "text": "how far an object travels",
+  "ids": [
+   15
+  ]
+ },
+ {
+  "uid": "U14",
+  "text": "scalar",
+  "ids": [
+   16,
+   354
+  ]
+ },
+ {
+  "uid": "U15",
+  "text": "magnitude only",
+  "ids": [
+   17
+  ]
+ },
+ {
+  "uid": "U16",
+  "text": "time",
+  "ids": [
+   18,
+   184,
+   384
+  ]
+ },
+ {
+  "uid": "U17",
+  "text": "how long motion takes",
+  "ids": [
+   19
+  ]
+ },
+ {
+  "uid": "U18",
+  "text": "vector",
+  "ids": [
+   20,
+   356
+  ]
+ },
+ {
+  "uid": "U19",
+  "text": "magnitude and direction",
+  "ids": [
+   21
+  ]
+ },
+ {
+  "uid": "U20",
+  "text": "gradient / slope",
+  "ids": [
+   22
+  ]
+ },
+ {
+  "uid": "U21",
+  "text": "distance–time graph",
+  "ids": [
+   23
+  ]
+ },
+ {
+  "uid": "U22",
+  "text": "gradient gives speed",
+  "ids": [
+   24
+  ]
+ },
+ {
+  "uid": "U23",
+  "text": "acceleration",
+  "ids": [
+   25,
+   187,
+   310,
+   621
+  ]
+ },
+ {
+  "uid": "U24",
+  "text": "rate of change of velocity",
+  "ids": [
+   26
+  ]
+ },
+ {
+  "uid": "U25",
+  "text": "speed–time graph",
+  "ids": [
+   27
+  ]
+ },
+ {
+  "uid": "U26",
+  "text": "gradient gives acceleration; area gives distance",
+  "ids": [
+   28
+  ]
+ },
+ {
+  "uid": "U27",
+  "text": "This week  Use these words accurately when you speak, write explanations, and answer calculation questions. Always include units in numerical answers.",
+  "ids": [
+   29,
+   30,
+   31,
+   32
+  ]
+ },
+ {
+  "uid": "U28",
+  "text": "1. Understanding Speed",
+  "ids": [
+   33
+  ]
+ },
+ {
+  "uid": "U29",
+  "text": "MUST KNOW  Speed (S) = distance / time     Average speed = total distance / total time",
+  "ids": [
+   34
+  ]
+ },
+ {
+  "uid": "U30",
+  "text": "Units for speed",
+  "ids": [
+   35
+  ]
+ },
+ {
+  "uid": "U31",
+  "text": "A speed unit is always a distance unit divided by a time unit.",
+  "ids": [
+   36
+  ]
+ },
+ {
+  "uid": "U32",
+  "text": "Examples include m/s, cm/s, km/h and mile/h.",
+  "ids": [
+   37
+  ]
+ },
+ {
+  "uid": "U33",
+  "text": "Quick match",
+  "ids": [
+   38
+  ]
+ },
+ {
+  "uid": "U34",
+  "text": "Which unit would be most sensible for each?",
+  "ids": [
+   39
+  ]
+ },
+ {
+  "uid": "U35",
+  "text": "Teacher Answer — Suggested sensible units",
+  "ids": [
+   40,
+   46
+  ]
+ },
+ {
+  "uid": "U36",
+  "text": "Cars → km/h",
+  "ids": [
+   41,
+   47
+  ]
+ },
+ {
+  "uid": "U37",
+  "text": "Jets → m/s",
+  "ids": [
+   42,
+   48
+  ]
+ },
+ {
+  "uid": "U38",
+  "text": "Snails → cm/s",
+  "ids": [
+   43,
+   49
+  ]
+ },
+ {
+  "uid": "U39",
+  "text": "Falling objects → m/s",
+  "ids": [
+   44,
+   50
+  ]
+ },
+ {
+  "uid": "U40",
+  "text": "Teaching note: the key idea is that speed units must be distance ÷ time; students should also judge whether the size of the unit is sensible for the object.",
+  "ids": [
+   45,
+   51
+  ]
+ },
+ {
+  "uid": "U41",
+  "text": "Object",
+  "ids": [
+   52
+  ]
+ },
+ {
+  "uid": "U42",
+  "text": "Possible speed unit",
+  "ids": [
+   53,
+   54
+  ]
+ },
+ {
+  "uid": "U43",
+  "text": "Cars",
+  "ids": [
+   55
+  ]
+ },
+ {
+  "uid": "U44",
+  "text": "Jets",
+  "ids": [
+   56
+  ]
+ },
+ {
+  "uid": "U45",
+  "text": "Snails",
+  "ids": [
+   57
+  ]
+ },
+ {
+  "uid": "U46",
+  "text": "Falling objects",
+  "ids": [
+   58
+  ]
+ },
+ {
+  "uid": "U47",
+  "text": "Class Question — Average Speed",
+  "ids": [
+   59
+  ]
+ },
+ {
+  "uid": "U48",
+  "text": "I ran 1000 m in 3 minutes. Then ran another 1000 m uphill in 7 minutes. What is my average speed?",
+  "ids": [
+   60
+  ]
+ },
+ {
+  "uid": "U49",
+  "text": "Teacher Answer — Step by step",
+  "ids": [
+   61,
+   72,
+   79,
+   95,
+   116,
+   148,
+   157,
+   197,
+   221,
+   226,
+   232,
+   236,
+   240,
+   246,
+   250,
+   394,
+   409,
+   422,
+   436,
+   442,
+   453,
+   468,
+   475,
+   482,
+   489,
+   504,
+   514,
+   529,
+   544,
+   552,
+   561,
+   576,
+   583,
+   590,
+   602,
+   625,
+   640,
+   648,
+   660,
+   672,
+   682,
+   694,
+   706,
+   719
+  ]
+ },
+ {
+  "uid": "U50",
+  "text": "Step 1: Total distance = 1000 m + 1000 m = 2000 m.",
+  "ids": [
+   62
+  ]
+ },
+ {
+  "uid": "U51",
+  "text": "Step 2: Total time = 3 min + 7 min = 10 min.",
+  "ids": [
+   63
+  ]
+ },
+ {
+  "uid": "U52",
+  "text": "Step 3: Average speed = total distance ÷ total time.",
+  "ids": [
+   64
+  ]
+ },
+ {
+  "uid": "U53",
+  "text": "Step 4: Average speed = 2000 m ÷ 10 min = 200 m/min.",
+  "ids": [
+   65
+  ]
+ },
+ {
+  "uid": "U54",
+  "text": "Final answer: 200 m/min.",
+  "ids": [
+   66
+  ]
+ },
+ {
+  "uid": "U55",
+  "text": "Total distance = ______________________________",
+  "ids": [
+   67
+  ]
+ },
+ {
+  "uid": "U56",
+  "text": "Total time = __________________________________",
+  "ids": [
+   68
+  ]
+ },
+ {
+  "uid": "U57",
+  "text": "Average speed = _______________________________",
+  "ids": [
+   69
+  ]
+ },
+ {
+  "uid": "U58",
+  "text": "COMMON CONFUSION  Do not average the two speeds unless the question specifically allows it. For average speed, use total distance ÷ total time.",
+  "ids": [
+   70
+  ]
+ },
+ {
+  "uid": "U59",
+  "text": "Exam-style question",
+  "ids": [
+   71,
+   156
+  ]
+ },
+ {
+  "uid": "U60",
+  "text": "Given: speed = 40 m/s, time = 2.0 s.",
+  "ids": [
+   73
+  ]
+ },
+ {
+  "uid": "U61",
+  "text": "Step 1: Use distance = speed × time.",
+  "ids": [
+   74
+  ]
+ },
+ {
+  "uid": "U62",
+  "text": "Step 2: distance = 40 × 2.0 = 80 m.",
+  "ids": [
+   75
+  ]
+ },
+ {
+  "uid": "U63",
+  "text": "Final answer: 80 m, option D.",
+  "ids": [
+   76
+  ]
+ },
+ {
+  "uid": "U64",
+  "text": "How can speed be measured?",
+  "ids": [
+   77
+  ]
+ },
+ {
+  "uid": "U65",
+  "text": "How would you measure the speed of a moving trolley or toy car?",
+  "ids": [
+   78
+  ]
+ },
+ {
+  "uid": "U66",
+  "text": "Step 1: Measure a known distance along the track using a metre rule.",
+  "ids": [
+   80
+  ]
+ },
+ {
+  "uid": "U67",
+  "text": "Step 2: Measure the time taken for the trolley to travel that distance using a stopwatch or light gates.",
+  "ids": [
+   81
+  ]
+ },
+ {
+  "uid": "U68",
+  "text": "Step 3: Calculate speed using speed = distance ÷ time.",
+  "ids": [
+   82
+  ]
+ },
+ {
+  "uid": "U69",
+  "text": "Step 4: Repeat the measurement and calculate a mean to improve reliability.",
+  "ids": [
+   83
+  ]
+ },
+ {
+  "uid": "U70",
+  "text": "Good exam wording: measure a known distance, measure the corresponding time, then calculate distance ÷ time.",
+  "ids": [
+   84
+  ]
+ },
+ {
+  "uid": "U71",
+  "text": "Rearranging the equation",
+  "ids": [
+   85
+  ]
+ },
+ {
+  "uid": "U72",
+  "text": "MUST KNOW  distance = speed × time     time = distance / speed",
+  "ids": [
+   86
+  ]
+ },
+ {
+  "uid": "U73",
+  "text": "2. Distance–Time Graphs",
+  "ids": [
+   87
+  ]
+ },
+ {
+  "uid": "U74",
+  "text": "MUST KNOW  The gradient of a distance–time graph tells us the speed.",
+  "ids": [
+   88
+  ]
+ },
+ {
+  "uid": "U75",
+  "text": "Steeper gradient → greater speed.",
+  "ids": [
+   89
+  ]
+ },
+ {
+  "uid": "U76",
+  "text": "Horizontal line → zero gradient → speed is zero → the object is stationary.",
+  "ids": [
+   90
+  ]
+ },
+ {
+  "uid": "U77",
+  "text": "Straight line with constant gradient → constant speed.",
+  "ids": [
+   91
+  ]
+ },
+ {
+  "uid": "U78",
+  "text": "FORMULA  Speed = gradient (slope) = Δy / Δx",
+  "ids": [
+   92
+  ]
+ },
+ {
+  "uid": "U79",
+  "text": "Worked graph",
+  "ids": [
+   93
+  ]
+ },
+ {
+  "uid": "U80",
+  "text": "Gradient = Δy / Δx = ______________________________",
+  "ids": [
+   94
+  ]
+ },
+ {
+  "uid": "U81",
+  "text": "From the marked triangle on the graph: Δdistance = 80 km and Δtime = 1.0 h.",
+  "ids": [
+   96
+  ]
+ },
+ {
+  "uid": "U82",
+  "text": "Step 1: speed = gradient = Δdistance ÷ Δtime.",
+  "ids": [
+   97
+  ]
+ },
+ {
+  "uid": "U83",
+  "text": "Step 2: speed = 80 km ÷ 1.0 h.",
+  "ids": [
+   98
+  ]
+ },
+ {
+  "uid": "U84",
+  "text": "Final answer: 80 km/h.",
+  "ids": [
+   99
+  ]
+ },
+ {
+  "uid": "U85",
+  "text": "COMMON CONFUSION  A horizontal line on a distance–time graph means stationary. Do not confuse this with a horizontal line on a speed–time graph.",
+  "ids": [
+   100,
+   101
+  ]
+ },
+ {
+  "uid": "U86",
+  "text": "Check your understanding",
+  "ids": [
+   102
+  ]
+ },
+ {
+  "uid": "U87",
+  "text": "1. What does the gradient of a distance–time graph represent?",
+  "ids": [
+   103
+  ]
+ },
+ {
+  "uid": "U88",
+  "text": "Teacher Answer",
+  "ids": [
+   104,
+   107,
+   111,
+   123,
+   128,
+   153
+  ]
+ },
+ {
+  "uid": "U89",
+  "text": "The gradient represents speed.",
+  "ids": [
+   105
+  ]
+ },
+ {
+  "uid": "U90",
+  "text": "2. What does a horizontal section mean?",
+  "ids": [
+   106
+  ]
+ },
+ {
+  "uid": "U91",
+  "text": "A horizontal section has zero gradient.",
+  "ids": [
+   108
+  ]
+ },
+ {
+  "uid": "U92",
+  "text": "Therefore speed = 0, so the object is stationary.",
+  "ids": [
+   109
+  ]
+ },
+ {
+  "uid": "U93",
+  "text": "3. Which line shows the greater speed: a steeper line or a shallower line?",
+  "ids": [
+   110
+  ]
+ },
+ {
+  "uid": "U94",
+  "text": "The steeper line.",
+  "ids": [
+   112
+  ]
+ },
+ {
+  "uid": "U95",
+  "text": "Reason: a greater gradient means a greater change in distance per unit time, so the speed is greater.",
+  "ids": [
+   113
+  ]
+ },
+ {
+  "uid": "U96",
+  "text": "3. Acceleration",
+  "ids": [
+   114
+  ]
+ },
+ {
+  "uid": "U97",
+  "text": "A car advert may say a car goes “from 0 to 60 km per hour in 6 s”. What does this tell us about the car?",
+  "ids": [
+   115
+  ]
+ },
+ {
+  "uid": "U98",
+  "text": "The car's velocity increases from 0 to 60 km/h in 6 s.",
+  "ids": [
+   117
+  ]
+ },
+ {
+  "uid": "U99",
+  "text": "This tells us the car is accelerating: its velocity is changing with time.",
+  "ids": [
+   118
+  ]
+ },
+ {
+  "uid": "U100",
+  "text": "Optional numerical extension: 60 km/h = 16.7 m/s, so average acceleration ≈ 16.7 ÷ 6 = 2.8 m/s².",
+  "ids": [
+   119
+  ]
+ },
+ {
+  "uid": "U101",
+  "text": "KEY IDEA  Acceleration tells us the rate at which velocity changes — the change in velocity per unit time.",
+  "ids": [
+   120
+  ]
+ },
+ {
+  "uid": "U102",
+  "text": "Think",
+  "ids": [
+   121
+  ]
+ },
+ {
+  "uid": "U103",
+  "text": "What is the difference between “greater speed” and “greater acceleration”?",
+  "ids": [
+   122
+  ]
+ },
+ {
+  "uid": "U104",
+  "text": "Greater speed means the object is moving faster at that moment.",
+  "ids": [
+   124
+  ]
+ },
+ {
+  "uid": "U105",
+  "text": "Greater acceleration means the object's velocity is changing more quickly.",
+  "ids": [
+   125
+  ]
+ },
+ {
+  "uid": "U106",
+  "text": "An object can have a high speed but zero acceleration if it moves at constant velocity.",
+  "ids": [
+   126
+  ]
+ },
+ {
+  "uid": "U107",
+  "text": "Do velocity and acceleration have to be in the same direction?",
+  "ids": [
+   127
+  ]
+ },
+ {
+  "uid": "U108",
+  "text": "No.",
+  "ids": [
+   129
+  ]
+ },
+ {
+  "uid": "U109",
+  "text": "If an object is slowing down while moving forward, its acceleration is opposite to its velocity.",
+  "ids": [
+   130
+  ]
+ },
+ {
+  "uid": "U110",
+  "text": "If it is speeding up in a straight line, acceleration and velocity are in the same direction.",
+  "ids": [
+   131
+  ]
+ },
+ {
+  "uid": "U111",
+  "text": "Acceleration can involve an increase in speed.",
+  "ids": [
+   132
+  ]
+ },
+ {
+  "uid": "U112",
+  "text": "Acceleration can involve a decrease in speed.",
+  "ids": [
+   133
+  ]
+ },
+ {
+  "uid": "U113",
+  "text": "Acceleration can also involve a change in direction.",
+  "ids": [
+   134
+  ]
+ },
+ {
+  "uid": "U114",
+  "text": "COMMON CONFUSION  Moving fast is not the same as accelerating quickly. An object can move very fast at constant speed and have zero acceleration.",
+  "ids": [
+   135
+  ]
+ },
+ {
+  "uid": "U115",
+  "text": "Acceleration equation",
+  "ids": [
+   136
+  ]
+ },
+ {
+  "uid": "U116",
+  "text": "MUST KNOW  acceleration = change in velocity / time taken     u = initial velocity     v = final velocity",
+  "ids": [
+   137
+  ]
+ },
+ {
+  "uid": "U117",
+  "text": "Unit of acceleration: m/s²",
+  "ids": [
+   138
+  ]
+ },
+ {
+  "uid": "U118",
+  "text": "Acceleration is a vector quantity.",
+  "ids": [
+   139
+  ]
+ },
+ {
+  "uid": "U119",
+  "text": "4. Speed–Time Graphs",
+  "ids": [
+   140
+  ]
+ },
+ {
+  "uid": "U120",
+  "text": "MUST KNOW  The gradient of a speed–time graph tells us the acceleration.",
+  "ids": [
+   141
+  ]
+ },
+ {
+  "uid": "U121",
+  "text": "Steeper slope → greater acceleration.",
+  "ids": [
+   142
+  ]
+ },
+ {
+  "uid": "U122",
+  "text": "Negative slope → deceleration.",
+  "ids": [
+   143
+  ]
+ },
+ {
+  "uid": "U123",
+  "text": "Horizontal line → constant speed.",
+  "ids": [
+   144
+  ]
+ },
+ {
+  "uid": "U124",
+  "text": "Curved line → changing acceleration.",
+  "ids": [
+   145
+  ]
+ },
+ {
+  "uid": "U125",
+  "text": "DO NOT MIX THEM UP  Distance–time graph: gradient = speed.     Speed–time graph: gradient = acceleration.",
+  "ids": [
+   146
+  ]
+ },
+ {
+  "uid": "U126",
+  "text": "Class Question",
+  "ids": [
+   147
+  ]
+ },
+ {
+  "uid": "U127",
+  "text": "First 30 s: speed increases 0 → 4 → 8 → 12 m/s, so the car has non-zero acceleration.",
+  "ids": [
+   149
+  ]
+ },
+ {
+  "uid": "U128",
+  "text": "Last 30 s: speed stays at 12 m/s, so acceleration is zero and the car moves at constant speed.",
+  "ids": [
+   150
+  ]
+ },
+ {
+  "uid": "U129",
+  "text": "Final answer: option D — non-zero acceleration in the first 30 s; constant speed in the last 30 s.",
+  "ids": [
+   151
+  ]
+ },
+ {
+  "uid": "U130",
+  "text": "What does the curved section mean?",
+  "ids": [
+   152
+  ]
+ },
+ {
+  "uid": "U131",
+  "text": "A curved section on a speed–time graph means the gradient is changing.",
+  "ids": [
+   154
+  ]
+ },
+ {
+  "uid": "U132",
+  "text": "Because gradient represents acceleration, the acceleration is changing (non-uniform acceleration).",
+  "ids": [
+   155
+  ]
+ },
+ {
+  "uid": "U133",
+  "text": "The velocity–time graph is approximately a triangle.",
+  "ids": [
+   158
+  ]
+ },
+ {
+  "uid": "U134",
+  "text": "Distance travelled = area under the graph = 520 m.",
+  "ids": [
+   159
+  ]
+ },
+ {
+  "uid": "U135",
+  "text": "Total base time = 7.33 s + 2.69 s = 10.02 s.",
+  "ids": [
+   160
+  ]
+ },
+ {
+  "uid": "U136",
+  "text": "Triangle area = ½ × base × height.",
+  "ids": [
+   161
+  ]
+ },
+ {
+  "uid": "U137",
+  "text": "520 = ½ × 10.02 × maximum velocity.",
+  "ids": [
+   162
+  ]
+ },
+ {
+  "uid": "U138",
+  "text": "Maximum velocity = (2 × 520) ÷ 10.02 ≈ 103.8 m/s.",
+  "ids": [
+   163
+  ]
+ },
+ {
+  "uid": "U139",
+  "text": "Closest option = 105 m/s.",
+  "ids": [
+   164
+  ]
+ },
+ {
+  "uid": "U140",
+  "text": "Final answer: option C, 105 m/s.",
+  "ids": [
+   165
+  ]
+ },
+ {
+  "uid": "U141",
+  "text": "Area under a speed–time graph",
+  "ids": [
+   166
+  ]
+ },
+ {
+  "uid": "U142",
+  "text": "MUST KNOW  Distance travelled = area under the speed–time graph.",
+  "ids": [
+   167
+  ]
+ },
+ {
+  "uid": "U143",
+  "text": "For straight-line sections, split the area into rectangles and/or triangles.",
+  "ids": [
+   168
+  ]
+ },
+ {
+  "uid": "U144",
+  "text": "Teacher Method — Step by step",
+  "ids": [
+   169
+  ]
+ },
+ {
+  "uid": "U145",
+  "text": "Step 1: Identify the shapes under the graph (rectangle, triangle, trapezium if needed).",
+  "ids": [
+   170
+  ]
+ },
+ {
+  "uid": "U146",
+  "text": "Step 2: Calculate each area using the correct formula.",
+  "ids": [
+   171
+  ]
+ },
+ {
+  "uid": "U147",
+  "text": "Step 3: Add the areas.",
+  "ids": [
+   172
+  ]
+ },
+ {
+  "uid": "U148",
+  "text": "Step 4: The total area is the distance travelled.",
+  "ids": [
+   173
+  ]
+ },
+ {
+  "uid": "U149",
+  "text": "Unit check: (m/s) × s = m.",
+  "ids": [
+   174
+  ]
+ },
+ {
+  "uid": "U150",
+  "text": "5. Speed, Velocity, Scalars & Vectors",
+  "ids": [
+   175
+  ]
+ },
+ {
+  "uid": "U151",
+  "text": "KEY DEFINITIONS  Velocity is an object's speed in a particular stated direction. A vector has magnitude and direction. A scalar has magnitude only.",
+  "ids": [
+   176,
+   177
+  ]
+ },
+ {
+  "uid": "U152",
+  "text": "Scalar quantities",
+  "ids": [
+   178,
+   612
+  ]
+ },
+ {
+  "uid": "U153",
+  "text": "Vector quantities",
+  "ids": [
+   179,
+   613
+  ]
+ },
+ {
+  "uid": "U154",
+  "text": "force",
+  "ids": [
+   183,
+   292,
+   617
+  ]
+ },
+ {
+  "uid": "U155",
+  "text": "weight",
+  "ids": [
+   185,
+   328,
+   378,
+   619
+  ]
+ },
+ {
+  "uid": "U156",
+  "text": "mass",
+  "ids": [
+   186,
+   326,
+   380,
+   616,
+   1147
+  ]
+ },
+ {
+  "uid": "U157",
+  "text": "energy",
+  "ids": [
+   188,
+   618,
+   1086
+  ]
+ },
+ {
+  "uid": "U158",
+  "text": "momentum",
+  "ids": [
+   189,
+   346,
+   386
+  ]
+ },
+ {
+  "uid": "U159",
+  "text": "temperature",
+  "ids": [
+   190,
+   622
+  ]
+ },
+ {
+  "uid": "U160",
+  "text": "electric field strength",
+  "ids": [
+   191
+  ]
+ },
+ {
+  "uid": "U161",
+  "text": "gravitational field strength",
+  "ids": [
+   192
+  ]
+ },
+ {
+  "uid": "U162",
+  "text": "COMMON CONFUSION  Speed is scalar; velocity is vector. Mass is scalar; weight is vector because weight is a force.",
+  "ids": [
+   193,
+   194
+  ]
+ },
+ {
+  "uid": "U163",
+  "text": "Class Question — Connect the graphs",
+  "ids": [
+   195
+  ]
+ },
+ {
+  "uid": "U164",
+  "text": "Above is a graph showing the speed of a car over time. What would a distance vs. time graph for this look like?",
+  "ids": [
+   196
+  ]
+ },
+ {
+  "uid": "U165",
+  "text": "The speed decreases uniformly from 12 m/s at 0 s to 0 m/s at 6 s.",
+  "ids": [
+   198
+  ]
+ },
+ {
+  "uid": "U166",
+  "text": "On a distance–time graph, the gradient represents speed.",
+  "ids": [
+   199
+  ]
+ },
+ {
+  "uid": "U167",
+  "text": "Therefore the distance must keep increasing, but the gradient must become smaller and smaller.",
+  "ids": [
+   200
+  ]
+ },
+ {
+  "uid": "U168",
+  "text": "The graph should curve upward in distance but flatten with time (concave down), becoming horizontal at 6 s.",
+  "ids": [
+   201
+  ]
+ },
+ {
+  "uid": "U169",
+  "text": "Using 1 s intervals, the distance increases by the average speed in each interval:",
+  "ids": [
+   202
+  ]
+ },
+ {
+  "uid": "U170",
+  "text": "0–1 s: (12 + 10)/2 × 1 = 11 m → total 11 m.",
+  "ids": [
+   203
+  ]
+ },
+ {
+  "uid": "U171",
+  "text": "1–2 s: (10 + 8)/2 × 1 = 9 m → total 20 m.",
+  "ids": [
+   204
+  ]
+ },
+ {
+  "uid": "U172",
+  "text": "2–3 s: (8 + 6)/2 × 1 = 7 m → total 27 m.",
+  "ids": [
+   205
+  ]
+ },
+ {
+  "uid": "U173",
+  "text": "3–4 s: (6 + 4)/2 × 1 = 5 m → total 32 m.",
+  "ids": [
+   206
+  ]
+ },
+ {
+  "uid": "U174",
+  "text": "4–5 s: (4 + 2)/2 × 1 = 3 m → total 35 m.",
+  "ids": [
+   207
+  ]
+ },
+ {
+  "uid": "U175",
+  "text": "5–6 s: (2 + 0)/2 × 1 = 1 m → total 36 m.",
+  "ids": [
+   208
+  ]
+ },
+ {
+  "uid": "U176",
+  "text": "So suitable plotted points are approximately (0,0), (1,11), (2,20), (3,27), (4,32), (5,35), (6,36).",
+  "ids": [
+   209
+  ]
+ },
+ {
+  "uid": "U177",
+  "text": "Compare your idea",
+  "ids": [
+   210
+  ]
+ },
+ {
+  "uid": "U178",
+  "text": "Week 1 Review",
+  "ids": [
+   211
+  ]
+ },
+ {
+  "uid": "U179",
+  "text": "Key equations",
+  "ids": [
+   212
+  ]
+ },
+ {
+  "uid": "U180",
+  "text": "speed = distance / time",
+  "ids": [
+   213
+  ]
+ },
+ {
+  "uid": "U181",
+  "text": "average speed = total distance / total time",
+  "ids": [
+   214
+  ]
+ },
+ {
+  "uid": "U182",
+  "text": "acceleration = change in velocity / time",
+  "ids": [
+   215
+  ]
+ },
+ {
+  "uid": "U183",
+  "text": "speed = gradient of a distance–time graph",
+  "ids": [
+   216
+  ]
+ },
+ {
+  "uid": "U184",
+  "text": "acceleration = gradient of a speed–time graph",
+  "ids": [
+   217
+  ]
+ },
+ {
+  "uid": "U185",
+  "text": "distance = area under a speed–time graph",
+  "ids": [
+   218
+  ]
+ },
+ {
+  "uid": "U186",
+  "text": "Mini Check",
+  "ids": [
+   219
+  ]
+ },
+ {
+  "uid": "U187",
+  "text": "1. A runner travels 500 m in 100 s. Calculate the speed.",
+  "ids": [
+   220
+  ]
+ },
+ {
+  "uid": "U188",
+  "text": "Step 1: speed = distance ÷ time.",
+  "ids": [
+   222
+  ]
+ },
+ {
+  "uid": "U189",
+  "text": "Step 2: speed = 500 m ÷ 100 s = 5 m/s.",
+  "ids": [
+   223
+  ]
+ },
+ {
+  "uid": "U190",
+  "text": "Final answer: 5 m/s.",
+  "ids": [
+   224
+  ]
+ },
+ {
+  "uid": "U191",
+  "text": "2. A student travels 600 m in 5 min and then 400 m in 5 min. Calculate the average speed in m/min.",
+  "ids": [
+   225
+  ]
+ },
+ {
+  "uid": "U192",
+  "text": "Step 1: Total distance = 600 + 400 = 1000 m.",
+  "ids": [
+   227
+  ]
+ },
+ {
+  "uid": "U193",
+  "text": "Step 2: Total time = 5 + 5 = 10 min.",
+  "ids": [
+   228
+  ]
+ },
+ {
+  "uid": "U194",
+  "text": "Step 3: Average speed = 1000 ÷ 10 = 100 m/min.",
+  "ids": [
+   229
+  ]
+ },
+ {
+  "uid": "U195",
+  "text": "Final answer: 100 m/min.",
+  "ids": [
+   230
+  ]
+ },
+ {
+  "uid": "U196",
+  "text": "3. State what a horizontal line means on a distance–time graph.",
+  "ids": [
+   231
+  ]
+ },
+ {
+  "uid": "U197",
+  "text": "Horizontal line → gradient = 0 → speed = 0.",
+  "ids": [
+   233
+  ]
+ },
+ {
+  "uid": "U198",
+  "text": "Final answer: the object is stationary.",
+  "ids": [
+   234
+  ]
+ },
+ {
+  "uid": "U199",
+  "text": "4. State what a horizontal line means on a speed–time graph.",
+  "ids": [
+   235
+  ]
+ },
+ {
+  "uid": "U200",
+  "text": "Horizontal line → speed does not change with time.",
+  "ids": [
+   237
+  ]
+ },
+ {
+  "uid": "U201",
+  "text": "Final answer: the object moves at constant speed (zero acceleration).",
+  "ids": [
+   238
+  ]
+ },
+ {
+  "uid": "U202",
+  "text": "5. A car changes velocity from 5 m/s to 17 m/s in 4 s. Calculate the acceleration.",
+  "ids": [
+   239
+  ]
+ },
+ {
+  "uid": "U203",
+  "text": "Step 1: Change in velocity = 17 − 5 = 12 m/s.",
+  "ids": [
+   241
+  ]
+ },
+ {
+  "uid": "U204",
+  "text": "Step 2: acceleration = change in velocity ÷ time.",
+  "ids": [
+   242
+  ]
+ },
+ {
+  "uid": "U205",
+  "text": "Step 3: acceleration = 12 ÷ 4 = 3 m/s².",
+  "ids": [
+   243
+  ]
+ },
+ {
+  "uid": "U206",
+  "text": "Final answer: 3 m/s².",
+  "ids": [
+   244
+  ]
+ },
+ {
+  "uid": "U207",
+  "text": "6. State the difference between speed and velocity.",
+  "ids": [
+   245
+  ]
+ },
+ {
+  "uid": "U208",
+  "text": "Speed is a scalar: it has magnitude only.",
+  "ids": [
+   247
+  ]
+ },
+ {
+  "uid": "U209",
+  "text": "Velocity is a vector: it has magnitude and a stated direction.",
+  "ids": [
+   248
+  ]
+ },
+ {
+  "uid": "U210",
+  "text": "7. Classify each as scalar or vector: speed, velocity, mass, weight.",
+  "ids": [
+   249
+  ]
+ },
+ {
+  "uid": "U211",
+  "text": "Speed → scalar.",
+  "ids": [
+   251
+  ]
+ },
+ {
+  "uid": "U212",
+  "text": "Velocity → vector.",
+  "ids": [
+   252
+  ]
+ },
+ {
+  "uid": "U213",
+  "text": "Mass → scalar.",
+  "ids": [
+   253
+  ]
+ },
+ {
+  "uid": "U214",
+  "text": "Weight → vector, because weight is a force.",
+  "ids": [
+   254
+  ]
+ },
+ {
+  "uid": "U215",
+  "text": "Self Reflection",
+  "ids": [
+   255
+  ]
+ },
+ {
+  "uid": "U216",
+  "text": "1. Which idea from this week do you understand best? Why?",
+  "ids": [
+   256
+  ]
+ },
+ {
+  "uid": "U217",
+  "text": "Teacher Guidance / Sample Response",
+  "ids": [
+   257,
+   260,
+   263,
+   266,
+   269,
+   731,
+   736,
+   741,
+   746
+  ]
+ },
+ {
+  "uid": "U218",
+  "text": "Student-dependent. Sample: “I understand average speed best because I know I must add the total distance and total time before dividing.”",
+  "ids": [
+   258
+  ]
+ },
+ {
+  "uid": "U219",
+  "text": "2. Which idea is still confusing?",
+  "ids": [
+   259
+  ]
+ },
+ {
+  "uid": "U220",
+  "text": "Student-dependent. Sample: “I still confuse what a horizontal line means on distance–time and speed–time graphs.”",
+  "ids": [
+   261
+  ]
+ },
+ {
+  "uid": "U221",
+  "text": "3. Which graph skill do you need to practise more: distance–time or speed–time graphs? Why?",
+  "ids": [
+   262
+  ]
+ },
+ {
+  "uid": "U222",
+  "text": "Student-dependent. Sample: “I need more practice with speed–time graphs because I need to remember both gradient = acceleration and area = distance.”",
+  "ids": [
+   264
+  ]
+ },
+ {
+  "uid": "U223",
+  "text": "4. Which vocabulary word is hardest for you to remember or use correctly?",
+  "ids": [
+   265
+  ]
+ },
+ {
+  "uid": "U224",
+  "text": "Student-dependent. Sample: “Velocity, because I need to remember that it includes direction but speed does not.”",
+  "ids": [
+   267
+  ]
+ },
+ {
+  "uid": "U225",
+  "text": "5. What will you do before the next physics lesson to improve?",
+  "ids": [
+   268
+  ]
+ },
+ {
+  "uid": "U226",
+  "text": "Student-dependent. Sample: “I will review the vocabulary, redo the graph questions, and practise one speed and one acceleration calculation.”",
+  "ids": [
+   270
+  ]
+ },
+ {
+  "uid": "U227",
+  "text": "My confidence after Week 1:   1   2   3   4   5",
+  "ids": [
+   271
+  ]
+ },
+ {
+  "uid": "U228",
+  "text": "Teacher Guidance",
+  "ids": [
+   272,
+   750
+  ]
+ },
+ {
+  "uid": "U229",
+  "text": "No single correct answer. Use this as a quick confidence check and compare it with the student's actual performance on the Mini Check.",
+  "ids": [
+   273
+  ]
+ },
+ {
+  "uid": "U230",
+  "text": "One question I still want to ask:",
+  "ids": [
+   274
+  ]
+ },
+ {
+  "uid": "U231",
+  "text": "Teacher Guidance / Sample",
+  "ids": [
+   275
+  ]
+ },
+ {
+  "uid": "U232",
+  "text": "No single correct answer. Example: “Why does the area under a speed–time graph give distance?”",
+  "ids": [
+   276
+  ]
+ },
+ {
+  "uid": "U233",
+  "text": "Chapter Overview",
+  "ids": [
+   277,
+   753,
+   1071
+  ]
+ },
+ {
+  "uid": "U234",
+  "text": "Lesson",
+  "ids": [
+   278,
+   754,
+   1072
+  ]
+ },
+ {
+  "uid": "U235",
+  "text": "Content",
+  "ids": [
+   279,
+   1073
+  ]
+ },
+ {
+  "uid": "U236",
+  "text": "Lesson 1",
+  "ids": [
+   280,
+   1074
+  ]
+ },
+ {
+  "uid": "U237",
+  "text": "Forces → effects of forces → resultant force → Practice",
+  "ids": [
+   281
+  ]
+ },
+ {
+  "uid": "U238",
+  "text": "Lesson 2",
+  "ids": [
+   282,
+   1076
+  ]
+ },
+ {
+  "uid": "U239",
+  "text": "Mass & weight → astronaut question → falling → terminal velocity → circular motion",
+  "ids": [
+   283
+  ]
+ },
+ {
+  "uid": "U240",
+  "text": "Lesson 3",
+  "ids": [
+   284,
+   1078
+  ]
+ },
+ {
+  "uid": "U241",
+  "text": "Force, mass and acceleration → F = ma → SI units / newton",
+  "ids": [
+   285
+  ]
+ },
+ {
+  "uid": "U242",
+  "text": "Lesson 4",
+  "ids": [
+   286,
+   1080
+  ]
+ },
+ {
+  "uid": "U243",
+  "text": "Momentum → impulse → car question → conservation of momentum",
+  "ids": [
+   287
+  ]
+ },
+ {
+  "uid": "U244",
+  "text": "Lesson 5",
+  "ids": [
+   288
+  ]
+ },
+ {
+  "uid": "U245",
+  "text": "Scalars & vectors → vector addition → AB + BC = AC",
+  "ids": [
+   289
+  ]
+ },
+ {
+  "uid": "U246",
+  "text": "English term",
+  "ids": [
+   290,
+   324,
+   771,
+   805,
+   1084,
+   1108
+  ]
+ },
+ {
+  "uid": "U247",
+  "text": "English definition",
+  "ids": [
+   291,
+   325,
+   772,
+   806,
+   1085,
+   1109
+  ]
+ },
+ {
+  "uid": "U248",
+  "text": "a push or a pull that can change an object’s motion",
+  "ids": [
+   293
+  ]
+ },
+ {
+  "uid": "U249",
+  "text": "push / pull",
+  "ids": [
+   294
+  ]
+ },
+ {
+  "uid": "U250",
+  "text": "two common ways a force can act on an object",
+  "ids": [
+   295
+  ]
+ },
+ {
+  "uid": "U251",
+  "text": "thrust",
+  "ids": [
+   296
+  ]
+ },
+ {
+  "uid": "U252",
+  "text": "a forward force produced by an engine, rocket or propeller",
+  "ids": [
+   297
+  ]
+ },
+ {
+  "uid": "U253",
+  "text": "newton (N)",
+  "ids": [
+   298
+  ]
+ },
+ {
+  "uid": "U254",
+  "text": "the SI unit used to measure force",
+  "ids": [
+   299
+  ]
+ },
+ {
+  "uid": "U255",
+  "text": "interaction",
+  "ids": [
+   300
+  ]
+ },
+ {
+  "uid": "U256",
+  "text": "when two objects act on each other and forces appear",
+  "ids": [
+   301
+  ]
+ },
+ {
+  "uid": "U257",
+  "text": "contact force",
+  "ids": [
+   302
+  ]
+ },
+ {
+  "uid": "U258",
+  "text": "a force that acts when objects are touching",
+  "ids": [
+   303
+  ]
+ },
+ {
+  "uid": "U259",
+  "text": "friction",
+  "ids": [
+   304
+  ]
+ },
+ {
+  "uid": "U260",
+  "text": "a force that opposes relative motion between surfaces",
+  "ids": [
+   305
+  ]
+ },
+ {
+  "uid": "U261",
+  "text": "air resistance / drag",
+  "ids": [
+   306
+  ]
+ },
+ {
+  "uid": "U262",
+  "text": "a force from air that opposes motion through the air",
+  "ids": [
+   307
+  ]
+ },
+ {
+  "uid": "U263",
+  "text": "upthrust",
+  "ids": [
+   308
+  ]
+ },
+ {
+  "uid": "U264",
+  "text": "an upward force exerted by a fluid on an object",
+  "ids": [
+   309
+  ]
+ },
+ {
+  "uid": "U265",
+  "text": "the rate of change of velocity; speed or direction may change",
+  "ids": [
+   311
+  ]
+ },
+ {
+  "uid": "U266",
+  "text": "acceleration that reduces the speed of an object",
+  "ids": [
+   313
+  ]
+ },
+ {
+  "uid": "U267",
+  "text": "resultant force",
+  "ids": [
+   314
+  ]
+ },
+ {
+  "uid": "U268",
+  "text": "the single force with the same effect as two or more forces combined",
+  "ids": [
+   315
+  ]
+ },
+ {
+  "uid": "U269",
+  "text": "balanced forces",
+  "ids": [
+   316
+  ]
+ },
+ {
+  "uid": "U270",
+  "text": "forces with zero resultant force",
+  "ids": [
+   317
+  ]
+ },
+ {
+  "uid": "U271",
+  "text": "unbalanced forces",
+  "ids": [
+   318
+  ]
+ },
+ {
+  "uid": "U272",
+  "text": "forces with a non-zero resultant force",
+  "ids": [
+   319
+  ]
+ },
+ {
+  "uid": "U273",
+  "text": "constant speed",
+  "ids": [
+   320
+  ]
+ },
+ {
+  "uid": "U274",
+  "text": "motion in which the speed does not change",
+  "ids": [
+   321
+  ]
+ },
+ {
+  "uid": "U275",
+  "text": "constant velocity",
+  "ids": [
+   322
+  ]
+ },
+ {
+  "uid": "U276",
+  "text": "motion with constant speed in a constant direction",
+  "ids": [
+   323
+  ]
+ },
+ {
+  "uid": "U277",
+  "text": "the amount of matter in an object; measured in kilograms",
+  "ids": [
+   327
+  ]
+ },
+ {
+  "uid": "U278",
+  "text": "the gravitational force acting on an object",
+  "ids": [
+   329
+  ]
+ },
+ {
+  "uid": "U279",
+  "text": "gravity",
+  "ids": [
+   330
+  ]
+ },
+ {
+  "uid": "U280",
+  "text": "the attractive effect that pulls masses toward each other",
+  "ids": [
+   331
+  ]
+ },
+ {
+  "uid": "U281",
+  "text": "gravitational field",
+  "ids": [
+   332
+  ]
+ },
+ {
+  "uid": "U282",
+  "text": "a region where a mass experiences a gravitational force",
+  "ids": [
+   333
+  ]
+ },
+ {
+  "uid": "U283",
+  "text": "acceleration of free fall, g",
+  "ids": [
+   334
+  ]
+ },
+ {
+  "uid": "U284",
+  "text": "the acceleration caused by gravity; near Earth use the value given in the question",
+  "ids": [
+   335
+  ]
+ },
+ {
+  "uid": "U285",
+  "text": "free fall",
+  "ids": [
+   336
+  ]
+ },
+ {
+  "uid": "U286",
+  "text": "motion when gravity is the only significant force acting",
+  "ids": [
+   337
+  ]
+ },
+ {
+  "uid": "U287",
+  "text": "terminal velocity",
+  "ids": [
+   338
+  ]
+ },
+ {
+  "uid": "U288",
+  "text": "constant falling speed reached when drag balances weight",
+  "ids": [
+   339
+  ]
+ },
+ {
+  "uid": "U289",
+  "text": "circular motion",
+  "ids": [
+   340
+  ]
+ },
+ {
+  "uid": "U290",
+  "text": "motion along a circular path",
+  "ids": [
+   341
+  ]
+ },
+ {
+  "uid": "U291",
+  "text": "tension",
+  "ids": [
+   342
+  ]
+ },
+ {
+  "uid": "U292",
+  "text": "a pulling force transmitted through a string, rope or cable",
+  "ids": [
+   343
+  ]
+ },
+ {
+  "uid": "U293",
+  "text": "lift",
+  "ids": [
+   344
+  ]
+ },
+ {
+  "uid": "U294",
+  "text": "an upward or sideways aerodynamic force, e.g. on an aircraft wing",
+  "ids": [
+   345
+  ]
+ },
+ {
+  "uid": "U295",
+  "text": "mass × velocity; a vector quantity",
+  "ids": [
+   347
+  ]
+ },
+ {
+  "uid": "U296",
+  "text": "impulse",
+  "ids": [
+   348,
+   388
+  ]
+ },
+ {
+  "uid": "U297",
+  "text": "force × time; equal to the change in momentum",
+  "ids": [
+   349
+  ]
+ },
+ {
+  "uid": "U298",
+  "text": "conservation of momentum",
+  "ids": [
+   350
+  ]
+ },
+ {
+  "uid": "U299",
+  "text": "total momentum before an interaction equals total momentum after, when no external resultant force acts",
+  "ids": [
+   351
+  ]
+ },
+ {
+  "uid": "U300",
+  "text": "collision",
+  "ids": [
+   352
+  ]
+ },
+ {
+  "uid": "U301",
+  "text": "an interaction in which objects exert forces on each other for a short time",
+  "ids": [
+   353
+  ]
+ },
+ {
+  "uid": "U302",
+  "text": "a quantity with magnitude only",
+  "ids": [
+   355
+  ]
+ },
+ {
+  "uid": "U303",
+  "text": "a quantity with both magnitude and direction",
+  "ids": [
+   357
+  ]
+ },
+ {
+  "uid": "U304",
+  "text": "magnitude",
+  "ids": [
+   358
+  ]
+ },
+ {
+  "uid": "U305",
+  "text": "the numerical size of a physical quantity",
+  "ids": [
+   359
+  ]
+ },
+ {
+  "uid": "U306",
+  "text": "direction",
+  "ids": [
+   360
+  ]
+ },
+ {
+  "uid": "U307",
+  "text": "the way a vector points or acts",
+  "ids": [
+   361
+  ]
+ },
+ {
+  "uid": "U308",
+  "text": "vector addition",
+  "ids": [
+   362
+  ]
+ },
+ {
+  "uid": "U309",
+  "text": "combining vectors, often using the head-to-tail method",
+  "ids": [
+   363
+  ]
+ },
+ {
+  "uid": "U310",
+  "text": "head-to-tail method",
+  "ids": [
+   364
+  ]
+ },
+ {
+  "uid": "U311",
+  "text": "draw each vector so the next starts where the previous one ends",
+  "ids": [
+   365
+  ]
+ },
+ {
+  "uid": "U312",
+  "text": "resultant vector",
+  "ids": [
+   366
+  ]
+ },
+ {
+  "uid": "U313",
+  "text": "the single vector with the same overall effect as the vectors combined",
+  "ids": [
+   367
+  ]
+ },
+ {
+  "uid": "U314",
+  "text": "W = mg",
+  "ids": [
+   368
+  ]
+ },
+ {
+  "uid": "U315",
+  "text": "F = ma",
+  "ids": [
+   369
+  ]
+ },
+ {
+  "uid": "U316",
+  "text": "p = mv",
+  "ids": [
+   370
+  ]
+ },
+ {
+  "uid": "U317",
+  "text": "Δp = mv − mu",
+  "ids": [
+   371
+  ]
+ },
+ {
+  "uid": "U318",
+  "text": "Ft = Δp = mv − mu",
+  "ids": [
+   372
+  ]
+ },
+ {
+  "uid": "U319",
+  "text": "total momentum before = total momentum after",
+  "ids": [
+   373
+  ]
+ },
+ {
+  "uid": "U320",
+  "text": "resultant force = vector sum of all forces",
+  "ids": [
+   374
+  ]
+ },
+ {
+  "uid": "U321",
+  "text": "Physical quantity",
+  "ids": [
+   375,
+   846,
+   1144
+  ]
+ },
+ {
+  "uid": "U322",
+  "text": "Symbol / unit",
+  "ids": [
+   376,
+   847
+  ]
+ },
+ {
+  "uid": "U323",
+  "text": "force / resultant force",
+  "ids": [
+   377
+  ]
+ },
+ {
+  "uid": "U324",
+  "text": "thrust / friction / drag / upthrust / tension / lift",
+  "ids": [
+   379
+  ]
+ },
+ {
+  "uid": "U325",
+  "text": "kg",
+  "ids": [
+   381,
+   1148
+  ]
+ },
+ {
+  "uid": "U326",
+  "text": "acceleration / g",
+  "ids": [
+   382
+  ]
+ },
+ {
+  "uid": "U327",
+  "text": "second / 秒",
+  "ids": [
+   385
+  ]
+ },
+ {
+  "uid": "U328",
+  "text": "kg·m/s",
+  "ids": [
+   387
+  ]
+ },
+ {
+  "uid": "U329",
+  "text": "LESSON 1",
+  "ids": [
+   389,
+   865,
+   1158
+  ]
+ },
+ {
+  "uid": "U330",
+  "text": "Forces and Resultant Force",
+  "ids": [
+   390
+  ]
+ },
+ {
+  "uid": "U331",
+  "text": "Roller-coaster forces",
+  "ids": [
+   391
+  ]
+ },
+ {
+  "uid": "U332",
+  "text": "STARTER IDEA Rapid changes in speed involve acceleration and deceleration. Forces are responsible for changes in motion.",
+  "ids": [
+   392
+  ]
+ },
+ {
+  "uid": "U333",
+  "text": "Think: During a roller-coaster ride, where might the speed or direction change?",
+  "ids": [
+   393
+  ]
+ },
+ {
+  "uid": "U334",
+  "text": "Possible answers:",
+  "ids": [
+   395
+  ]
+ },
+ {
+  "uid": "U335",
+  "text": "• The speed may increase when the roller-coaster moves down a steep slope or is pushed by a driving force.",
+  "ids": [
+   396
+  ]
+ },
+ {
+  "uid": "U336",
+  "text": "• The speed may decrease when brakes act or when the train moves uphill.",
+  "ids": [
+   397
+  ]
+ },
+ {
+  "uid": "U337",
+  "text": "• The direction changes at bends, loops and curved sections of track.",
+  "ids": [
+   398
+  ]
+ },
+ {
+  "uid": "U338",
+  "text": "Any change in speed or direction means the velocity changes, so the roller-coaster is accelerating.",
+  "ids": [
+   399
+  ]
+ },
+ {
+  "uid": "U339",
+  "text": "Final answer: At slopes/braking sections the speed can change; at bends/loops the direction changes.",
+  "ids": [
+   400
+  ]
+ },
+ {
+  "uid": "U340",
+  "text": "Force, thrust and the newton",
+  "ids": [
+   401
+  ]
+ },
+ {
+  "uid": "U341",
+  "text": "KEY DEFINITION A force is a push or a pull. The unit of force is the newton (N).",
+  "ids": [
+   402
+  ]
+ },
+ {
+  "uid": "U342",
+  "text": "The booster rockets provide a thrust force.",
+  "ids": [
+   403
+  ]
+ },
+ {
+  "uid": "U343",
+  "text": "Forces affect objects as they move.",
+  "ids": [
+   404
+  ]
+ },
+ {
+  "uid": "U344",
+  "text": "Forces appear when objects interact",
+  "ids": [
+   405
+  ]
+ },
+ {
+  "uid": "U345",
+  "text": "MUST KNOW Forces appear when two objects interact. Each force is represented by an arrow to show its direction.",
+  "ids": [
+   406
+  ]
+ },
+ {
+  "uid": "U346",
+  "text": "Examples: weight/contact force, friction, air resistance and upthrust.",
+  "ids": [
+   407
+  ]
+ },
+ {
+  "uid": "U347",
+  "text": "Name the force shown in each situation: person standing, pushing a box, parachutist, swimmer.",
+  "ids": [
+   408
+  ]
+ },
+ {
+  "uid": "U348",
+  "text": "Person standing: weight acts downward and the contact (normal) force from the ground acts upward.",
+  "ids": [
+   410
+  ]
+ },
+ {
+  "uid": "U349",
+  "text": "Pushing a box: friction acts opposite the motion / attempted motion.",
+  "ids": [
+   411
+  ]
+ },
+ {
+  "uid": "U350",
+  "text": "Parachutist: air resistance (drag) acts upward, opposite the downward motion.",
+  "ids": [
+   412
+  ]
+ },
+ {
+  "uid": "U351",
+  "text": "Swimmer: upthrust acts upward.",
+  "ids": [
+   413
+  ]
+ },
+ {
+  "uid": "U352",
+  "text": "Final answer: Standing — weight/contact force; box — friction; parachutist — air resistance; swimmer — upthrust.",
+  "ids": [
+   414
+  ]
+ },
+ {
+  "uid": "U353",
+  "text": "Forces produce acceleration",
+  "ids": [
+   415
+  ]
+ },
+ {
+  "uid": "U354",
+  "text": "MUST KNOW A force can change an object’s speed or change the direction in which it is moving.",
+  "ids": [
+   416
+  ]
+ },
+ {
+  "uid": "U355",
+  "text": "Forward force → can speed an object up.",
+  "ids": [
+   417
+  ]
+ },
+ {
+  "uid": "U356",
+  "text": "Backward force → can slow an object down.",
+  "ids": [
+   418
+  ]
+ },
+ {
+  "uid": "U357",
+  "text": "Sideways force → can change the direction of motion.",
+  "ids": [
+   419
+  ]
+ },
+ {
+  "uid": "U358",
+  "text": "COMMON CONFUSION Acceleration does not only mean “speeding up”. A change in direction is also acceleration because velocity changes.",
+  "ids": [
+   420
+  ]
+ },
+ {
+  "uid": "U359",
+  "text": "Explain why a sideways force can cause acceleration even if the speed stays the same.",
+  "ids": [
+   421
+  ]
+ },
+ {
+  "uid": "U360",
+  "text": "Step 1: Acceleration is the rate of change of velocity.",
+  "ids": [
+   423
+  ]
+ },
+ {
+  "uid": "U361",
+  "text": "Step 2: Velocity has both magnitude (speed) and direction.",
+  "ids": [
+   424
+  ]
+ },
+ {
+  "uid": "U362",
+  "text": "Step 3: A sideways force changes the direction of motion.",
+  "ids": [
+   425
+  ]
+ },
+ {
+  "uid": "U363",
+  "text": "Step 4: Therefore velocity changes even if the speed is unchanged.",
+  "ids": [
+   426
+  ]
+ },
+ {
+  "uid": "U364",
+  "text": "Step 5: A change in velocity means the object is accelerating.",
+  "ids": [
+   427
+  ]
+ },
+ {
+  "uid": "U365",
+  "text": "Final answer: The sideways force changes the direction of velocity, so the object accelerates.",
+  "ids": [
+   428
+  ]
+ },
+ {
+  "uid": "U366",
+  "text": "Resultant force",
+  "ids": [
+   429
+  ]
+ },
+ {
+  "uid": "U367",
+  "text": "KEY DEFINITION The resultant force is the single force that has the same effect as two or more forces.",
+  "ids": [
+   430
+  ]
+ },
+ {
+  "uid": "U368",
+  "text": "MUST KNOW If no resultant force acts on an object, it will not accelerate. It remains at rest or continues at constant speed in a straight line.",
+  "ids": [
+   431
+  ]
+ },
+ {
+  "uid": "U369",
+  "text": "EXAM METHOD Opposite directions → subtract. Same direction → add. A non-zero resultant must include a direction.",
+  "ids": [
+   432
+  ]
+ },
+ {
+  "uid": "U370",
+  "text": "Practice — balanced and unbalanced forces",
+  "ids": [
+   433
+  ]
+ },
+ {
+  "uid": "U371",
+  "text": "Study the force diagrams below.",
+  "ids": [
+   434
+  ]
+ },
+ {
+  "uid": "U372",
+  "text": "a) For each of a, b and c, state whether the forces are balanced or unbalanced.",
+  "ids": [
+   435
+  ]
+ },
+ {
+  "uid": "U373",
+  "text": "a: 80 N acts to the right and 60 N acts to the left. These are not equal → unbalanced.",
+  "ids": [
+   437
+  ]
+ },
+ {
+  "uid": "U374",
+  "text": "b: 70 N + 30 N = 100 N to the right, and 100 N acts to the left. Equal and opposite → balanced.",
+  "ids": [
+   438
+  ]
+ },
+ {
+  "uid": "U375",
+  "text": "c: 270 N upward and 320 N downward. These are not equal → unbalanced.",
+  "ids": [
+   439
+  ]
+ },
+ {
+  "uid": "U376",
+  "text": "Final answer: a unbalanced; b balanced; c unbalanced.",
+  "ids": [
+   440
+  ]
+ },
+ {
+  "uid": "U377",
+  "text": "b) For each unbalanced case, calculate the resultant force and give its direction.",
+  "ids": [
+   441
+  ]
+ },
+ {
+  "uid": "U378",
+  "text": "Case a:",
+  "ids": [
+   443
+  ]
+ },
+ {
+  "uid": "U379",
+  "text": "Step 1: Opposite directions → subtract.",
+  "ids": [
+   444,
+   448
+  ]
+ },
+ {
+  "uid": "U380",
+  "text": "Step 2: Resultant = 80 − 60 = 20 N.",
+  "ids": [
+   445
+  ]
+ },
+ {
+  "uid": "U381",
+  "text": "Step 3: The larger force is to the right → 20 N right.",
+  "ids": [
+   446
+  ]
+ },
+ {
+  "uid": "U382",
+  "text": "Case c:",
+  "ids": [
+   447
+  ]
+ },
+ {
+  "uid": "U383",
+  "text": "Step 2: Resultant = 320 − 270 = 50 N.",
+  "ids": [
+   449
+  ]
+ },
+ {
+  "uid": "U384",
+  "text": "Step 3: The larger force is downward → 50 N downward.",
+  "ids": [
+   450
+  ]
+ },
+ {
+  "uid": "U385",
+  "text": "Final answer: a: 20 N right; c: 50 N downward.",
+  "ids": [
+   451
+  ]
+ },
+ {
+  "uid": "U386",
+  "text": "c) State how the motion of each object will change.",
+  "ids": [
+   452
+  ]
+ },
+ {
+  "uid": "U387",
+  "text": "a: Resultant force is to the right → the object accelerates to the right.",
+  "ids": [
+   454
+  ]
+ },
+ {
+  "uid": "U388",
+  "text": "b: Resultant force = 0 → acceleration = 0. It remains at rest if initially at rest, or continues at constant velocity if already moving.",
+  "ids": [
+   455
+  ]
+ },
+ {
+  "uid": "U389",
+  "text": "c: Resultant force is downward → the object accelerates downward.",
+  "ids": [
+   456
+  ]
+ },
+ {
+  "uid": "U390",
+  "text": "Final answer: a accelerates right; b no acceleration; c accelerates downward.",
+  "ids": [
+   457
+  ]
+ },
+ {
+  "uid": "U391",
+  "text": "LESSON 2",
+  "ids": [
+   458,
+   881,
+   1244
+  ]
+ },
+ {
+  "uid": "U392",
+  "text": "Mass, Weight, Gravity, Falling and Turning",
+  "ids": [
+   459
+  ]
+ },
+ {
+  "uid": "U393",
+  "text": "Mass, weight and gravity",
+  "ids": [
+   460
+  ]
+ },
+ {
+  "uid": "U394",
+  "text": "KEY DEFINITION Weight is the force of gravity acting on an object. Because weight is a force, it is measured in newtons (N).",
+  "ids": [
+   461
+  ]
+ },
+ {
+  "uid": "U395",
+  "text": "MUST KNOW acceleration of free fall: g = 10 m/s² near the Earth’s surface.",
+  "ids": [
+   462
+  ]
+ },
+ {
+  "uid": "U396",
+  "text": "FORMULA weight = mass × acceleration of free fall   W = mg",
+  "ids": [
+   463
+  ]
+ },
+ {
+  "uid": "U397",
+  "text": "Mass compared with weight",
+  "ids": [
+   464
+  ]
+ },
+ {
+  "uid": "U398",
+  "text": "KEY DEFINITIONS Mass (kg) tells you how much matter an object contains. Weight (N) is the gravitational force acting on the object.",
+  "ids": [
+   465
+  ]
+ },
+ {
+  "uid": "U399",
+  "text": "COMMON CONFUSION Mass and weight are not interchangeable. Mass is measured in kg; weight is measured in N.",
+  "ids": [
+   466
+  ]
+ },
+ {
+  "uid": "U400",
+  "text": "Complete: If gravity becomes weaker, what happens to an object’s mass and what happens to its weight?",
+  "ids": [
+   467
+  ]
+ },
+ {
+  "uid": "U401",
+  "text": "Step 1: Mass is the amount of matter in an object, so a change in location/gravity does not change its mass.",
+  "ids": [
+   469
+  ]
+ },
+ {
+  "uid": "U402",
+  "text": "Step 2: Weight is W = mg.",
+  "ids": [
+   470
+  ]
+ },
+ {
+  "uid": "U403",
+  "text": "Step 3: If g becomes smaller while m stays the same, W becomes smaller.",
+  "ids": [
+   471
+  ]
+ },
+ {
+  "uid": "U404",
+  "text": "Final answer: Mass stays the same; weight decreases.",
+  "ids": [
+   472
+  ]
+ },
+ {
+  "uid": "U405",
+  "text": "Working Example 3.4",
+  "ids": [
+   473
+  ]
+ },
+ {
+  "uid": "U406",
+  "text": "a) An astronaut has a mass of 90 kg. Calculate her weight on Earth.",
+  "ids": [
+   474
+  ]
+ },
+ {
+  "uid": "U407",
+  "text": "Given: m = 90 kg, g = 10 m/s².",
+  "ids": [
+   476
+  ]
+ },
+ {
+  "uid": "U408",
+  "text": "Step 1: Use W = mg.",
+  "ids": [
+   477,
+   484
+  ]
+ },
+ {
+  "uid": "U409",
+  "text": "Step 2: W = 90 × 10.",
+  "ids": [
+   478
+  ]
+ },
+ {
+  "uid": "U410",
+  "text": "Step 3: W = 900 N.",
+  "ids": [
+   479
+  ]
+ },
+ {
+  "uid": "U411",
+  "text": "Final answer: 900 N.",
+  "ids": [
+   480
+  ]
+ },
+ {
+  "uid": "U412",
+  "text": "b) On Mars, g = 3.7 m/s². Calculate her weight on Mars.",
+  "ids": [
+   481
+  ]
+ },
+ {
+  "uid": "U413",
+  "text": "Given: m = 90 kg, g = 3.7 m/s².",
+  "ids": [
+   483
+  ]
+ },
+ {
+  "uid": "U414",
+  "text": "Step 2: W = 90 × 3.7.",
+  "ids": [
+   485
+  ]
+ },
+ {
+  "uid": "U415",
+  "text": "Step 3: W = 333 N.",
+  "ids": [
+   486
+  ]
+ },
+ {
+  "uid": "U416",
+  "text": "Final answer: 333 N (≈ 3.3 × 10² N to 2 s.f.).",
+  "ids": [
+   487
+  ]
+ },
+ {
+  "uid": "U417",
+  "text": "c) Compare her mass on Earth and Mars. Explain your answer.",
+  "ids": [
+   488
+  ]
+ },
+ {
+  "uid": "U418",
+  "text": "Her mass on Earth = 90 kg.",
+  "ids": [
+   490
+  ]
+ },
+ {
+  "uid": "U419",
+  "text": "Her mass on Mars = 90 kg.",
+  "ids": [
+   491
+  ]
+ },
+ {
+  "uid": "U420",
+  "text": "Mass measures the amount of matter and does not depend on gravitational field strength.",
+  "ids": [
+   492
+  ]
+ },
+ {
+  "uid": "U421",
+  "text": "Her weight changes because W = mg and g is different on the two planets.",
+  "ids": [
+   493
+  ]
+ },
+ {
+  "uid": "U422",
+  "text": "Final answer: Mass = 90 kg on both Earth and Mars.",
+  "ids": [
+   494
+  ]
+ },
+ {
+  "uid": "U423",
+  "text": "3.3 Falling and turning — free fall",
+  "ids": [
+   495
+  ]
+ },
+ {
+  "uid": "U424",
+  "text": "MUST KNOW A free-fall parachutist initially accelerates downward. Close to the Earth’s surface there is a uniform gravitational field.",
+  "ids": [
+   496
+  ]
+ },
+ {
+  "uid": "U425",
+  "text": "At first, air resistance has little effect.",
+  "ids": [
+   497
+  ]
+ },
+ {
+  "uid": "U426",
+  "text": "Weight acts downward.",
+  "ids": [
+   498
+  ]
+ },
+ {
+  "uid": "U427",
+  "text": "Air resistance and terminal velocity",
+  "ids": [
+   499
+  ]
+ },
+ {
+  "uid": "U428",
+  "text": "KEY DEFINITION Terminal velocity is a steady falling speed reached when the upward drag balances the downward weight.",
+  "ids": [
+   500
+  ]
+ },
+ {
+  "uid": "U429",
+  "text": "Force balance changes as the parachutist falls and opens the parachute.",
+  "ids": [
+   501
+  ]
+ },
+ {
+  "uid": "U430",
+  "text": "COMMON CONFUSION At terminal velocity the parachutist is still moving. Resultant force = 0 means acceleration = 0, not speed = 0.",
+  "ids": [
+   502
+  ]
+ },
+ {
+  "uid": "U431",
+  "text": "Explain, in terms of forces, why the parachutist first accelerates, then reaches terminal velocity.",
+  "ids": [
+   503
+  ]
+ },
+ {
+  "uid": "U432",
+  "text": "Step 1: Just after the jump, weight acts downward and air resistance is small.",
+  "ids": [
+   505
+  ]
+ },
+ {
+  "uid": "U433",
+  "text": "Step 2: Weight > air resistance, so there is a resultant force downward.",
+  "ids": [
+   506
+  ]
+ },
+ {
+  "uid": "U434",
+  "text": "Step 3: The parachutist accelerates downward and speeds up.",
+  "ids": [
+   507
+  ]
+ },
+ {
+  "uid": "U435",
+  "text": "Step 4: As speed increases, air resistance increases.",
+  "ids": [
+   508
+  ]
+ },
+ {
+  "uid": "U436",
+  "text": "Step 5: Eventually air resistance = weight.",
+  "ids": [
+   509
+  ]
+ },
+ {
+  "uid": "U437",
+  "text": "Step 6: Resultant force = 0, so acceleration = 0.",
+  "ids": [
+   510
+  ]
+ },
+ {
+  "uid": "U438",
+  "text": "Step 7: The parachutist continues to fall at a constant speed: terminal velocity.",
+  "ids": [
+   511
+  ]
+ },
+ {
+  "uid": "U439",
+  "text": "Final answer: Terminal velocity is reached when drag = weight, so resultant force and acceleration are zero.",
+  "ids": [
+   512
+  ]
+ },
+ {
+  "uid": "U440",
+  "text": "Explain what happens immediately after the parachute opens and how a new terminal velocity is reached.",
+  "ids": [
+   513
+  ]
+ },
+ {
+  "uid": "U441",
+  "text": "Step 1: Opening the parachute greatly increases the area.",
+  "ids": [
+   515
+  ]
+ },
+ {
+  "uid": "U442",
+  "text": "Step 2: Air resistance suddenly becomes much larger.",
+  "ids": [
+   516
+  ]
+ },
+ {
+  "uid": "U443",
+  "text": "Step 3: Air resistance > weight, so the resultant force is upward.",
+  "ids": [
+   517
+  ]
+ },
+ {
+  "uid": "U444",
+  "text": "Step 4: The parachutist is still moving downward, so an upward acceleration makes the downward speed decrease.",
+  "ids": [
+   518
+  ]
+ },
+ {
+  "uid": "U445",
+  "text": "Step 5: As the parachutist slows, air resistance decreases.",
+  "ids": [
+   519
+  ]
+ },
+ {
+  "uid": "U446",
+  "text": "Step 6: Eventually air resistance = weight again.",
+  "ids": [
+   520
+  ]
+ },
+ {
+  "uid": "U447",
+  "text": "Step 7: Resultant force = 0 and a new, lower terminal velocity is reached.",
+  "ids": [
+   521
+  ]
+ },
+ {
+  "uid": "U448",
+  "text": "Final answer: The parachutist slows down, then falls at a new lower constant terminal velocity.",
+  "ids": [
+   522
+  ]
+ },
+ {
+  "uid": "U449",
+  "text": "Circular motion",
+  "ids": [
+   523
+  ]
+ },
+ {
+  "uid": "U450",
+  "text": "MUST KNOW For an object following a circular path, the object is acted on by a force at right angles to its velocity.",
+  "ids": [
+   524
+  ]
+ },
+ {
+  "uid": "U451",
+  "text": "Apple on a string → tension provides the force.",
+  "ids": [
+   525
+  ]
+ },
+ {
+  "uid": "U452",
+  "text": "Banking aircraft → lift provides the force.",
+  "ids": [
+   526
+  ]
+ },
+ {
+  "uid": "U453",
+  "text": "Moon orbiting Earth → gravity provides the force.",
+  "ids": [
+   527
+  ]
+ },
+ {
+  "uid": "U454",
+  "text": "A satellite moves at constant speed in a circular orbit. Explain why it is still accelerating.",
+  "ids": [
+   528
+  ]
+ },
+ {
+  "uid": "U455",
+  "text": "Step 1: The satellite’s speed is constant but its direction changes continuously.",
+  "ids": [
+   530
+  ]
+ },
+ {
+  "uid": "U456",
+  "text": "Step 2: Velocity includes both speed and direction.",
+  "ids": [
+   531
+  ]
+ },
+ {
+  "uid": "U457",
+  "text": "Step 3: Because direction changes, velocity changes.",
+  "ids": [
+   532
+  ]
+ },
+ {
+  "uid": "U458",
+  "text": "Step 4: A change in velocity means acceleration.",
+  "ids": [
+   533
+  ]
+ },
+ {
+  "uid": "U459",
+  "text": "Step 5: Gravity provides the force toward the centre of the orbit.",
+  "ids": [
+   534
+  ]
+ },
+ {
+  "uid": "U460",
+  "text": "Final answer: It accelerates because its velocity direction is continuously changing; acceleration is toward the centre.",
+  "ids": [
+   535
+  ]
+ },
+ {
+  "uid": "U461",
+  "text": "LESSON 3",
+  "ids": [
+   536,
+   894,
+   1275
+  ]
+ },
+ {
+  "uid": "U462",
+  "text": "Force, Mass and Acceleration",
+  "ids": [
+   537
+  ]
+ },
+ {
+  "uid": "U463",
+  "text": "Force, mass and acceleration",
+  "ids": [
+   538
+  ]
+ },
+ {
+  "uid": "U464",
+  "text": "KEY RELATIONSHIPS For the same mass, a bigger force gives a bigger acceleration. For the same force, a bigger mass gives a smaller acceleration.",
+  "ids": [
+   539
+  ]
+ },
+ {
+  "uid": "U465",
+  "text": "KEY DEFINITION Force: the action of one body on a second body that causes its velocity to change.",
+  "ids": [
+   540
+  ]
+ },
+ {
+  "uid": "U466",
+  "text": "FORMULA force = mass × acceleration   F = ma",
+  "ids": [
+   541
+  ]
+ },
+ {
+  "uid": "U467",
+  "text": "COMMON CONFUSION In F = ma, F is the resultant force.",
+  "ids": [
+   542
+  ]
+ },
+ {
+  "uid": "U468",
+  "text": "A 1200 kg car has a resultant forward force of 3600 N. Calculate its acceleration.",
+  "ids": [
+   543
+  ]
+ },
+ {
+  "uid": "U469",
+  "text": "Given: F = 3600 N, m = 1200 kg.",
+  "ids": [
+   545
+  ]
+ },
+ {
+  "uid": "U470",
+  "text": "Step 1: Use F = ma.",
+  "ids": [
+   546
+  ]
+ },
+ {
+  "uid": "U471",
+  "text": "Step 2: Rearrange: a = F ÷ m.",
+  "ids": [
+   547
+  ]
+ },
+ {
+  "uid": "U472",
+  "text": "Step 3: a = 3600 ÷ 1200 = 3.0 m/s².",
+  "ids": [
+   548
+  ]
+ },
+ {
+  "uid": "U473",
+  "text": "The acceleration is forward because the resultant force is forward.",
+  "ids": [
+   549
+  ]
+ },
+ {
+  "uid": "U474",
+  "text": "Final answer: 3.0 m/s² forward.",
+  "ids": [
+   550
+  ]
+ },
+ {
+  "uid": "U475",
+  "text": "The resultant force stays the same but the mass doubles. What happens to the acceleration? Explain using F = ma.",
+  "ids": [
+   551
+  ]
+ },
+ {
+  "uid": "U476",
+  "text": "Original mass = 1200 kg; new mass = 2400 kg.",
+  "ids": [
+   553
+  ]
+ },
+ {
+  "uid": "U477",
+  "text": "Force remains 3600 N.",
+  "ids": [
+   554
+  ]
+ },
+ {
+  "uid": "U478",
+  "text": "Use a = F ÷ m.",
+  "ids": [
+   555
+  ]
+ },
+ {
+  "uid": "U479",
+  "text": "Therefore doubling the mass while keeping force constant halves the acceleration.",
+  "ids": [
+   556
+  ]
+ },
+ {
+  "uid": "U480",
+  "text": "Final answer: Acceleration halves, from 3.0 m/s² to 1.5 m/s².",
+  "ids": [
+   557
+  ]
+ },
+ {
+  "uid": "U481",
+  "text": "SI units and the newton",
+  "ids": [
+   558
+  ]
+ },
+ {
+  "uid": "U482",
+  "text": "MUST KNOW 1 newton is the force required to give a mass of 1 kg an acceleration of 1 m/s².",
+  "ids": [
+   559
+  ]
+ },
+ {
+  "uid": "U483",
+  "text": "Show from F = ma that the unit N is equivalent to kg m/s².",
+  "ids": [
+   560
+  ]
+ },
+ {
+  "uid": "U484",
+  "text": "Start with F = ma.",
+  "ids": [
+   562
+  ]
+ },
+ {
+  "uid": "U485",
+  "text": "Unit of mass = kg.",
+  "ids": [
+   563
+  ]
+ },
+ {
+  "uid": "U486",
+  "text": "Unit of acceleration = m/s².",
+  "ids": [
+   564
+  ]
+ },
+ {
+  "uid": "U487",
+  "text": "Therefore unit of force = kg × m/s² = kg·m/s².",
+  "ids": [
+   565
+  ]
+ },
+ {
+  "uid": "U488",
+  "text": "The SI unit of force is the newton (N).",
+  "ids": [
+   566
+  ]
+ },
+ {
+  "uid": "U489",
+  "text": "Final answer: 1 N = 1 kg·m/s².",
+  "ids": [
+   567
+  ]
+ },
+ {
+  "uid": "U490",
+  "text": "LESSON 4",
+  "ids": [
+   568,
+   908,
+   1324
+  ]
+ },
+ {
+  "uid": "U491",
+  "text": "Momentum, Impulse and Conservation of Momentum",
+  "ids": [
+   569
+  ]
+ },
+ {
+  "uid": "U492",
+  "text": "3.5 The idea of momentum",
+  "ids": [
+   570
+  ]
+ },
+ {
+  "uid": "U493",
+  "text": "FORMULA momentum = mass × velocity   p = mv",
+  "ids": [
+   571
+  ]
+ },
+ {
+  "uid": "U494",
+  "text": "FORMULA impulse = force × time = change of momentum   Ft = mv − mu",
+  "ids": [
+   572
+  ]
+ },
+ {
+  "uid": "U495",
+  "text": "MUST KNOW Momentum is a vector quantity. Direction matters.",
+  "ids": [
+   573
+  ]
+ },
+ {
+  "uid": "U496",
+  "text": "Working Example — car and impulse",
+  "ids": [
+   574
+  ]
+ },
+ {
+  "uid": "U497",
+  "text": "a) A car of mass 600 kg is moving at 15 m/s. Calculate its momentum.",
+  "ids": [
+   575
+  ]
+ },
+ {
+  "uid": "U498",
+  "text": "Given: m = 600 kg, v = 15 m/s.",
+  "ids": [
+   577
+  ]
+ },
+ {
+  "uid": "U499",
+  "text": "Step 1: Use p = mv.",
+  "ids": [
+   578
+  ]
+ },
+ {
+  "uid": "U500",
+  "text": "Step 2: p = 600 × 15.",
+  "ids": [
+   579
+  ]
+ },
+ {
+  "uid": "U501",
+  "text": "Step 3: p = 9000 kg·m/s.",
+  "ids": [
+   580
+  ]
+ },
+ {
+  "uid": "U502",
+  "text": "Final answer: 9.0 × 10³ kg·m/s.",
+  "ids": [
+   581
+  ]
+ },
+ {
+  "uid": "U503",
+  "text": "b) A force of 30 N acts on the car for 10 s. Calculate the impulse.",
+  "ids": [
+   582
+  ]
+ },
+ {
+  "uid": "U504",
+  "text": "Given: F = 30 N, t = 10 s.",
+  "ids": [
+   584
+  ]
+ },
+ {
+  "uid": "U505",
+  "text": "Step 1: Use impulse = Ft.",
+  "ids": [
+   585
+  ]
+ },
+ {
+  "uid": "U506",
+  "text": "Step 2: impulse = 30 × 10 = 300 N·s.",
+  "ids": [
+   586
+  ]
+ },
+ {
+  "uid": "U507",
+  "text": "Step 3: Since impulse = change in momentum, Δp = 300 kg·m/s.",
+  "ids": [
+   587
+  ]
+ },
+ {
+  "uid": "U508",
+  "text": "Final answer: 300 N·s.",
+  "ids": [
+   588
+  ]
+ },
+ {
+  "uid": "U509",
+  "text": "c) Calculate the momentum of the car after the accelerating force has acted.",
+  "ids": [
+   589
+  ]
+ },
+ {
+  "uid": "U510",
+  "text": "Initial momentum = 9000 kg·m/s.",
+  "ids": [
+   591
+  ]
+ },
+ {
+  "uid": "U511",
+  "text": "Change in momentum = impulse = 300 kg·m/s.",
+  "ids": [
+   592
+  ]
+ },
+ {
+  "uid": "U512",
+  "text": "The force is in the direction of motion, so the momentum increases.",
+  "ids": [
+   593
+  ]
+ },
+ {
+  "uid": "U513",
+  "text": "Final momentum = initial momentum + change in momentum.",
+  "ids": [
+   594
+  ]
+ },
+ {
+  "uid": "U514",
+  "text": "Final momentum = 9000 + 300 = 9300 kg·m/s.",
+  "ids": [
+   595
+  ]
+ },
+ {
+  "uid": "U515",
+  "text": "Final answer: 9300 kg·m/s.",
+  "ids": [
+   596
+  ]
+ },
+ {
+  "uid": "U516",
+  "text": "LINK THE STEPS final momentum = initial momentum + change in momentum",
+  "ids": [
+   597
+  ]
+ },
+ {
+  "uid": "U517",
+  "text": "Principle of conservation of momentum",
+  "ids": [
+   598
+  ]
+ },
+ {
+  "uid": "U518",
+  "text": "PRINCIPLE total momentum before = total momentum after",
+  "ids": [
+   599
+  ]
+ },
+ {
+  "uid": "U519",
+  "text": "EXAM WARNING Choose one direction as positive. Momentum in the opposite direction is negative.",
+  "ids": [
+   600
+  ]
+ },
+ {
+  "uid": "U520",
+  "text": "Two trolleys collide in a straight line. Write the momentum equation you would use before substituting numbers.",
+  "ids": [
+   601
+  ]
+ },
+ {
+  "uid": "U521",
+  "text": "Choose one direction as positive.",
+  "ids": [
+   603
+  ]
+ },
+ {
+  "uid": "U522",
+  "text": "Use total momentum before = total momentum after.",
+  "ids": [
+   604
+  ]
+ },
+ {
+  "uid": "U523",
+  "text": "For two trolleys that remain separate after collision:",
+  "ids": [
+   605
+  ]
+ },
+ {
+  "uid": "U524",
+  "text": "If they stick together after collision:",
+  "ids": [
+   606
+  ]
+ },
+ {
+  "uid": "U525",
+  "text": "Final answer: m₁u₁ + m₂u₂ = m₁v₁ + m₂v₂, using signs for direction.",
+  "ids": [
+   607
+  ]
+ },
+ {
+  "uid": "U526",
+  "text": "LESSON 5",
+  "ids": [
+   608,
+   930
+  ]
+ },
+ {
+  "uid": "U527",
+  "text": "Scalars, Vectors and Vector Addition",
+  "ids": [
+   609
+  ]
+ },
+ {
+  "uid": "U528",
+  "text": "3.6 Scalars and vectors",
+  "ids": [
+   610
+  ]
+ },
+ {
+  "uid": "U529",
+  "text": "KEY DEFINITIONS Scalar = magnitude only. Vector = magnitude and direction.",
+  "ids": [
+   611
+  ]
+ },
+ {
+  "uid": "U530",
+  "text": "density",
+  "ids": [
+   620,
+   860
+  ]
+ },
+ {
+  "uid": "U531",
+  "text": "COMMON CONFUSION Speed is scalar but velocity is vector. Mass is scalar but weight is vector because weight is a force.",
+  "ids": [
+   623
+  ]
+ },
+ {
+  "uid": "U532",
+  "text": "Classify each quantity: speed, velocity, mass, force, energy, weight, density, acceleration, temperature.",
+  "ids": [
+   624
+  ]
+ },
+ {
+  "uid": "U533",
+  "text": "Scalars have magnitude only; vectors have magnitude and direction.",
+  "ids": [
+   626
+  ]
+ },
+ {
+  "uid": "U534",
+  "text": "speed → scalar",
+  "ids": [
+   627
+  ]
+ },
+ {
+  "uid": "U535",
+  "text": "velocity → vector",
+  "ids": [
+   628
+  ]
+ },
+ {
+  "uid": "U536",
+  "text": "mass → scalar",
+  "ids": [
+   629
+  ]
+ },
+ {
+  "uid": "U537",
+  "text": "force → vector",
+  "ids": [
+   630
+  ]
+ },
+ {
+  "uid": "U538",
+  "text": "energy → scalar",
+  "ids": [
+   631
+  ]
+ },
+ {
+  "uid": "U539",
+  "text": "weight → vector (weight is a force)",
+  "ids": [
+   632
+  ]
+ },
+ {
+  "uid": "U540",
+  "text": "density → scalar",
+  "ids": [
+   633
+  ]
+ },
+ {
+  "uid": "U541",
+  "text": "acceleration → vector",
+  "ids": [
+   634
+  ]
+ },
+ {
+  "uid": "U542",
+  "text": "temperature → scalar",
+  "ids": [
+   635
+  ]
+ },
+ {
+  "uid": "U543",
+  "text": "Final answer: Scalars: speed, mass, energy, density, temperature. Vectors: velocity, force, weight, acceleration.",
+  "ids": [
+   636
+  ]
+ },
+ {
+  "uid": "U544",
+  "text": "Rules for vector addition",
+  "ids": [
+   637
+  ]
+ },
+ {
+  "uid": "U545",
+  "text": "METHOD 1. Draw arrows end-to-end. 2. Choose a scale that gives a large triangle. 3. Join the start of the first arrow to the end of the last arrow to find the resultant.",
+  "ids": [
+   638
+  ]
+ },
+ {
+  "uid": "U546",
+  "text": "Why is direction essential when adding vectors?",
+  "ids": [
+   639
+  ]
+ },
+ {
+  "uid": "U547",
+  "text": "Vectors are defined by both magnitude and direction.",
+  "ids": [
+   641
+  ]
+ },
+ {
+  "uid": "U548",
+  "text": "The same two magnitudes can produce different resultants if their directions are different.",
+  "ids": [
+   642
+  ]
+ },
+ {
+  "uid": "U549",
+  "text": "Therefore direction must be included when vectors are added, for example with the head-to-tail method.",
+  "ids": [
+   643
+  ]
+ },
+ {
+  "uid": "U550",
+  "text": "Final answer: The resultant depends on both the magnitudes and the directions of the vectors.",
+  "ids": [
+   644
+  ]
+ },
+ {
+  "uid": "U551",
+  "text": "Vector addition: AB + BC = AC",
+  "ids": [
+   645
+  ]
+ },
+ {
+  "uid": "U552",
+  "text": "End-to-end vector addition: AB + BC = AC.",
+  "ids": [
+   646
+  ]
+ },
+ {
+  "uid": "U553",
+  "text": "Draw a scale vector diagram for two perpendicular forces of 6.0 N east and 8.0 N north. Measure or calculate the resultant and state its direction.",
+  "ids": [
+   647
+  ]
+ },
+ {
+  "uid": "U554",
+  "text": "Step 1: Draw 6.0 N east, then from its head draw 8.0 N north.",
+  "ids": [
+   649
+  ]
+ },
+ {
+  "uid": "U555",
+  "text": "Step 2: Draw the resultant from the starting point to the final point.",
+  "ids": [
+   650
+  ]
+ },
+ {
+  "uid": "U556",
+  "text": "Step 3: R = √(6.0² + 8.0²) = √100 = 10.0 N.",
+  "ids": [
+   651
+  ]
+ },
+ {
+  "uid": "U557",
+  "text": "Step 4: tan θ = 8.0/6.0.",
+  "ids": [
+   652
+  ]
+ },
+ {
+  "uid": "U558",
+  "text": "Step 5: θ = tan⁻¹(8/6) = 53.1° north of east.",
+  "ids": [
+   653
+  ]
+ },
+ {
+  "uid": "U559",
+  "text": "Final answer: 10.0 N at 53.1° north of east (or 36.9° east of north).",
+  "ids": [
+   654
+  ]
+ },
+ {
+  "uid": "U560",
+  "text": "Chapter 3 — IGCSE Exam-Style Challenge",
+  "ids": [
+   655
+  ]
+ },
+ {
+  "uid": "U561",
+  "text": "These are original practice questions written in Cambridge IGCSE style and matched to the content of this chapter. They are deliberately more demanding.",
+  "ids": [
+   656
+  ]
+ },
+ {
+  "uid": "U562",
+  "text": "EXAM HABIT Show working, include units, give directions for vectors, and explain answers using resultant force where appropriate.",
+  "ids": [
+   657
+  ]
+ },
+ {
+  "uid": "U563",
+  "text": "1. Resultant force and motion  [6 marks]",
+  "ids": [
+   658
+  ]
+ },
+ {
+  "uid": "U564",
+  "text": "A 950 kg car travels east. The engine produces a driving force of 2400 N east while resistive forces total 1650 N west.\n(a) Calculate the resultant force and state its direction. [2]\n(b) Calculate the acceleration. [2]\n(c) The driving force later becomes equal to the resistive force while the car is still moving. Describe the subsequent motion. [2]",
+  "ids": [
+   659
+  ]
+ },
+ {
+  "uid": "U565",
+  "text": "(a) Resultant force:",
+  "ids": [
+   661,
+   683
+  ]
+ },
+ {
+  "uid": "U566",
+  "text": "Step 1: Opposite directions → subtract: 2400 − 1650 = 750 N.",
+  "ids": [
+   662
+  ]
+ },
+ {
+  "uid": "U567",
+  "text": "Step 2: The larger force is east → resultant = 750 N east.",
+  "ids": [
+   663
+  ]
+ },
+ {
+  "uid": "U568",
+  "text": "(b) Acceleration:",
+  "ids": [
+   664
+  ]
+ },
+ {
+  "uid": "U569",
+  "text": "Step 1: Use F = ma → a = F/m.",
+  "ids": [
+   665
+  ]
+ },
+ {
+  "uid": "U570",
+  "text": "Step 2: a = 750/950 = 0.789... m/s² ≈ 0.79 m/s² east.",
+  "ids": [
+   666
+  ]
+ },
+ {
+  "uid": "U571",
+  "text": "(c) When driving force = resistive force:",
+  "ids": [
+   667
+  ]
+ },
+ {
+  "uid": "U572",
+  "text": "Resultant force = 0 → acceleration = 0. Since the car is already moving, it continues at constant velocity in a straight line.",
+  "ids": [
+   668
+  ]
+ },
+ {
+  "uid": "U573",
+  "text": "Final answer: (a) 750 N east; (b) 0.79 m/s² east; (c) constant velocity.",
+  "ids": [
+   669
+  ]
+ },
+ {
+  "uid": "U574",
+  "text": "2. Mass, weight and gravity  [5 marks]",
+  "ids": [
+   670
+  ]
+ },
+ {
+  "uid": "U575",
+  "text": "A probe has a mass of 72 kg. On a planet, the gravitational field produces g = 4.2 m/s².\n(a) Calculate the probe’s weight on the planet. [2]\n(b) State its mass on Earth. [1]\n(c) Explain why mass is unchanged but weight can change from one planet to another. [2]",
+  "ids": [
+   671
+  ]
+ },
+ {
+  "uid": "U576",
+  "text": "(a) Weight:",
+  "ids": [
+   673
+  ]
+ },
+ {
+  "uid": "U577",
+  "text": "Use W = mg = 72 × 4.2 = 302.4 N ≈ 3.0 × 10² N (2 s.f.).",
+  "ids": [
+   674
+  ]
+ },
+ {
+  "uid": "U578",
+  "text": "(b) Mass on Earth:",
+  "ids": [
+   675
+  ]
+ },
+ {
+  "uid": "U579",
+  "text": "Mass does not depend on gravitational field strength → 72 kg.",
+  "ids": [
+   676
+  ]
+ },
+ {
+  "uid": "U580",
+  "text": "(c) Explanation:",
+  "ids": [
+   677
+  ]
+ },
+ {
+  "uid": "U581",
+  "text": "Mass is the amount of matter and remains unchanged. Weight is W = mg, so weight changes when g changes from planet to planet.",
+  "ids": [
+   678
+  ]
+ },
+ {
+  "uid": "U582",
+  "text": "Final answer: (a) 302.4 N ≈ 3.0 × 10² N; (b) 72 kg; (c) mass constant, weight changes with g.",
+  "ids": [
+   679
+  ]
+ },
+ {
+  "uid": "U583",
+  "text": "3. Parachutist forces  [7 marks]",
+  "ids": [
+   680
+  ]
+ },
+ {
+  "uid": "U584",
+  "text": "A parachutist has weight 760 N. At one instant during the fall, air resistance is 520 N upward.\n(a) Calculate the resultant force. [2]\n(b) State the direction of the acceleration. [1]\n(c) Later, air resistance becomes 760 N. Describe the motion then. [2]\n(d) The parachute opens and air resistance becomes 1300 N for a short time. Explain the effect on the motion. [2]",
+  "ids": [
+   681
+  ]
+ },
+ {
+  "uid": "U585",
+  "text": "760 N downward − 520 N upward = 240 N downward.",
+  "ids": [
+   684
+  ]
+ },
+ {
+  "uid": "U586",
+  "text": "(b) Direction of acceleration:",
+  "ids": [
+   685
+  ]
+ },
+ {
+  "uid": "U587",
+  "text": "Acceleration is in the direction of the resultant force → downward.",
+  "ids": [
+   686
+  ]
+ },
+ {
+  "uid": "U588",
+  "text": "(c) When air resistance becomes 760 N:",
+  "ids": [
+   687
+  ]
+ },
+ {
+  "uid": "U589",
+  "text": "Drag = weight → resultant force = 0 → acceleration = 0 → constant downward terminal velocity.",
+  "ids": [
+   688
+  ]
+ },
+ {
+  "uid": "U590",
+  "text": "(d) When the parachute opens and drag = 1300 N:",
+  "ids": [
+   689
+  ]
+ },
+ {
+  "uid": "U591",
+  "text": "Resultant = 1300 − 760 = 540 N upward. The parachutist is still moving downward, so the upward acceleration reduces the downward speed. Eventually drag falls to equal weight and a lower terminal velocity is reached.",
+  "ids": [
+   690
+  ]
+ },
+ {
+  "uid": "U592",
+  "text": "Final answer: (a) 240 N downward; (b) downward; (c) terminal velocity; (d) slows down due to 540 N upward resultant.",
+  "ids": [
+   691
+  ]
+ },
+ {
+  "uid": "U593",
+  "text": "4. Momentum and impulse  [7 marks]",
+  "ids": [
+   692
+  ]
+ },
+ {
+  "uid": "U594",
+  "text": "A 1200 kg vehicle moves at 18 m/s. A resultant force acts in the direction of motion for 4.0 s and increases the vehicle’s momentum by 9600 kg m/s.\n(a) Calculate the initial momentum. [2]\n(b) Calculate the impulse. [1]\n(c) Calculate the resultant force. [2]\n(d) Calculate the final speed. [2]",
+  "ids": [
+   693
+  ]
+ },
+ {
+  "uid": "U595",
+  "text": "(a) Initial momentum:",
+  "ids": [
+   695
+  ]
+ },
+ {
+  "uid": "U596",
+  "text": "p = mv = 1200 × 18 = 21600 kg·m/s.",
+  "ids": [
+   696
+  ]
+ },
+ {
+  "uid": "U597",
+  "text": "(b) Impulse:",
+  "ids": [
+   697
+  ]
+ },
+ {
+  "uid": "U598",
+  "text": "Impulse = change in momentum = 9600 N·s.",
+  "ids": [
+   698
+  ]
+ },
+ {
+  "uid": "U599",
+  "text": "(c) Resultant force:",
+  "ids": [
+   699
+  ]
+ },
+ {
+  "uid": "U600",
+  "text": "Ft = Δp → F = 9600/4.0 = 2400 N.",
+  "ids": [
+   700
+  ]
+ },
+ {
+  "uid": "U601",
+  "text": "(d) Final speed:",
+  "ids": [
+   701
+  ]
+ },
+ {
+  "uid": "U602",
+  "text": "Final momentum = 21600 + 9600 = 31200 kg·m/s.",
+  "ids": [
+   702
+  ]
+ },
+ {
+  "uid": "U603",
+  "text": "Final answer: (a) 2.16 × 10⁴ kg·m/s; (b) 9600 N·s; (c) 2400 N; (d) 26 m/s.",
+  "ids": [
+   703
+  ]
+ },
+ {
+  "uid": "U604",
+  "text": "5. Conservation of momentum  [8 marks]",
+  "ids": [
+   704
+  ]
+ },
+ {
+  "uid": "U605",
+  "text": "Trolley A, mass 0.80 kg, moves right at 3.5 m/s. Trolley B, mass 1.20 kg, moves left at 1.0 m/s. They collide and stick together. Take right as positive.\n(a) Calculate the total momentum before the collision. [3]\n(b) Calculate the velocity of the joined trolleys after the collision. [3]\n(c) State the direction of motion after the collision. [1]\n(d) Explain why signs are important in this calculation. [1]",
+  "ids": [
+   705
+  ]
+ },
+ {
+  "uid": "U606",
+  "text": "(a) Total momentum before:",
+  "ids": [
+   707
+  ]
+ },
+ {
+  "uid": "U607",
+  "text": "pA = 0.80 × (+3.5) = +2.80 kg·m/s.",
+  "ids": [
+   708
+  ]
+ },
+ {
+  "uid": "U608",
+  "text": "pB = 1.20 × (−1.0) = −1.20 kg·m/s.",
+  "ids": [
+   709
+  ]
+ },
+ {
+  "uid": "U609",
+  "text": "Total = +2.80 − 1.20 = +1.60 kg·m/s.",
+  "ids": [
+   710
+  ]
+ },
+ {
+  "uid": "U610",
+  "text": "(b) Velocity after collision:",
+  "ids": [
+   711
+  ]
+ },
+ {
+  "uid": "U611",
+  "text": "Total mass = 0.80 + 1.20 = 2.00 kg.",
+  "ids": [
+   712
+  ]
+ },
+ {
+  "uid": "U612",
+  "text": "Conservation of momentum: 1.60 = 2.00v → v = +0.80 m/s.",
+  "ids": [
+   713
+  ]
+ },
+ {
+  "uid": "U613",
+  "text": "(c) Positive sign means motion is to the right.",
+  "ids": [
+   714
+  ]
+ },
+ {
+  "uid": "U614",
+  "text": "(d) Signs are essential because momentum is a vector; opposite directions must have opposite signs.",
+  "ids": [
+   715
+  ]
+ },
+ {
+  "uid": "U615",
+  "text": "Final answer: (a) +1.60 kg·m/s; (b) +0.80 m/s; (c) right; (d) signs represent direction.",
+  "ids": [
+   716
+  ]
+ },
+ {
+  "uid": "U616",
+  "text": "6. Vectors and circular motion  [7 marks]",
+  "ids": [
+   717
+  ]
+ },
+ {
+  "uid": "U617",
+  "text": "An aircraft experiences two perpendicular horizontal forces: 9.0 kN north and 12.0 kN east.\n(a) Draw a vector triangle using a suitable scale. [3]\n(b) Determine the magnitude of the resultant force. [2]\n(c) State the direction of the resultant. [1]\n(d) State why an object moving at constant speed in a circle has an acceleration. [1]",
+  "ids": [
+   718
+  ]
+ },
+ {
+  "uid": "U618",
+  "text": "(a) Vector triangle:",
+  "ids": [
+   720
+  ]
+ },
+ {
+  "uid": "U619",
+  "text": "Example scale: 1 cm = 3 kN. Draw 4.0 cm east for 12.0 kN, then 3.0 cm north for 9.0 kN. Join start to finish for the resultant (5.0 cm).",
+  "ids": [
+   721
+  ]
+ },
+ {
+  "uid": "U620",
+  "text": "(b) Magnitude:",
+  "ids": [
+   722
+  ]
+ },
+ {
+  "uid": "U621",
+  "text": "R = √(12.0² + 9.0²) = √225 = 15.0 kN.",
+  "ids": [
+   723
+  ]
+ },
+ {
+  "uid": "U622",
+  "text": "(c) Direction:",
+  "ids": [
+   724
+  ]
+ },
+ {
+  "uid": "U623",
+  "text": "tan θ = 9/12 → θ = 36.9° north of east.",
+  "ids": [
+   725
+  ]
+ },
+ {
+  "uid": "U624",
+  "text": "(d) Circular motion:",
+  "ids": [
+   726
+  ]
+ },
+ {
+  "uid": "U625",
+  "text": "An object at constant speed in a circle is accelerating because its direction, and therefore its velocity, changes continuously.",
+  "ids": [
+   727
+  ]
+ },
+ {
+  "uid": "U626",
+  "text": "Final answer: (a) correct head-to-tail triangle; (b) 15.0 kN; (c) 36.9° north of east; (d) velocity direction changes.",
+  "ids": [
+   728
+  ]
+ },
+ {
+  "uid": "U627",
+  "text": "Reflection & Weekly Check",
+  "ids": [
+   729,
+   1459
+  ]
+ },
+ {
+  "uid": "U628",
+  "text": "1. Which topic is strongest for you: resultant force, weight, terminal velocity, F = ma, momentum, or vectors? Why?",
+  "ids": [
+   730
+  ]
+ },
+ {
+  "uid": "U629",
+  "text": "No single correct answer. A good response names one topic and gives a specific reason.",
+  "ids": [
+   732
+  ]
+ },
+ {
+  "uid": "U630",
+  "text": "Sample: “Resultant force is strongest for me because I can subtract opposite forces and state the direction of the resultant.”",
+  "ids": [
+   733
+  ]
+ },
+ {
+  "uid": "U631",
+  "text": "Final answer: Student-dependent.",
+  "ids": [
+   734,
+   739,
+   744,
+   748
+  ]
+ },
+ {
+  "uid": "U632",
+  "text": "2. Which exam-style question above was most challenging? What caused the difficulty?",
+  "ids": [
+   735
+  ]
+ },
+ {
+  "uid": "U633",
+  "text": "No single correct answer. The student should identify both the question and the reason for difficulty.",
+  "ids": [
+   737
+  ]
+ },
+ {
+  "uid": "U634",
+  "text": "Possible reasons: choosing a formula, keeping momentum signs correct, using vector direction, or writing a force explanation.",
+  "ids": [
+   738
+  ]
+ },
+ {
+  "uid": "U635",
+  "text": "3. Write one mistake you need to avoid in the next lesson or test.",
+  "ids": [
+   740,
+   1464
+  ]
+ },
+ {
+  "uid": "U636",
+  "text": "No single correct answer.",
+  "ids": [
+   742
+  ]
+ },
+ {
+  "uid": "U637",
+  "text": "Possible examples: forgetting units; writing kg for weight; forgetting direction for a vector; adding opposite forces instead of subtracting; ignoring negative momentum.",
+  "ids": [
+   743
+  ]
+ },
+ {
+  "uid": "U638",
+  "text": "4. Write one question you still want to ask.",
+  "ids": [
+   745,
+   1466
+  ]
+ },
+ {
+  "uid": "U639",
+  "text": "No single correct answer. Use this response to identify any remaining misconception or topic needing revision.",
+  "ids": [
+   747
+  ]
+ },
+ {
+  "uid": "U640",
+  "text": "Confidence after Chapter 3:     1     2     3     4     5",
+  "ids": [
+   749
+  ]
+ },
+ {
+  "uid": "U641",
+  "text": "No single correct answer. Use this as a quick confidence check and compare it with the student’s actual performance on the exam-style questions.",
+  "ids": [
+   751
+  ]
+ },
+ {
+  "uid": "U642",
+  "text": "Final answer: Student self-assessment.",
+  "ids": [
+   752
+  ]
+ },
+ {
+  "uid": "U643",
+  "text": "Chapter / topic",
+  "ids": [
+   755
+  ]
+ },
+ {
+  "uid": "U644",
+  "text": "Main content in PPT order",
+  "ids": [
+   756
+  ]
+ },
+ {
+  "uid": "U645",
+  "text": "Ch.4 4.1 Moment of a force",
+  "ids": [
+   757
+  ]
+ },
+ {
+  "uid": "U646",
+  "text": "turning effect → pivot → force, distance and 90° → equilibrium",
+  "ids": [
+   758
+  ]
+ },
+ {
+  "uid": "U647",
+  "text": "Ch.4 4.2 Calculating moments",
+  "ids": [
+   759
+  ]
+ },
+ {
+  "uid": "U648",
+  "text": "M = Fd → perpendicular distance → textbook exam-style examples",
+  "ids": [
+   760
+  ]
+ },
+ {
+  "uid": "U649",
+  "text": "Ch.4 Balancing moments",
+  "ids": [
+   761
+  ]
+ },
+ {
+  "uid": "U650",
+  "text": "principle of moments → clockwise/anticlockwise → equilibrium conditions",
+  "ids": [
+   762
+  ]
+ },
+ {
+  "uid": "U651",
+  "text": "Ch.4 4.3 Stability & centre of mass",
+  "ids": [
+   763
+  ]
+ },
+ {
+  "uid": "U652",
+  "text": "centre of gravity / mass → stability → finding centre of mass",
+  "ids": [
+   764
+  ]
+ },
+ {
+  "uid": "U653",
+  "text": "Ch.5 5.1 Forces acting on solids",
+  "ids": [
+   765
+  ]
+ },
+ {
+  "uid": "U654",
+  "text": "shape change → elastic/inelastic deformation → stretching springs → extension graph",
+  "ids": [
+   766
+  ]
+ },
+ {
+  "uid": "U655",
+  "text": "Ch.5 5.3 Hooke’s law",
+  "ids": [
+   767
+  ]
+ },
+ {
+  "uid": "U656",
+  "text": "limit of proportionality → F = kx → rubber → Hooke and springs",
+  "ids": [
+   768
+  ]
+ },
+ {
+  "uid": "U657",
+  "text": "Ch.5 Pressure",
+  "ids": [
+   769
+  ]
+ },
+ {
+  "uid": "U658",
+  "text": "pressure in fluids → manometer / barometer → p = F/A and p = hρg",
+  "ids": [
+   770
+  ]
+ },
+ {
+  "uid": "U659",
+  "text": "moment",
+  "ids": [
+   773,
+   849
+  ]
+ },
+ {
+  "uid": "U660",
+  "text": "the turning effect of a force about a point",
+  "ids": [
+   774
+  ]
+ },
+ {
+  "uid": "U661",
+  "text": "pivot",
+  "ids": [
+   775
+  ]
+ },
+ {
+  "uid": "U662",
+  "text": "the fixed point about which an object can turn",
+  "ids": [
+   776
+  ]
+ },
+ {
+  "uid": "U663",
+  "text": "turning effect",
+  "ids": [
+   777
+  ]
+ },
+ {
+  "uid": "U664",
+  "text": "the tendency of a force to make an object rotate",
+  "ids": [
+   778
+  ]
+ },
+ {
+  "uid": "U665",
+  "text": "perpendicular distance",
+  "ids": [
+   779
+  ]
+ },
+ {
+  "uid": "U666",
+  "text": "the shortest distance from the pivot to the line of action of the force",
+  "ids": [
+   780
+  ]
+ },
+ {
+  "uid": "U667",
+  "text": "line of action",
+  "ids": [
+   781
+  ]
+ },
+ {
+  "uid": "U668",
+  "text": "the straight line along which a force acts",
+  "ids": [
+   782
+  ]
+ },
+ {
+  "uid": "U669",
+  "text": "clockwise moment",
+  "ids": [
+   783
+  ]
+ },
+ {
+  "uid": "U670",
+  "text": "a moment tending to turn an object clockwise",
+  "ids": [
+   784
+  ]
+ },
+ {
+  "uid": "U671",
+  "text": "anticlockwise moment",
+  "ids": [
+   785
+  ]
+ },
+ {
+  "uid": "U672",
+  "text": "a moment tending to turn an object anticlockwise",
+  "ids": [
+   786
+  ]
+ },
+ {
+  "uid": "U673",
+  "text": "equilibrium",
+  "ids": [
+   787
+  ]
+ },
+ {
+  "uid": "U674",
+  "text": "a state with no resultant force and no resultant turning effect",
+  "ids": [
+   788
+  ]
+ },
+ {
+  "uid": "U675",
+  "text": "principle of moments",
+  "ids": [
+   789
+  ]
+ },
+ {
+  "uid": "U676",
+  "text": "for equilibrium, total clockwise moment equals total anticlockwise moment",
+  "ids": [
+   790
+  ]
+ },
+ {
+  "uid": "U677",
+  "text": "centre of gravity",
+  "ids": [
+   791
+  ]
+ },
+ {
+  "uid": "U678",
+  "text": "the point through which an object’s weight may be considered to act",
+  "ids": [
+   792
+  ]
+ },
+ {
+  "uid": "U679",
+  "text": "centre of mass",
+  "ids": [
+   793
+  ]
+ },
+ {
+  "uid": "U680",
+  "text": "the point at which the mass of an object may be considered concentrated",
+  "ids": [
+   794
+  ]
+ },
+ {
+  "uid": "U681",
+  "text": "stability",
+  "ids": [
+   795
+  ]
+ },
+ {
+  "uid": "U682",
+  "text": "the ability of an object to remain upright and resist toppling",
+  "ids": [
+   796
+  ]
+ },
+ {
+  "uid": "U683",
+  "text": "base",
+  "ids": [
+   797
+  ]
+ },
+ {
+  "uid": "U684",
+  "text": "the area through which an object is supported",
+  "ids": [
+   798
+  ]
+ },
+ {
+  "uid": "U685",
+  "text": "plumb-line",
+  "ids": [
+   799
+  ]
+ },
+ {
+  "uid": "U686",
+  "text": "a weighted string that shows the vertical direction",
+  "ids": [
+   800
+  ]
+ },
+ {
+  "uid": "U687",
+  "text": "elastic deformation",
+  "ids": [
+   801
+  ]
+ },
+ {
+  "uid": "U688",
+  "text": "a change in shape or size that is reversed when the force is removed",
+  "ids": [
+   802
+  ]
+ },
+ {
+  "uid": "U689",
+  "text": "inelastic deformation",
+  "ids": [
+   803
+  ]
+ },
+ {
+  "uid": "U690",
+  "text": "a change in shape or size that is not fully reversed after the force is removed",
+  "ids": [
+   804
+  ]
+ },
+ {
+  "uid": "U691",
+  "text": "load",
+  "ids": [
+   807
+  ]
+ },
+ {
+  "uid": "U692",
+  "text": "the force applied to stretch or deform an object",
+  "ids": [
+   808
+  ]
+ },
+ {
+  "uid": "U693",
+  "text": "extension",
+  "ids": [
+   809
+  ]
+ },
+ {
+  "uid": "U694",
+  "text": "increase in length: stretched length minus original length",
+  "ids": [
+   810
+  ]
+ },
+ {
+  "uid": "U695",
+  "text": "original length",
+  "ids": [
+   811
+  ]
+ },
+ {
+  "uid": "U696",
+  "text": "the length before the stretching force is applied",
+  "ids": [
+   812
+  ]
+ },
+ {
+  "uid": "U697",
+  "text": "stretched length",
+  "ids": [
+   813
+  ]
+ },
+ {
+  "uid": "U698",
+  "text": "the total length of the object while stretched",
+  "ids": [
+   814
+  ]
+ },
+ {
+  "uid": "U699",
+  "text": "limit of proportionality",
+  "ids": [
+   815
+  ]
+ },
+ {
+  "uid": "U700",
+  "text": "the point beyond which extension is no longer proportional to load",
+  "ids": [
+   816
+  ]
+ },
+ {
+  "uid": "U701",
+  "text": "elastic limit",
+  "ids": [
+   817
+  ]
+ },
+ {
+  "uid": "U702",
+  "text": "the limit referred to in the PPT after which permanent deformation occurs",
+  "ids": [
+   818
+  ]
+ },
+ {
+  "uid": "U703",
+  "text": "Hooke’s law",
+  "ids": [
+   819
+  ]
+ },
+ {
+  "uid": "U704",
+  "text": "extension is proportional to load provided the limit of proportionality is not exceeded",
+  "ids": [
+   820
+  ]
+ },
+ {
+  "uid": "U705",
+  "text": "spring constant, k",
+  "ids": [
+   821
+  ]
+ },
+ {
+  "uid": "U706",
+  "text": "a measure of the stiffness of a spring",
+  "ids": [
+   822
+  ]
+ },
+ {
+  "uid": "U707",
+  "text": "stiffness",
+  "ids": [
+   823
+  ]
+ },
+ {
+  "uid": "U708",
+  "text": "how difficult an object is to stretch or deform",
+  "ids": [
+   824
+  ]
+ },
+ {
+  "uid": "U709",
+  "text": "pressure",
+  "ids": [
+   825,
+   855
+  ]
+ },
+ {
+  "uid": "U710",
+  "text": "force acting per unit area at right angles to a surface",
+  "ids": [
+   826
+  ]
+ },
+ {
+  "uid": "U711",
+  "text": "pascal (Pa)",
+  "ids": [
+   827
+  ]
+ },
+ {
+  "uid": "U712",
+  "text": "the SI unit of pressure; 1 Pa = 1 N/m²",
+  "ids": [
+   828
+  ]
+ },
+ {
+  "uid": "U713",
+  "text": "density, ρ",
+  "ids": [
+   829
+  ]
+ },
+ {
+  "uid": "U714",
+  "text": "mass per unit volume",
+  "ids": [
+   830
+  ]
+ },
+ {
+  "uid": "U715",
+  "text": "manometer",
+  "ids": [
+   831
+  ]
+ },
+ {
+  "uid": "U716",
+  "text": "an instrument showing the difference in pressure between two gases or liquids",
+  "ids": [
+   832
+  ]
+ },
+ {
+  "uid": "U717",
+  "text": "barometer",
+  "ids": [
+   833
+  ]
+ },
+ {
+  "uid": "U718",
+  "text": "an instrument used to measure atmospheric pressure",
+  "ids": [
+   834
+  ]
+ },
+ {
+  "uid": "U719",
+  "text": "atmospheric pressure",
+  "ids": [
+   835
+  ]
+ },
+ {
+  "uid": "U720",
+  "text": "pressure caused by the atmosphere",
+  "ids": [
+   836
+  ]
+ },
+ {
+  "uid": "U721",
+  "text": "M: moment (N m); F: force (N); d: perpendicular distance from pivot to line of action (m)",
+  "ids": [
+   837
+  ]
+ },
+ {
+  "uid": "U722",
+  "text": "total clockwise moment = total anticlockwise moment",
+  "ids": [
+   838
+  ]
+ },
+ {
+  "uid": "U723",
+  "text": "stretched length = original length + extension",
+  "ids": [
+   839
+  ]
+ },
+ {
+  "uid": "U724",
+  "text": "extension = stretched length − original length",
+  "ids": [
+   840
+  ]
+ },
+ {
+  "uid": "U725",
+  "text": "F = kx",
+  "ids": [
+   841
+  ]
+ },
+ {
+  "uid": "U726",
+  "text": "F: load (N); k: spring constant (N/m); x: extension (m)",
+  "ids": [
+   842
+  ]
+ },
+ {
+  "uid": "U727",
+  "text": "p: pressure (Pa); F: force normal to surface (N); A: area (m²)",
+  "ids": [
+   843
+  ]
+ },
+ {
+  "uid": "U728",
+  "text": "h: depth (m); ρ: density (kg/m³); g: acceleration due to gravity (m/s²)",
+  "ids": [
+   844
+  ]
+ },
+ {
+  "uid": "U729",
+  "text": "MUST KNOW / 必须掌握 1 Pa = 1 N/m². For moment calculations, convert cm to m when the answer is required in N m.",
+  "ids": [
+   845
+  ]
+ },
+ {
+  "uid": "U730",
+  "text": "force / load",
+  "ids": [
+   848
+  ]
+ },
+ {
+  "uid": "U731",
+  "text": "distance / length / extension",
+  "ids": [
+   850
+  ]
+ },
+ {
+  "uid": "U732",
+  "text": "m (or cm)",
+  "ids": [
+   851
+  ]
+ },
+ {
+  "uid": "U733",
+  "text": "metre / centimetre",
+  "ids": [
+   852
+  ]
+ },
+ {
+  "uid": "U734",
+  "text": "spring constant",
+  "ids": [
+   853
+  ]
+ },
+ {
+  "uid": "U735",
+  "text": "newton per metre",
+  "ids": [
+   854
+  ]
+ },
+ {
+  "uid": "U736",
+  "text": "Pa = N/m²",
+  "ids": [
+   856
+  ]
+ },
+ {
+  "uid": "U737",
+  "text": "area",
+  "ids": [
+   857
+  ]
+ },
+ {
+  "uid": "U738",
+  "text": "depth",
+  "ids": [
+   858
+  ]
+ },
+ {
+  "uid": "U739",
+  "text": "metre / 米",
+  "ids": [
+   859,
+   1151
+  ]
+ },
+ {
+  "uid": "U740",
+  "text": "kg/m³",
+  "ids": [
+   861
+  ]
+ },
+ {
+  "uid": "U741",
+  "text": "acceleration due to gravity",
+  "ids": [
+   862
+  ]
+ },
+ {
+  "uid": "U742",
+  "text": "metre per second squared",
+  "ids": [
+   863
+  ]
+ },
+ {
+  "uid": "U743",
+  "text": "EXAM TIP / 考试提醒 Always include the final unit. Check whether the distance is perpendicular and whether an area conversion is squared.",
+  "ids": [
+   864
+  ]
+ },
+ {
+  "uid": "U744",
+  "text": "The Moment of a Force",
+  "ids": [
+   866
+  ]
+ },
+ {
+  "uid": "U745",
+  "text": "4.1 The moment of a force",
+  "ids": [
+   867
+  ]
+ },
+ {
+  "uid": "U746",
+  "text": "KEY DEFINITION The moment of a force is the turning effect of a force about a point (pivot).",
+  "ids": [
+   868
+  ]
+ },
+ {
+  "uid": "U747",
+  "text": "• A bigger force produces a bigger moment.",
+  "ids": [
+   869
+  ]
+ },
+ {
+  "uid": "U748",
+  "text": "• A force acting further from the pivot produces a bigger moment.",
+  "ids": [
+   870
+  ]
+ },
+ {
+  "uid": "U749",
+  "text": "• The turning effect is greatest when the force acts at 90° to the object.",
+  "ids": [
+   871
+  ]
+ },
+ {
+  "uid": "U750",
+  "text": "COMMON CONFUSION The distance used in a moment is not simply “the length of the object”. It is the perpendicular distance from the pivot to the line of action of the force.",
+  "ids": [
+   872
+  ]
+ },
+ {
+  "uid": "U751",
+  "text": "Think: To make a heavy door easier to open, where should you push and in what direction? Explain using the ideas of distance and angle.",
+  "ids": [
+   873
+  ]
+ },
+ {
+  "uid": "U752",
+  "text": "STEP-BY-STEP ANSWER\n1. The pivot is the hinge of the door.\n2. Moment = force × perpendicular distance from the pivot.\n3. To make the moment as large as possible, increase the perpendicular distance.\n4. Therefore, push as far from the hinges as possible (near the outer edge/handle).\n5. Push at 90° to the door, because this gives the greatest turning effect.\nFinal answer: Push near the handle, as far from the hinges as possible, and perpendicular (90°) to the door.",
+  "ids": [
+   874
+  ]
+ },
+ {
+  "uid": "U753",
+  "text": "Equilibrium",
+  "ids": [
+   875
+  ]
+ },
+ {
+  "uid": "U754",
+  "text": "KEY DEFINITION An object is in equilibrium when the forces are balanced and the turning effects are also balanced.",
+  "ids": [
+   876
+  ]
+ },
+ {
+  "uid": "U755",
+  "text": "• No resultant force → no linear acceleration.",
+  "ids": [
+   877
+  ]
+ },
+ {
+  "uid": "U756",
+  "text": "• No resultant turning effect → no angular acceleration / no start of rotation.",
+  "ids": [
+   878
+  ]
+ },
+ {
+  "uid": "U757",
+  "text": "A beam is balanced on a pivot. State the two conditions that must be true for the beam to be in equilibrium.",
+  "ids": [
+   879
+  ]
+ },
+ {
+  "uid": "U758",
+  "text": "STEP-BY-STEP ANSWER\n1. The forces must balance, so resultant force = 0.\n2. The turning effects must balance, so total clockwise moment = total anticlockwise moment.\nFinal answer: resultant force = 0 and resultant moment = 0.",
+  "ids": [
+   880
+  ]
+ },
+ {
+  "uid": "U759",
+  "text": "Calculating Moments",
+  "ids": [
+   882
+  ]
+ },
+ {
+  "uid": "U760",
+  "text": "4.2 Calculating moments",
+  "ids": [
+   883
+  ]
+ },
+ {
+  "uid": "U761",
+  "text": "FORMULA moment = force × perpendicular distance from pivot to force     M = F × d",
+  "ids": [
+   884
+  ]
+ },
+ {
+  "uid": "U762",
+  "text": "Exam method:",
+  "ids": [
+   885
+  ]
+ },
+ {
+  "uid": "U763",
+  "text": "• Mark the pivot.",
+  "ids": [
+   886
+  ]
+ },
+ {
+  "uid": "U764",
+  "text": "• Draw or identify the line of action of the force.",
+  "ids": [
+   887
+  ]
+ },
+ {
+  "uid": "U765",
+  "text": "• Measure/use the perpendicular distance from the pivot to that line.",
+  "ids": [
+   888
+  ]
+ },
+ {
+  "uid": "U766",
+  "text": "• Convert distance to metres if the required unit is N m.",
+  "ids": [
+   889
+  ]
+ },
+ {
+  "uid": "U767",
+  "text": "• Calculate M = Fd and state clockwise or anticlockwise if asked.",
+  "ids": [
+   890
+  ]
+ },
+ {
+  "uid": "U768",
+  "text": "Example",
+  "ids": [
+   891,
+   902,
+   939,
+   952,
+   978,
+   1167,
+   1379,
+   1411
+  ]
+ },
+ {
+  "uid": "U769",
+  "text": "1. The pictures show different positions of a bicycle pedal. Which position would result in the biggest turning force? [1]",
+  "ids": [
+   892
+  ]
+ },
+ {
+  "uid": "U770",
+  "text": "STEP-BY-STEP ANSWER\n1. The force is the same in all four positions: 500 N.\n2. Moment = force × perpendicular distance from the pivot to the line of action of the force.\n3. Compare the perpendicular distances: b is 0 cm, a is 5 cm, d is 14 cm, and c is 15 cm.\n4. The largest perpendicular distance gives the largest moment.\nFinal answer: C.",
+  "ids": [
+   893
+  ]
+ },
+ {
+  "uid": "U771",
+  "text": "Balancing Moments and Equilibrium",
+  "ids": [
+   895
+  ]
+ },
+ {
+  "uid": "U772",
+  "text": "Principle of moments",
+  "ids": [
+   896
+  ]
+ },
+ {
+  "uid": "U773",
+  "text": "MUST KNOW For a balanced object: total clockwise moment = total anticlockwise moment.",
+  "ids": [
+   897
+  ]
+ },
+ {
+  "uid": "U774",
+  "text": "Use the diagram: calculate the anticlockwise moment produced by the 500 N force. Then compare it with the total clockwise moment.",
+  "ids": [
+   898
+  ]
+ },
+ {
+  "uid": "U775",
+  "text": "STEP-BY-STEP ANSWER\nAnticlockwise moment from the 500 N force:\nM = Fd = 500 × 2.0 = 1000 N m.\nClockwise moments:\n400 × 1.0 = 400 N m\n300 × 2.0 = 600 N m\nTotal clockwise moment = 400 + 600 = 1000 N m.\nComparison: clockwise moment = anticlockwise moment = 1000 N m, so the beam is rotationally balanced.",
+  "ids": [
+   899
+  ]
+ },
+ {
+  "uid": "U776",
+  "text": "MUST KNOW An object is in complete equilibrium only when (1) resultant force = 0 and (2) total clockwise moment = total anticlockwise moment.",
+  "ids": [
+   900
+  ]
+ },
+ {
+  "uid": "U777",
+  "text": "COMMON CONFUSION Balanced forces alone are not enough. An object can have zero resultant force but still rotate if the moments are not balanced.",
+  "ids": [
+   901
+  ]
+ },
+ {
+  "uid": "U778",
+  "text": "3. A toy train is crossing a bridge. The centre of gravity of the train is mid-way between the supports. Which row of the table shows the correct values of the contact forces at X and Y? [1]",
+  "ids": [
+   903
+  ]
+ },
+ {
+  "uid": "U779",
+  "text": "STEP-BY-STEP ANSWER\n1. The train's weight is 8 N downward.\n2. The centre of gravity is midway between the two supports, so the support forces are equal.\n3. For vertical equilibrium: X + Y = 8 N.\n4. Since X = Y, each force = 8 ÷ 2 = 4 N.\nFinal answer: X = 4 N and Y = 4 N → row C.",
+  "ids": [
+   904
+  ]
+ },
+ {
+  "uid": "U780",
+  "text": "4. A 1.0 metre wooden ruler is damaged and no longer uniform. The mass of the ruler is 11.5 g. The ruler is balanced on a pivot with a 50 g mass as shown. Where is the centre of gravity of the ruler? [1]",
+  "ids": [
+   905
+  ]
+ },
+ {
+  "uid": "U781",
+  "text": "STEP-BY-STEP ANSWER\nImportant: the PPT image shows the ruler mass as 115 g. Using that value:\n1. Pivot = 55 cm. The 50 g mass acts at 85 cm, so its distance from the pivot = 85 − 55 = 30 cm.\n2. Let the ruler's centre of gravity be at x cm. It must be left of the pivot.\n3. Principle of moments: 115 × (55 − x) = 50 × 30.\n4. 115(55 − x) = 1500.\n5. 55 − x = 1500 ÷ 115 = 13.04 cm.\n6. x = 55 − 13.04 = 41.96 cm ≈ 42 cm.\nFinal answer: B, at the 42 cm mark.",
+  "ids": [
+   906
+  ]
+ },
+ {
+  "uid": "U782",
+  "text": "PRINCIPLE For an object in rotational equilibrium: total clockwise moment = total anticlockwise moment.",
+  "ids": [
+   907
+  ]
+ },
+ {
+  "uid": "U783",
+  "text": "Stability and Centre of Mass",
+  "ids": [
+   909
+  ]
+ },
+ {
+  "uid": "U784",
+  "text": "4.3 Stability and centre of mass",
+  "ids": [
+   910
+  ]
+ },
+ {
+  "uid": "U785",
+  "text": "KEY DEFINITION The centre of mass is the point at which the mass of an object may be considered to be concentrated. The weight of the object acts through this point.",
+  "ids": [
+   911
+  ]
+ },
+ {
+  "uid": "U786",
+  "text": "MUST KNOW An object topples when the vertical line through its centre of mass falls outside its base.",
+  "ids": [
+   912
+  ]
+ },
+ {
+  "uid": "U787",
+  "text": "COMMON CONFUSION Centre of mass and centre of gravity are often at the same point in a uniform gravitational field, but “centre of mass” refers to mass distribution while “centre of gravity” refers to where the resultant weight acts.",
+  "ids": [
+   913
+  ]
+ },
+ {
+  "uid": "U788",
+  "text": "KEY DEFINITION The weight of an object acts through its centre of mass. This point may also be described as the centre of gravity when discussing the action of weight.",
+  "ids": [
+   914
+  ]
+ },
+ {
+  "uid": "U789",
+  "text": "• Symmetry can help you estimate the centre of mass of a regular object.",
+  "ids": [
+   915
+  ]
+ },
+ {
+  "uid": "U790",
+  "text": "• The centre of mass can lie outside the material of an object, for example below the top of a table.",
+  "ids": [
+   916
+  ]
+ },
+ {
+  "uid": "U791",
+  "text": "• An object is more stable when its centre of mass is lower and its base is wider.",
+  "ids": [
+   917
+  ]
+ },
+ {
+  "uid": "U792",
+  "text": "• Toppling occurs when the vertical line through the centre of mass falls outside the base.",
+  "ids": [
+   918
+  ]
+ },
+ {
+  "uid": "U793",
+  "text": "COMMON CONFUSION The centre of mass does not have to be inside the solid material of the object.",
+  "ids": [
+   919
+  ]
+ },
+ {
+  "uid": "U794",
+  "text": "Finding the centre of mass of an irregular card",
+  "ids": [
+   920
+  ]
+ },
+ {
+  "uid": "U795",
+  "text": "Method:",
+  "ids": [
+   921
+  ]
+ },
+ {
+  "uid": "U796",
+  "text": "• Suspend the card freely from a pin.",
+  "ids": [
+   922
+  ]
+ },
+ {
+  "uid": "U797",
+  "text": "• Hang a plumb-line from the same pin and draw the vertical line on the card.",
+  "ids": [
+   923
+  ]
+ },
+ {
+  "uid": "U798",
+  "text": "• Repeat from two more suspension points.",
+  "ids": [
+   924
+  ]
+ },
+ {
+  "uid": "U799",
+  "text": "• The lines intersect at the centre of mass.",
+  "ids": [
+   925
+  ]
+ },
+ {
+  "uid": "U800",
+  "text": "Explain why the centre of mass must lie on each plumb-line when the card hangs freely.",
+  "ids": [
+   926
+  ]
+ },
+ {
+  "uid": "U801",
+  "text": "STEP-BY-STEP ANSWER\n1. When the card hangs freely and is at rest, it is in equilibrium.\n2. Its weight acts vertically downward through its centre of mass.\n3. The plumb-line shows the vertical direction through the suspension point.\n4. If the centre of mass were not on this vertical line, the weight would produce a turning moment and the card would rotate.\nFinal answer: the centre of mass must lie on the vertical plumb-line so that there is no turning moment.",
+  "ids": [
+   927
+  ]
+ },
+ {
+  "uid": "U802",
+  "text": "Extension: Explain two changes that would make a tall vehicle more stable.",
+  "ids": [
+   928
+  ]
+ },
+ {
+  "uid": "U803",
+  "text": "STEP-BY-STEP ANSWER\nChange 1: lower the centre of mass, for example by placing heavy components lower down. This means a larger tilt is needed before the vertical line through the centre of mass moves outside the base.\nChange 2: make the base wider. This increases the distance to the edge of the base, so a larger tilt is needed before toppling occurs.",
+  "ids": [
+   929
+  ]
+ },
+ {
+  "uid": "U804",
+  "text": "Forces Acting on Solids and Stretching Springs",
+  "ids": [
+   931
+  ]
+ },
+ {
+  "uid": "U805",
+  "text": "5.1 Forces acting on solids",
+  "ids": [
+   932
+  ]
+ },
+ {
+  "uid": "U806",
+  "text": "MUST KNOW Forces can change the size and shape of an object.",
+  "ids": [
+   933
+  ]
+ },
+ {
+  "uid": "U807",
+  "text": "KEY DEFINITIONS Elastic deformation: the object returns to its original shape when the force is removed. Inelastic deformation: the object is permanently deformed and does not fully return.",
+  "ids": [
+   934
+  ]
+ },
+ {
+  "uid": "U808",
+  "text": "Stretching springs",
+  "ids": [
+   935
+  ]
+ },
+ {
+  "uid": "U809",
+  "text": "• At first, a spring deforms elastically and returns to its original length when the load is removed.",
+  "ids": [
+   936
+  ]
+ },
+ {
+  "uid": "U810",
+  "text": "• If the load becomes too great, the spring can be permanently damaged and becomes inelastically deformed.",
+  "ids": [
+   937
+  ]
+ },
+ {
+  "uid": "U811",
+  "text": "RELATIONSHIP stretched length = original length + extension     therefore extension = stretched length − original length",
+  "ids": [
+   938
+  ]
+ },
+ {
+  "uid": "U812",
+  "text": "A spring has original length 24.0 cm. The table shows stretched lengths of 24.6 cm at 1.0 N, 27.0 cm at 5.0 N, and 29.5 cm at 8.0 N.",
+  "ids": [
+   940
+  ]
+ },
+ {
+  "uid": "U813",
+  "text": "(a) Calculate the extension at 5.0 N.",
+  "ids": [
+   941
+  ]
+ },
+ {
+  "uid": "U814",
+  "text": "STEP-BY-STEP ANSWER\nOriginal length = 24.0 cm\nStretched length at 5.0 N = 27.0 cm\nExtension = stretched length − original length\nExtension = 27.0 − 24.0 = 3.0 cm\nFinal answer: 3.0 cm.",
+  "ids": [
+   942
+  ]
+ },
+ {
+  "uid": "U815",
+  "text": "(b) The graph is straight at first and then bends. What does the bending tell you about the spring?",
+  "ids": [
+   943
+  ]
+ },
+ {
+  "uid": "U816",
+  "text": "STEP-BY-STEP ANSWER\n1. In the straight-line region, extension is proportional to load.\n2. When the graph bends, extension is no longer proportional to load.\n3. The limit of proportionality has been reached/exceeded.\n4. If the load is sufficiently large, the spring may be permanently (inelastically) deformed.\nFinal answer: the spring is no longer obeying Hooke's law and may be permanently damaged.",
+  "ids": [
+   944
+  ]
+ },
+ {
+  "uid": "U817",
+  "text": "COMMON CONFUSION Extension is not the same as stretched length. Extension is the increase in length only.",
+  "ids": [
+   945
+  ]
+ },
+ {
+  "uid": "U818",
+  "text": "LESSON 6",
+  "ids": [
+   946
+  ]
+ },
+ {
+  "uid": "U819",
+  "text": "Hooke’s Law and Rubber",
+  "ids": [
+   947
+  ]
+ },
+ {
+  "uid": "U820",
+  "text": "5.3 Hooke's law",
+  "ids": [
+   948
+  ]
+ },
+ {
+  "uid": "U821",
+  "text": "KEY DEFINITION The limit of proportionality is the point where the load–extension graph stops being a straight line. The PPT also refers to this as the elastic limit.",
+  "ids": [
+   949
+  ]
+ },
+ {
+  "uid": "U822",
+  "text": "HOOKE’S LAW The extension of a spring is proportional to the load applied to it, provided the limit of proportionality is not exceeded.",
+  "ids": [
+   950
+  ]
+ },
+ {
+  "uid": "U823",
+  "text": "FORMULA F = kx     F = load (N), k = spring constant (N/m), x = extension (m)",
+  "ids": [
+   951
+  ]
+ },
+ {
+  "uid": "U824",
+  "text": "A spring extends by 3.0 cm when a load of 5.0 N is applied, within the straight-line region. Calculate the spring constant in N/m.",
+  "ids": [
+   953
+  ]
+ },
+ {
+  "uid": "U825",
+  "text": "STEP-BY-STEP ANSWER\n1. Use F = kx.\n2. Convert extension to metres: 3.0 cm = 0.030 m.\n3. Rearrange: k = F ÷ x.\n4. k = 5.0 ÷ 0.030 = 166.7 N/m.\nFinal answer: k ≈ 1.7 × 10² N/m (about 167 N/m).",
+  "ids": [
+   954
+  ]
+ },
+ {
+  "uid": "U826",
+  "text": "COMMON CONFUSION If k is in N/m, convert extension from cm to m before using F = kx.",
+  "ids": [
+   955
+  ]
+ },
+ {
+  "uid": "U827",
+  "text": "How rubber behaves",
+  "ids": [
+   956
+  ]
+ },
+ {
+  "uid": "U828",
+  "text": "• A larger load generally gives a larger extension.",
+  "ids": [
+   957
+  ]
+ },
+ {
+  "uid": "U829",
+  "text": "• The load–extension graph is not a straight line; it is slightly S-shaped.",
+  "ids": [
+   958
+  ]
+ },
+ {
+  "uid": "U830",
+  "text": "• Rubber does not obey Hooke’s law.",
+  "ids": [
+   959
+  ]
+ },
+ {
+  "uid": "U831",
+  "text": "• When the load is removed, the graph does not return exactly along the same path to zero.",
+  "ids": [
+   960
+  ]
+ },
+ {
+  "uid": "U832",
+  "text": "Compare the load–extension behaviour of a spring in its proportional region with the behaviour of rubber.",
+  "ids": [
+   961
+  ]
+ },
+ {
+  "uid": "U833",
+  "text": "STEP-BY-STEP ANSWER\nSpring in proportional region: extension is directly proportional to load, so the load–extension graph is a straight line through the origin and Hooke's law is obeyed.\nRubber: extension is not directly proportional to load, so the graph is curved/S-shaped and rubber does not obey Hooke's law. On unloading, it does not follow exactly the same path back.",
+  "ids": [
+   962
+  ]
+ },
+ {
+  "uid": "U834",
+  "text": "Hooke and springs",
+  "ids": [
+   963
+  ]
+ },
+ {
+  "uid": "U835",
+  "text": "Robert Hooke was interested in springs because they could be used in sensitive, accurate weighing machines and to control clocks or watches.",
+  "ids": [
+   964
+  ]
+ },
+ {
+  "uid": "U836",
+  "text": "LESSON 7",
+  "ids": [
+   965
+  ]
+ },
+ {
+  "uid": "U837",
+  "text": "Pressure",
+  "ids": [
+   966
+  ]
+ },
+ {
+  "uid": "U838",
+  "text": "Pressure in solids and fluids",
+  "ids": [
+   967
+  ]
+ },
+ {
+  "uid": "U839",
+  "text": "KEY DEFINITION Pressure is force acting per unit area at right angles to a surface.",
+  "ids": [
+   968
+  ]
+ },
+ {
+  "uid": "U840",
+  "text": "FORMULA p = F / A     p in Pa, F in N, A in m²",
+  "ids": [
+   969
+  ]
+ },
+ {
+  "uid": "U841",
+  "text": "• For the same force, a smaller area produces a greater pressure.",
+  "ids": [
+   970
+  ]
+ },
+ {
+  "uid": "U842",
+  "text": "• Pressure in a liquid is greater at greater depth.",
+  "ids": [
+   971
+  ]
+ },
+ {
+  "uid": "U843",
+  "text": "• The example shows an underwater vehicle at 600 m depth and notes that strong spherical/cylindrical surfaces help resist pressure.",
+  "ids": [
+   972
+  ]
+ },
+ {
+  "uid": "U844",
+  "text": "• A dam is made thickest at its base because water pressure is greatest at the greatest depth.",
+  "ids": [
+   973
+  ]
+ },
+ {
+  "uid": "U845",
+  "text": "Manometer and barometer",
+  "ids": [
+   974
+  ]
+ },
+ {
+  "uid": "U846",
+  "text": "KEY DEFINITIONS A manometer shows the difference in pressure between two gases or liquids. A barometer measures atmospheric pressure.",
+  "ids": [
+   975
+  ]
+ },
+ {
+  "uid": "U847",
+  "text": "Calculating liquid pressure",
+  "ids": [
+   976
+  ]
+ },
+ {
+  "uid": "U848",
+  "text": "FORMULA p = hρg     pressure = depth × density × acceleration due to gravity",
+  "ids": [
+   977
+  ]
+ },
+ {
+  "uid": "U849",
+  "text": "A force of 600 N acts normally on an area of 0.030 m². Calculate the pressure.",
+  "ids": [
+   979
+  ]
+ },
+ {
+  "uid": "U850",
+  "text": "STEP-BY-STEP ANSWER\n1. Use p = F/A.\n2. F = 600 N, A = 0.030 m².\n3. p = 600 ÷ 0.030 = 20,000 Pa.\nFinal answer: 2.0 × 10⁴ Pa.",
+  "ids": [
+   980
+  ]
+ },
+ {
+  "uid": "U851",
+  "text": "Extension: Water has density 1000 kg/m³. Using g = 10 m/s², calculate the pressure due to the water at a depth of 4.0 m.",
+  "ids": [
+   981
+  ]
+ },
+ {
+  "uid": "U852",
+  "text": "STEP-BY-STEP ANSWER\n1. Use p = hρg.\n2. h = 4.0 m, ρ = 1000 kg/m³, g = 10 m/s².\n3. p = 4.0 × 1000 × 10 = 40,000 Pa.\nFinal answer: 4.0 × 10⁴ Pa.",
+  "ids": [
+   982
+  ]
+ },
+ {
+  "uid": "U853",
+  "text": "COMMON CONFUSION In p = F/A, area is in m². In p = hρg, h is vertical depth below the liquid surface.",
+  "ids": [
+   983
+  ]
+ },
+ {
+  "uid": "U854",
+  "text": "Reflection",
+  "ids": [
+   984
+  ]
+ },
+ {
+  "uid": "U855",
+  "text": "Complete this after the seven lessons. Use full sentences where possible.",
+  "ids": [
+   985
+  ]
+ },
+ {
+  "uid": "U856",
+  "text": "1. The idea I understand best from Chapters 4–5 is…",
+  "ids": [
+   986
+  ]
+ },
+ {
+  "uid": "U857",
+  "text": "SAMPLE RESPONSE (answers will vary)\nI understand moments best. A moment is the turning effect of a force, and I can calculate it using M = Fd with the perpendicular distance from the pivot.",
+  "ids": [
+   987
+  ]
+ },
+ {
+  "uid": "U858",
+  "text": "2. One point I still confuse about moments / equilibrium is…",
+  "ids": [
+   988
+  ]
+ },
+ {
+  "uid": "U859",
+  "text": "SAMPLE RESPONSE (answers will vary)\nI need to remember that complete equilibrium requires both zero resultant force and balanced clockwise and anticlockwise moments.",
+  "ids": [
+   989
+  ]
+ },
+ {
+  "uid": "U860",
+  "text": "3. One point I still confuse about springs / Hooke’s law is…",
+  "ids": [
+   990
+  ]
+ },
+ {
+  "uid": "U861",
+  "text": "SAMPLE RESPONSE (answers will vary)\nI need to remember to convert extension from cm to m before using F = kx when k is in N/m.",
+  "ids": [
+   991
+  ]
+ },
+ {
+  "uid": "U862",
+  "text": "4. One point I still confuse about pressure is…",
+  "ids": [
+   992
+  ]
+ },
+ {
+  "uid": "U863",
+  "text": "SAMPLE RESPONSE (answers will vary)\nI need to distinguish p = F/A for pressure on a surface from p = hρg for pressure due to a liquid.",
+  "ids": [
+   993
+  ]
+ },
+ {
+  "uid": "U864",
+  "text": "5. Before the exam-style questions, I need to practise…",
+  "ids": [
+   994
+  ]
+ },
+ {
+  "uid": "U865",
+  "text": "SAMPLE RESPONSE (answers will vary)\nI need to practise choosing the correct formula, converting units, showing working clearly and giving the final unit.",
+  "ids": [
+   995
+  ]
+ },
+ {
+  "uid": "U866",
+  "text": "Weekly Quiz — Chapters 4 & 5",
+  "ids": [
+   996
+  ]
+ },
+ {
+  "uid": "U867",
+  "text": "QUIZ HABIT Show working for calculations. Include units. For explanation questions, use the correct physics terms.",
+  "ids": [
+   997
+  ]
+ },
+ {
+  "uid": "U868",
+  "text": "1. Define the moment of a force. [2]",
+  "ids": [
+   998
+  ]
+ },
+ {
+  "uid": "U869",
+  "text": "ANSWER\nThe moment of a force is the turning effect of a force about a point (pivot).",
+  "ids": [
+   999
+  ]
+ },
+ {
+  "uid": "U870",
+  "text": "2. A 30 N force acts perpendicularly 0.40 m from a pivot. Calculate the moment. [2]",
+  "ids": [
+   1000
+  ]
+ },
+ {
+  "uid": "U871",
+  "text": "STEP-BY-STEP ANSWER\nM = Fd = 30 × 0.40 = 12 N m.\nFinal answer: 12 N m.",
+  "ids": [
+   1001
+  ]
+ },
+ {
+  "uid": "U872",
+  "text": "3. State the two conditions required for an object to be in equilibrium. [2]",
+  "ids": [
+   1002
+  ]
+ },
+ {
+  "uid": "U873",
+  "text": "ANSWER\n1. Resultant force = 0.\n2. Total clockwise moment = total anticlockwise moment (resultant moment = 0).",
+  "ids": [
+   1003
+  ]
+ },
+ {
+  "uid": "U874",
+  "text": "4. A spring has original length 12.0 cm and stretched length 16.5 cm. Calculate the extension. [1]",
+  "ids": [
+   1004
+  ]
+ },
+ {
+  "uid": "U875",
+  "text": "STEP-BY-STEP ANSWER\nExtension = stretched length − original length\n= 16.5 − 12.0 = 4.5 cm.\nFinal answer: 4.5 cm.",
+  "ids": [
+   1005
+  ]
+ },
+ {
+  "uid": "U876",
+  "text": "5. State Hooke’s law. [2]",
+  "ids": [
+   1006
+  ]
+ },
+ {
+  "uid": "U877",
+  "text": "ANSWER\nThe extension of a spring is proportional to the load applied to it, provided the limit of proportionality is not exceeded.",
+  "ids": [
+   1007
+  ]
+ },
+ {
+  "uid": "U878",
+  "text": "6. A spring constant is 250 N/m and the extension is 0.020 m. Calculate the load. [2]",
+  "ids": [
+   1008
+  ]
+ },
+ {
+  "uid": "U879",
+  "text": "STEP-BY-STEP ANSWER\nUse F = kx.\nF = 250 × 0.020 = 5.0 N.\nFinal answer: 5.0 N.",
+  "ids": [
+   1009
+  ]
+ },
+ {
+  "uid": "U880",
+  "text": "7. Explain why the bottom of a dam is made thicker than the top. [2]",
+  "ids": [
+   1010
+  ]
+ },
+ {
+  "uid": "U881",
+  "text": "STEP-BY-STEP ANSWER\n1. Liquid pressure increases with depth.\n2. Therefore the water exerts a greater pressure/force on the lower part of the dam.\n3. The bottom is made thicker to withstand this greater pressure.",
+  "ids": [
+   1011
+  ]
+ },
+ {
+  "uid": "U882",
+  "text": "8. State what a manometer measures and what a barometer measures. [2]",
+  "ids": [
+   1012
+  ]
+ },
+ {
+  "uid": "U883",
+  "text": "ANSWER\nManometer: pressure difference between two gases or liquids.\nBarometer: atmospheric pressure.",
+  "ids": [
+   1013
+  ]
+ },
+ {
+  "uid": "U884",
+  "text": "Chapters 4 & 5 — IGCSE Exam-Style Challenge",
+  "ids": [
+   1014
+  ]
+ },
+ {
+  "uid": "U885",
+  "text": "Suggested time: 45 minutes. Total: 40 marks.",
+  "ids": [
+   1015
+  ]
+ },
+ {
+  "uid": "U886",
+  "text": "EXAM HABIT Show working, use SI units, write clear explanations, and use perpendicular distance for moments.",
+  "ids": [
+   1016
+  ]
+ },
+ {
+  "uid": "U887",
+  "text": "1. Moments and a pedal [6 marks]",
+  "ids": [
+   1017
+  ]
+ },
+ {
+  "uid": "U888",
+  "text": "A cyclist pushes vertically downward with a force of 420 N on a pedal. The perpendicular distance from the crank pivot to the line of action is 0.145 m.",
+  "ids": [
+   1018
+  ]
+ },
+ {
+  "uid": "U889",
+  "text": "(a) Calculate the moment of the force about the pivot. [2]",
+  "ids": [
+   1019
+  ]
+ },
+ {
+  "uid": "U890",
+  "text": "STEP-BY-STEP ANSWER\nM = Fd\n= 420 × 0.145\n= 60.9 N m.\nFinal answer: 60.9 N m.",
+  "ids": [
+   1020
+  ]
+ },
+ {
+  "uid": "U891",
+  "text": "(b) The cyclist keeps the same force but rotates the crank so that the perpendicular distance becomes smaller. State and explain what happens to the moment. [2]",
+  "ids": [
+   1021
+  ]
+ },
+ {
+  "uid": "U892",
+  "text": "STEP-BY-STEP ANSWER\n1. M = Fd.\n2. The force F stays the same.\n3. The perpendicular distance d becomes smaller.\n4. Therefore the moment becomes smaller.\nFinal answer: the turning effect decreases.",
+  "ids": [
+   1022
+  ]
+ },
+ {
+  "uid": "U893",
+  "text": "(c) State the angle at which the force gives the greatest turning effect for a given force and crank length. [2]",
+  "ids": [
+   1023
+  ]
+ },
+ {
+  "uid": "U894",
+  "text": "ANSWER\n90° to the crank/object, because this gives the maximum perpendicular distance for a given crank length.",
+  "ids": [
+   1024
+  ]
+ },
+ {
+  "uid": "U895",
+  "text": "2. Balancing a beam [8 marks]",
+  "ids": [
+   1025
+  ]
+ },
+ {
+  "uid": "U896",
+  "text": "A uniform beam is supported at a pivot. A 360 N load acts 1.20 m to the left of the pivot. A 240 N load acts 1.50 m to the right. A third load W acts 0.60 m to the right. The beam is in equilibrium.",
+  "ids": [
+   1026
+  ]
+ },
+ {
+  "uid": "U897",
+  "text": "(a) Calculate the anticlockwise moment about the pivot. [2]",
+  "ids": [
+   1027
+  ]
+ },
+ {
+  "uid": "U898",
+  "text": "STEP-BY-STEP ANSWER\nM = Fd = 360 × 1.20 = 432 N m.\nFinal answer: 432 N m anticlockwise.",
+  "ids": [
+   1028
+  ]
+ },
+ {
+  "uid": "U899",
+  "text": "(b) Calculate the clockwise moment produced by the 240 N load. [2]",
+  "ids": [
+   1029
+  ]
+ },
+ {
+  "uid": "U900",
+  "text": "STEP-BY-STEP ANSWER\nM = Fd = 240 × 1.50 = 360 N m.\nFinal answer: 360 N m clockwise.",
+  "ids": [
+   1030
+  ]
+ },
+ {
+  "uid": "U901",
+  "text": "(c) Use the principle of moments to calculate W. [3]",
+  "ids": [
+   1031
+  ]
+ },
+ {
+  "uid": "U902",
+  "text": "STEP-BY-STEP ANSWER\nFor equilibrium: total clockwise moment = total anticlockwise moment.\n360 + (W × 0.60) = 432\nW × 0.60 = 432 − 360 = 72\nW = 72 ÷ 0.60 = 120 N.\nFinal answer: W = 120 N.",
+  "ids": [
+   1032
+  ]
+ },
+ {
+  "uid": "U903",
+  "text": "(d) State one additional condition, apart from balanced moments, that is required for complete equilibrium. [1]",
+  "ids": [
+   1033
+  ]
+ },
+ {
+  "uid": "U904",
+  "text": "ANSWER\nThe resultant force must be zero (the forces must also be balanced).",
+  "ids": [
+   1034
+  ]
+ },
+ {
+  "uid": "U905",
+  "text": "3. Stability and centre of mass [6 marks]",
+  "ids": [
+   1035
+  ]
+ },
+ {
+  "uid": "U906",
+  "text": "A tall storage cabinet is easier to topple than a low, wide cabinet.",
+  "ids": [
+   1036
+  ]
+ },
+ {
+  "uid": "U907",
+  "text": "(a) Explain how lowering the centre of mass increases stability. [2]",
+  "ids": [
+   1037
+  ]
+ },
+ {
+  "uid": "U908",
+  "text": "STEP-BY-STEP ANSWER\n1. An object topples when the vertical line through its centre of mass passes outside its base.\n2. Lowering the centre of mass means the object must be tilted through a greater angle before this vertical line reaches the edge of the base.\nFinal answer: a lower centre of mass makes toppling less likely.",
+  "ids": [
+   1038
+  ]
+ },
+ {
+  "uid": "U909",
+  "text": "(b) Explain how increasing the width of the base increases stability. [2]",
+  "ids": [
+   1039
+  ]
+ },
+ {
+  "uid": "U910",
+  "text": "STEP-BY-STEP ANSWER\n1. A wider base places the edge of the base further from the centre.\n2. The object must be tilted further before the vertical line through the centre of mass passes outside the base.\nFinal answer: a wider base increases stability.",
+  "ids": [
+   1040
+  ]
+ },
+ {
+  "uid": "U911",
+  "text": "(c) Describe how to find the centre of mass of an irregular flat card using a pin and a plumb-line. [2]",
+  "ids": [
+   1041
+  ]
+ },
+ {
+  "uid": "U912",
+  "text": "STEP-BY-STEP ANSWER\n1. Suspend the card freely from a pin.\n2. Hang a plumb-line from the same pin and draw the vertical line on the card.\n3. Suspend the card from a different point and repeat.\n4. Repeat again if needed.\n5. The intersection of the vertical lines is the centre of mass.",
+  "ids": [
+   1042
+  ]
+ },
+ {
+  "uid": "U913",
+  "text": "4. Springs and Hooke’s law [8 marks]",
+  "ids": [
+   1043
+  ]
+ },
+ {
+  "uid": "U914",
+  "text": "A spring has an original length of 15.0 cm. A 3.0 N load makes its length 18.0 cm. The spring is still within the proportional region.",
+  "ids": [
+   1044
+  ]
+ },
+ {
+  "uid": "U915",
+  "text": "(a) Calculate the extension in metres. [2]",
+  "ids": [
+   1045
+  ]
+ },
+ {
+  "uid": "U916",
+  "text": "STEP-BY-STEP ANSWER\nStretched length = 18.0 cm\nOriginal length = 15.0 cm\nExtension = 18.0 − 15.0 = 3.0 cm\nConvert: 3.0 cm = 0.030 m.\nFinal answer: 0.030 m.",
+  "ids": [
+   1046
+  ]
+ },
+ {
+  "uid": "U917",
+  "text": "(b) Calculate the spring constant k. [3]",
+  "ids": [
+   1047
+  ]
+ },
+ {
+  "uid": "U918",
+  "text": "STEP-BY-STEP ANSWER\nUse F = kx.\nRearrange: k = F/x.\nk = 3.0 ÷ 0.030 = 100 N/m.\nFinal answer: 100 N/m.",
+  "ids": [
+   1048
+  ]
+ },
+ {
+  "uid": "U919",
+  "text": "(c) Predict the extension when the load is increased to 4.0 N, assuming the limit of proportionality is not exceeded. [2]",
+  "ids": [
+   1049
+  ]
+ },
+ {
+  "uid": "U920",
+  "text": "STEP-BY-STEP ANSWER\nWithin the proportional region, k remains 100 N/m.\nUse x = F/k.\nx = 4.0 ÷ 100 = 0.040 m.\nFinal answer: 0.040 m (4.0 cm).",
+  "ids": [
+   1050
+  ]
+ },
+ {
+  "uid": "U921",
+  "text": "(d) State what happens to the load–extension graph when the limit of proportionality is exceeded. [1]",
+  "ids": [
+   1051
+  ]
+ },
+ {
+  "uid": "U922",
+  "text": "ANSWER\nThe graph bends and is no longer a straight line; extension is no longer proportional to load.",
+  "ids": [
+   1052
+  ]
+ },
+ {
+  "uid": "U923",
+  "text": "5. Pressure on a surface [6 marks]",
+  "ids": [
+   1053
+  ]
+ },
+ {
+  "uid": "U924",
+  "text": "A rectangular block weighs 540 N and rests on a face of area 0.018 m².",
+  "ids": [
+   1054
+  ]
+ },
+ {
+  "uid": "U925",
+  "text": "(a) Calculate the pressure exerted by the block on the floor. [3]",
+  "ids": [
+   1055
+  ]
+ },
+ {
+  "uid": "U926",
+  "text": "STEP-BY-STEP ANSWER\nUse p = F/A.\np = 540 ÷ 0.018\np = 30,000 Pa.\nFinal answer: 3.0 × 10⁴ Pa.",
+  "ids": [
+   1056
+  ]
+ },
+ {
+  "uid": "U927",
+  "text": "(b) The block is turned so that it rests on a smaller face. The weight is unchanged. Explain why the pressure increases. [2]",
+  "ids": [
+   1057
+  ]
+ },
+ {
+  "uid": "U928",
+  "text": "STEP-BY-STEP ANSWER\n1. p = F/A.\n2. The weight/force F is unchanged.\n3. The contact area A becomes smaller.\n4. Therefore p increases.\nFinal answer: the same force acts over a smaller area, so the pressure is greater.",
+  "ids": [
+   1058
+  ]
+ },
+ {
+  "uid": "U929",
+  "text": "(c) State the SI unit of pressure. [1]",
+  "ids": [
+   1059
+  ]
+ },
+ {
+  "uid": "U930",
+  "text": "ANSWER\nPascal (Pa), equivalent to N/m².",
+  "ids": [
+   1060
+  ]
+ },
+ {
+  "uid": "U931",
+  "text": "6. Pressure in liquids and measuring pressure [6 marks]",
+  "ids": [
+   1061
+  ]
+ },
+ {
+  "uid": "U932",
+  "text": "Sea water has density 1030 kg/m³. A diver is 12 m below the surface. Use g = 10 m/s².",
+  "ids": [
+   1062
+  ]
+ },
+ {
+  "uid": "U933",
+  "text": "(a) Calculate the pressure due to the sea water at this depth using p = hρg. [3]",
+  "ids": [
+   1063
+  ]
+ },
+ {
+  "uid": "U934",
+  "text": "STEP-BY-STEP ANSWER\nUse p = hρg.\np = 12 × 1030 × 10\np = 123,600 Pa.\nFinal answer: 1.236 × 10⁵ Pa (≈ 1.24 × 10⁵ Pa).",
+  "ids": [
+   1064
+  ]
+ },
+ {
+  "uid": "U935",
+  "text": "(b) Explain why the walls of a dam are thicker near the bottom. [1]",
+  "ids": [
+   1065
+  ]
+ },
+ {
+  "uid": "U936",
+  "text": "ANSWER\nWater pressure increases with depth, so the lower part of the dam must withstand greater pressure.",
+  "ids": [
+   1066
+  ]
+ },
+ {
+  "uid": "U937",
+  "text": "(c) Name the instrument used to show a pressure difference between two gases or liquids. [1]",
+  "ids": [
+   1067
+  ]
+ },
+ {
+  "uid": "U938",
+  "text": "ANSWER\nManometer.",
+  "ids": [
+   1068
+  ]
+ },
+ {
+  "uid": "U939",
+  "text": "(d) Name the instrument used to measure atmospheric pressure. [1]",
+  "ids": [
+   1069
+  ]
+ },
+ {
+  "uid": "U940",
+  "text": "ANSWER\nBarometer.",
+  "ids": [
+   1070
+  ]
+ },
+ {
+  "uid": "U941",
+  "text": "Energy, energy stores, energy unit, potential energy, transfer pathways, PPT practice",
+  "ids": [
+   1075
+  ]
+ },
+ {
+  "uid": "U942",
+  "text": "Events and processes, energy-flow diagrams, RTG, PPT Question 7",
+  "ids": [
+   1077
+  ]
+ },
+ {
+  "uid": "U943",
+  "text": "Conservation of energy, Sankey diagrams, efficiency, dissipation, PPT Questions 8 and 11–14",
+  "ids": [
+   1079
+  ]
+ },
+ {
+  "uid": "U944",
+  "text": "Gravitational potential energy and kinetic energy calculations, PPT Questions 15–21",
+  "ids": [
+   1081
+  ]
+ },
+ {
+  "uid": "U945",
+  "text": "End of chapter",
+  "ids": [
+   1082
+  ]
+ },
+ {
+  "uid": "U946",
+  "text": "Energy summary table, exam-style practice, reflection & weekly check",
+  "ids": [
+   1083
+  ]
+ },
+ {
+  "uid": "U947",
+  "text": "a quantity that must be changed or transferred to make something happen",
+  "ids": [
+   1087
+  ]
+ },
+ {
+  "uid": "U948",
+  "text": "energy store",
+  "ids": [
+   1088
+  ]
+ },
+ {
+  "uid": "U949",
+  "text": "a way of describing where energy is stored in a system",
+  "ids": [
+   1089
+  ]
+ },
+ {
+  "uid": "U950",
+  "text": "kinetic energy",
+  "ids": [
+   1090
+  ]
+ },
+ {
+  "uid": "U951",
+  "text": "the energy store of a moving object",
+  "ids": [
+   1091
+  ]
+ },
+ {
+  "uid": "U952",
+  "text": "gravitational potential energy (g.p.e.)",
+  "ids": [
+   1092
+  ]
+ },
+ {
+  "uid": "U953",
+  "text": "the energy store of an object raised against gravity",
+  "ids": [
+   1093
+  ]
+ },
+ {
+  "uid": "U954",
+  "text": "chemical energy",
+  "ids": [
+   1094
+  ]
+ },
+ {
+  "uid": "U955",
+  "text": "energy stored in chemical bonds and released in reactions",
+  "ids": [
+   1095
+  ]
+ },
+ {
+  "uid": "U956",
+  "text": "nuclear energy",
+  "ids": [
+   1096
+  ]
+ },
+ {
+  "uid": "U957",
+  "text": "energy stored in the nucleus of an atom",
+  "ids": [
+   1097
+  ]
+ },
+ {
+  "uid": "U958",
+  "text": "elastic / strain energy",
+  "ids": [
+   1098
+  ]
+ },
+ {
+  "uid": "U959",
+  "text": "energy stored when an object is stretched, compressed or deformed",
+  "ids": [
+   1099
+  ]
+ },
+ {
+  "uid": "U960",
+  "text": "internal energy",
+  "ids": [
+   1100
+  ]
+ },
+ {
+  "uid": "U961",
+  "text": "the total kinetic and potential energies of the particles in an object",
+  "ids": [
+   1101
+  ]
+ },
+ {
+  "uid": "U962",
+  "text": "thermal energy transfer",
+  "ids": [
+   1102
+  ]
+ },
+ {
+  "uid": "U963",
+  "text": "energy transferred from a hotter place to a colder place because of a temperature difference",
+  "ids": [
+   1103
+  ]
+ },
+ {
+  "uid": "U964",
+  "text": "electrostatic energy",
+  "ids": [
+   1104
+  ]
+ },
+ {
+  "uid": "U965",
+  "text": "energy stored because of the positions of electric charges",
+  "ids": [
+   1105
+  ]
+ },
+ {
+  "uid": "U966",
+  "text": "potential energy",
+  "ids": [
+   1106
+  ]
+ },
+ {
+  "uid": "U967",
+  "text": "stored energy that can be transferred later",
+  "ids": [
+   1107
+  ]
+ },
+ {
+  "uid": "U968",
+  "text": "mechanical working",
+  "ids": [
+   1110
+  ]
+ },
+ {
+  "uid": "U969",
+  "text": "energy transferred when a force moves an object through a distance",
+  "ids": [
+   1111
+  ]
+ },
+ {
+  "uid": "U970",
+  "text": "electrical working",
+  "ids": [
+   1112
+  ]
+ },
+ {
+  "uid": "U971",
+  "text": "energy transferred by an electric current",
+  "ids": [
+   1113
+  ]
+ },
+ {
+  "uid": "U972",
+  "text": "radiation",
+  "ids": [
+   1114
+  ]
+ },
+ {
+  "uid": "U973",
+  "text": "energy transferred by electromagnetic waves such as light",
+  "ids": [
+   1115
+  ]
+ },
+ {
+  "uid": "U974",
+  "text": "event",
+  "ids": [
+   1116
+  ]
+ },
+ {
+  "uid": "U975",
+  "text": "something that happens or takes place, often at a specific time and place",
+  "ids": [
+   1117
+  ]
+ },
+ {
+  "uid": "U976",
+  "text": "process",
+  "ids": [
+   1118
+  ]
+ },
+ {
+  "uid": "U977",
+  "text": "a series of actions or steps, often over a period of time",
+  "ids": [
+   1119
+  ]
+ },
+ {
+  "uid": "U978",
+  "text": "conservation of energy",
+  "ids": [
+   1120
+  ]
+ },
+ {
+  "uid": "U979",
+  "text": "energy cannot be created or destroyed; it can only be stored or transferred",
+  "ids": [
+   1121
+  ]
+ },
+ {
+  "uid": "U980",
+  "text": "useful energy",
+  "ids": [
+   1122
+  ]
+ },
+ {
+  "uid": "U981",
+  "text": "energy transferred in the form wanted for the intended purpose",
+  "ids": [
+   1123
+  ]
+ },
+ {
+  "uid": "U982",
+  "text": "wasted energy",
+  "ids": [
+   1124
+  ]
+ },
+ {
+  "uid": "U983",
+  "text": "energy transferred to unwanted stores, usually the surroundings",
+  "ids": [
+   1125
+  ]
+ },
+ {
+  "uid": "U984",
+  "text": "dissipated",
+  "ids": [
+   1126
+  ]
+ },
+ {
+  "uid": "U985",
+  "text": "spread out into the surroundings so it becomes less useful",
+  "ids": [
+   1127
+  ]
+ },
+ {
+  "uid": "U986",
+  "text": "efficiency",
+  "ids": [
+   1128,
+   1156
+  ]
+ },
+ {
+  "uid": "U987",
+  "text": "the fraction or percentage of input energy usefully transferred",
+  "ids": [
+   1129
+  ]
+ },
+ {
+  "uid": "U988",
+  "text": "Sankey diagram",
+  "ids": [
+   1130
+  ]
+ },
+ {
+  "uid": "U989",
+  "text": "a flow diagram in which arrow width is proportional to the energy transferred",
+  "ids": [
+   1131
+  ]
+ },
+ {
+  "uid": "U990",
+  "text": "Symbols / meaning",
+  "ids": [
+   1132
+  ]
+ },
+ {
+  "uid": "U991",
+  "text": "efficiency = useful energy output / total energy input",
+  "ids": [
+   1133
+  ]
+ },
+ {
+  "uid": "U992",
+  "text": "efficiency has no unit when written as a decimal",
+  "ids": [
+   1134
+  ]
+ },
+ {
+  "uid": "U993",
+  "text": "percentage efficiency = (useful energy output / total energy input) × 100%",
+  "ids": [
+   1135
+  ]
+ },
+ {
+  "uid": "U994",
+  "text": "final answer written as %",
+  "ids": [
+   1136
+  ]
+ },
+ {
+  "uid": "U995",
+  "text": "ΔEₚ = mgΔh",
+  "ids": [
+   1137
+  ]
+ },
+ {
+  "uid": "U996",
+  "text": "m mass (kg); g gravitational field strength (N/kg or m/s²); Δh change in height (m)",
+  "ids": [
+   1138
+  ]
+ },
+ {
+  "uid": "U997",
+  "text": "Eₖ = ½mv²",
+  "ids": [
+   1139,
+   1383
+  ]
+ },
+ {
+  "uid": "U998",
+  "text": "m mass (kg); v speed (m/s); only v is squared",
+  "ids": [
+   1140
+  ]
+ },
+ {
+  "uid": "U999",
+  "text": "W = Fs",
+  "ids": [
+   1141
+  ]
+ },
+ {
+  "uid": "U1000",
+  "text": "W work done (J); F force (N); s distance moved in direction of force (m)",
+  "ids": [
+   1142
+  ]
+ },
+ {
+  "uid": "U1001",
+  "text": "COMMON CONFUSION  In Eₖ = ½mv², only the speed v is squared. In ΔEₚ = mgΔh, use the change in vertical height, not the length of a slope.",
+  "ids": [
+   1143
+  ]
+ },
+ {
+  "uid": "U1002",
+  "text": "Unit",
+  "ids": [
+   1145
+  ]
+ },
+ {
+  "uid": "U1003",
+  "text": "energy / work",
+  "ids": [
+   1146
+  ]
+ },
+ {
+  "uid": "U1004",
+  "text": "height / distance",
+  "ids": [
+   1150
+  ]
+ },
+ {
+  "uid": "U1005",
+  "text": "force / weight",
+  "ids": [
+   1152
+  ]
+ },
+ {
+  "uid": "U1006",
+  "text": "gravitational field strength, g",
+  "ids": [
+   1153
+  ]
+ },
+ {
+  "uid": "U1007",
+  "text": "N/kg or m/s²",
+  "ids": [
+   1154
+  ]
+ },
+ {
+  "uid": "U1008",
+  "text": "newton per kilogram / metre per second squared",
+  "ids": [
+   1155
+  ]
+ },
+ {
+  "uid": "U1009",
+  "text": "no unit or %",
+  "ids": [
+   1157
+  ]
+ },
+ {
+  "uid": "U1010",
+  "text": "Energy Stores",
+  "ids": [
+   1159
+  ]
+ },
+ {
+  "uid": "U1011",
+  "text": "PPT order: slides 2–10",
+  "ids": [
+   1160
+  ]
+ },
+ {
+  "uid": "U1012",
+  "text": "Energy — What is it?",
+  "ids": [
+   1161
+  ]
+ },
+ {
+  "uid": "U1013",
+  "text": "KEY DEFINITION  Energy is the ability to cause change. Energy can change from one form/store to another. In a closed system, the total amount of energy remains the same.",
+  "ids": [
+   1162
+  ]
+ },
+ {
+  "uid": "U1014",
+  "text": "6.1 Energy stores",
+  "ids": [
+   1163
+  ]
+ },
+ {
+  "uid": "U1015",
+  "text": "Naming energy",
+  "ids": [
+   1164
+  ]
+ },
+ {
+  "uid": "U1016",
+  "text": "Energy store",
+  "ids": [
+   1165,
+   1377
+  ]
+ },
+ {
+  "uid": "U1017",
+  "text": "What it means",
+  "ids": [
+   1166
+  ]
+ },
+ {
+  "uid": "U1018",
+  "text": "Kinetic energy",
+  "ids": [
+   1168,
+   1235,
+   1380
+  ]
+ },
+ {
+  "uid": "U1019",
+  "text": "moving object",
+  "ids": [
+   1169,
+   1381
+  ]
+ },
+ {
+  "uid": "U1020",
+  "text": "runner, moving car",
+  "ids": [
+   1170
+  ]
+ },
+ {
+  "uid": "U1021",
+  "text": "Gravitational potential energy",
+  "ids": [
+   1171,
+   1243,
+   1384
+  ]
+ },
+ {
+  "uid": "U1022",
+  "text": "object raised against gravity",
+  "ids": [
+   1172
+  ]
+ },
+ {
+  "uid": "U1023",
+  "text": "book on a shelf, lifted mass",
+  "ids": [
+   1173
+  ]
+ },
+ {
+  "uid": "U1024",
+  "text": "Chemical energy",
+  "ids": [
+   1174,
+   1237,
+   1388
+  ]
+ },
+ {
+  "uid": "U1025",
+  "text": "chemical bonds",
+  "ids": [
+   1175,
+   1389
+  ]
+ },
+ {
+  "uid": "U1026",
+  "text": "fuel, food, battery chemicals",
+  "ids": [
+   1176,
+   1390
+  ]
+ },
+ {
+  "uid": "U1027",
+  "text": "Nuclear energy",
+  "ids": [
+   1177,
+   1241,
+   1392
+  ]
+ },
+ {
+  "uid": "U1028",
+  "text": "atomic nucleus",
+  "ids": [
+   1178,
+   1393
+  ]
+ },
+ {
+  "uid": "U1029",
+  "text": "radioactive source",
+  "ids": [
+   1179
+  ]
+ },
+ {
+  "uid": "U1030",
+  "text": "Elastic / strain energy",
+  "ids": [
+   1180,
+   1233,
+   1396
+  ]
+ },
+ {
+  "uid": "U1031",
+  "text": "deformed object",
+  "ids": [
+   1181
+  ]
+ },
+ {
+  "uid": "U1032",
+  "text": "stretched spring, compressed bow",
+  "ids": [
+   1182
+  ]
+ },
+ {
+  "uid": "U1033",
+  "text": "Internal energy",
+  "ids": [
+   1183,
+   1239,
+   1400
+  ]
+ },
+ {
+  "uid": "U1034",
+  "text": "particles inside an object",
+  "ids": [
+   1184
+  ]
+ },
+ {
+  "uid": "U1035",
+  "text": "hot object / heated material",
+  "ids": [
+   1185
+  ]
+ },
+ {
+  "uid": "U1036",
+  "text": "Electrostatic energy",
+  "ids": [
+   1186,
+   1404
+  ]
+ },
+ {
+  "uid": "U1037",
+  "text": "separated electric charges",
+  "ids": [
+   1187
+  ]
+ },
+ {
+  "uid": "U1038",
+  "text": "charged objects",
+  "ids": [
+   1188
+  ]
+ },
+ {
+  "uid": "U1039",
+  "text": "MUST KNOW  All forms of energy are measured in joules (J). Energy is a scalar quantity: it has magnitude but no direction.",
+  "ids": [
+   1189
+  ]
+ },
+ {
+  "uid": "U1040",
+  "text": "Potential energy (PE)",
+  "ids": [
+   1190
+  ]
+ },
+ {
+  "uid": "U1041",
+  "text": "KEY DEFINITION  Potential energy is stored energy that is ready to be transferred later. Gravitational and elastic energy are examples of potential energy.",
+  "ids": [
+   1191
+  ]
+ },
+ {
+  "uid": "U1042",
+  "text": "PPT Practice — Energy stores in processes",
+  "ids": [
+   1192
+  ]
+ },
+ {
+  "uid": "U1043",
+  "text": "Runner example from the PPT (school logo intentionally omitted).",
+  "ids": [
+   1193
+  ]
+ },
+ {
+  "uid": "U1044",
+  "text": "Lamp example from the PPT (school logo intentionally omitted).",
+  "ids": [
+   1194
+  ]
+ },
+ {
+  "uid": "U1045",
+  "text": "What type of energy is transferred in those processes?",
+  "ids": [
+   1195
+  ]
+ },
+ {
+  "uid": "U1046",
+  "text": "GREEN ANSWER  Runner: chemical energy store in the muscles decreases → kinetic energy store increases; some energy is also transferred by heating to the internal energy stores of the runner and surroundings.",
+  "ids": [
+   1196
+  ]
+ },
+ {
+  "uid": "U1047",
+  "text": "Lamp: energy is transferred electrically to the lamp → useful energy is transferred by radiation (light); some energy is transferred by heating to the surroundings.",
+  "ids": [
+   1197
+  ]
+ },
+ {
+  "uid": "U1048",
+  "text": "Energy stores and energy transfers",
+  "ids": [
+   1198
+  ]
+ },
+ {
+  "uid": "U1049",
+  "text": "MUST KNOW  Energy stores describe where energy is stored. Energy transfer pathways describe how energy moves from one store to another.",
+  "ids": [
+   1199
+  ]
+ },
+ {
+  "uid": "U1050",
+  "text": "Energy stores",
+  "ids": [
+   1200
+  ]
+ },
+ {
+  "uid": "U1051",
+  "text": "Energy transfer pathways",
+  "ids": [
+   1201
+  ]
+ },
+ {
+  "uid": "U1052",
+  "text": "kinetic, gravitational potential, chemical, elastic/strain, nuclear, internal, electrostatic",
+  "ids": [
+   1202
+  ]
+ },
+ {
+  "uid": "U1053",
+  "text": "mechanical working (by a force), heating, radiation (such as light), electrical working (by current)",
+  "ids": [
+   1203
+  ]
+ },
+ {
+  "uid": "U1054",
+  "text": "COMMON CONFUSION  Do not use “light energy” or “electrical energy” as stores when the question is asking for the energy-transfer pathway. Use radiation or electrical working.",
+  "ids": [
+   1204
+  ]
+ },
+ {
+  "uid": "U1055",
+  "text": "PPT Questions — Energy stores",
+  "ids": [
+   1205
+  ]
+ },
+ {
+  "uid": "U1056",
+  "text": "1. What name is given to the energy of a moving object?",
+  "ids": [
+   1206
+  ]
+ },
+ {
+  "uid": "U1057",
+  "text": "GREEN ANSWER  Kinetic energy.",
+  "ids": [
+   1207
+  ]
+ },
+ {
+  "uid": "U1058",
+  "text": "Reason: kinetic energy is the energy store of a moving object.",
+  "ids": [
+   1208
+  ]
+ },
+ {
+  "uid": "U1059",
+  "text": "2. What do the letters g.p.e. stand for? How can an object be given g.p.e.?",
+  "ids": [
+   1209
+  ]
+ },
+ {
+  "uid": "U1060",
+  "text": "GREEN ANSWER  g.p.e. = gravitational potential energy.",
+  "ids": [
+   1210
+  ]
+ },
+ {
+  "uid": "U1061",
+  "text": "An object gains g.p.e. when it is raised through a vertical height against gravity.",
+  "ids": [
+   1211
+  ]
+ },
+ {
+  "uid": "U1062",
+  "text": "3. What energy is stored in a stretched spring?",
+  "ids": [
+   1212
+  ]
+ },
+ {
+  "uid": "U1063",
+  "text": "GREEN ANSWER  Elastic (strain) energy.",
+  "ids": [
+   1213
+  ]
+ },
+ {
+  "uid": "U1064",
+  "text": "A stretched or compressed object stores elastic/strain energy because its shape has changed.",
+  "ids": [
+   1214
+  ]
+ },
+ {
+  "uid": "U1065",
+  "text": "4. Explain why steam is likely to lead to a more serious skin burn than boiling water.",
+  "ids": [
+   1215
+  ]
+ },
+ {
+  "uid": "U1066",
+  "text": "GREEN ANSWER  1. Steam and boiling water can both be at about the same temperature.",
+  "ids": [
+   1216
+  ]
+ },
+ {
+  "uid": "U1067",
+  "text": "2. When steam touches the skin, it condenses to liquid water.",
+  "ids": [
+   1217
+  ]
+ },
+ {
+  "uid": "U1068",
+  "text": "3. Condensation transfers additional thermal energy to the skin.",
+  "ids": [
+   1218
+  ]
+ },
+ {
+  "uid": "U1069",
+  "text": "4. The condensed hot water can then cool further and transfer more energy.",
+  "ids": [
+   1219
+  ]
+ },
+ {
+  "uid": "U1070",
+  "text": "Therefore steam can transfer more thermal energy to the skin and cause a more serious burn.",
+  "ids": [
+   1220
+  ]
+ },
+ {
+  "uid": "U1071",
+  "text": "5. For each energy store, give an example of an object or material that stores this energy.",
+  "ids": [
+   1221
+  ]
+ },
+ {
+  "uid": "U1072",
+  "text": "GREEN ANSWER  Kinetic: moving car / runner.",
+  "ids": [
+   1222
+  ]
+ },
+ {
+  "uid": "U1073",
+  "text": "Gravitational potential: book on a shelf / raised mass.",
+  "ids": [
+   1223
+  ]
+ },
+ {
+  "uid": "U1074",
+  "text": "Chemical: fuel / food / battery chemicals.",
+  "ids": [
+   1224
+  ]
+ },
+ {
+  "uid": "U1075",
+  "text": "Nuclear: radioactive source / nuclear fuel.",
+  "ids": [
+   1225
+  ]
+ },
+ {
+  "uid": "U1076",
+  "text": "Elastic (strain): stretched spring / elastic band / bow.",
+  "ids": [
+   1226
+  ]
+ },
+ {
+  "uid": "U1077",
+  "text": "Internal: hot water / heated metal.",
+  "ids": [
+   1227
+  ]
+ },
+ {
+  "uid": "U1078",
+  "text": "Electrostatic: separated or charged objects.",
+  "ids": [
+   1228
+  ]
+ },
+ {
+  "uid": "U1079",
+  "text": "6. Physical clues — which energy store is changing?",
+  "ids": [
+   1229
+  ]
+ },
+ {
+  "uid": "U1080",
+  "text": "Physical clue",
+  "ids": [
+   1230
+  ]
+ },
+ {
+  "uid": "U1081",
+  "text": "Which energy store is changing?",
+  "ids": [
+   1231
+  ]
+ },
+ {
+  "uid": "U1082",
+  "text": "material changing shape",
+  "ids": [
+   1232
+  ]
+ },
+ {
+  "uid": "U1083",
+  "text": "object changes speed",
+  "ids": [
+   1234
+  ]
+ },
+ {
+  "uid": "U1084",
+  "text": "chemical reaction",
+  "ids": [
+   1236
+  ]
+ },
+ {
+  "uid": "U1085",
+  "text": "change of temperature",
+  "ids": [
+   1238
+  ]
+ },
+ {
+  "uid": "U1086",
+  "text": "nuclear fission or fusion",
+  "ids": [
+   1240
+  ]
+ },
+ {
+  "uid": "U1087",
+  "text": "distance between objects changes",
+  "ids": [
+   1242
+  ]
+ },
+ {
+  "uid": "U1088",
+  "text": "Energy Transfers",
+  "ids": [
+   1245
+  ]
+ },
+ {
+  "uid": "U1089",
+  "text": "PPT order: slides 11–16",
+  "ids": [
+   1246
+  ]
+ },
+ {
+  "uid": "U1090",
+  "text": "6.2 Energy transfers",
+  "ids": [
+   1247
+  ]
+ },
+ {
+  "uid": "U1091",
+  "text": "KEY DEFINITIONS  An event is something that happens, often at a specific time and place. A process is a series of actions or steps, often over a longer period of time. Energy is transferred or changes during events and processes.",
+  "ids": [
+   1248
+  ]
+ },
+ {
+  "uid": "U1092",
+  "text": "Classify each as an event or a process: striking a match, burning, climbing a mountain, falling over.",
+  "ids": [
+   1249
+  ]
+ },
+ {
+  "uid": "U1093",
+  "text": "GREEN ANSWER  Striking a match → event.",
+  "ids": [
+   1250
+  ]
+ },
+ {
+  "uid": "U1094",
+  "text": "Burning → process.",
+  "ids": [
+   1251
+  ]
+ },
+ {
+  "uid": "U1095",
+  "text": "Climbing a mountain → process.",
+  "ids": [
+   1252
+  ]
+ },
+ {
+  "uid": "U1096",
+  "text": "Falling over → event.",
+  "ids": [
+   1253
+  ]
+ },
+ {
+  "uid": "U1097",
+  "text": "An event happens at a particular time/place; a process is a series of actions over a period of time.",
+  "ids": [
+   1254
+  ]
+ },
+ {
+  "uid": "U1098",
+  "text": "Energy-flow diagrams",
+  "ids": [
+   1255
+  ]
+ },
+ {
+  "uid": "U1099",
+  "text": "MUST KNOW  An energy-flow diagram shows the energy stores and the pathways by which energy is transferred between them.",
+  "ids": [
+   1256
+  ]
+ },
+ {
+  "uid": "U1100",
+  "text": "PPT example: divers — identify which energy stores and transfers may be involved.",
+  "ids": [
+   1257
+  ]
+ },
+ {
+  "uid": "U1101",
+  "text": "GREEN ANSWER  A diver at height has a gravitational potential energy store. As the diver falls, g.p.e. decreases and kinetic energy increases. During the motion and entry into the water, some energy is transferred to internal energy stores of the diver, air and water, and some may be transferred by sound.",
+  "ids": [
+   1258
+  ]
+ },
+ {
+  "uid": "U1102",
+  "text": "Example — Battery-powered lamp",
+  "ids": [
+   1259
+  ]
+ },
+ {
+  "uid": "U1103",
+  "text": "PPT energy-flow diagram for a battery-powered lamp.",
+  "ids": [
+   1260
+  ]
+ },
+ {
+  "uid": "U1104",
+  "text": "Example — Radioisotope Thermoelectric Generator (RTG)",
+  "ids": [
+   1261
+  ]
+ },
+ {
+  "uid": "U1105",
+  "text": "RTG energy-flow diagram from the PPT (without the school logo).",
+  "ids": [
+   1262
+  ]
+ },
+ {
+  "uid": "U1106",
+  "text": "READ THE DIAGRAM  The blue boxes show stores; the green boxes show transfers. Nuclear store → thermal transfer → internal store → thermal transfer → electrical transfer, with some energy also transferred to the surroundings.",
+  "ids": [
+   1263
+  ]
+ },
+ {
+  "uid": "U1107",
+  "text": "PPT Question 7",
+  "ids": [
+   1264
+  ]
+ },
+ {
+  "uid": "U1108",
+  "text": "What energy transfers are going on in the following? In each case, write an equation to represent the energy transfer.",
+  "ids": [
+   1265
+  ]
+ },
+ {
+  "uid": "U1109",
+  "text": "7(a) Coal is burned to heat a room and to provide a supply of hot water. Write an equation to represent the energy transfer.",
+  "ids": [
+   1266
+  ]
+ },
+ {
+  "uid": "U1110",
+  "text": "GREEN ANSWER  Chemical energy store of coal → energy transferred by heating → internal energy stores of the room and hot water.",
+  "ids": [
+   1267
+  ]
+ },
+ {
+  "uid": "U1111",
+  "text": "The chemical store decreases while the internal energy stores of the room/water increase.",
+  "ids": [
+   1268
+  ]
+ },
+ {
+  "uid": "U1112",
+  "text": "7(b) A student uses an electric lamp while she is doing her homework. Write an equation to represent the energy transfer.",
+  "ids": [
+   1269
+  ]
+ },
+ {
+  "uid": "U1113",
+  "text": "GREEN ANSWER  Electrical working → radiation (light) + heating of the lamp/surroundings.",
+  "ids": [
+   1270
+  ]
+ },
+ {
+  "uid": "U1114",
+  "text": "Useful transfer: radiation (light). Wasted transfer: mainly heating.",
+  "ids": [
+   1271
+  ]
+ },
+ {
+  "uid": "U1115",
+  "text": "7(c) A hair dryer is connected to the mains electricity supply. It blows hot air at the user’s wet hair. It whirrs as it does so. Write an equation to represent the energy transfer.",
+  "ids": [
+   1272
+  ]
+ },
+ {
+  "uid": "U1116",
+  "text": "GREEN ANSWER  Electrical working → heating of the air/hair + kinetic energy of the moving air + sound/internal energy of the surroundings.",
+  "ids": [
+   1273
+  ]
+ },
+ {
+  "uid": "U1117",
+  "text": "Useful outputs are mainly hot moving air; some energy is dissipated as sound and unwanted heating.",
+  "ids": [
+   1274
+  ]
+ },
+ {
+  "uid": "U1118",
+  "text": "Conservation of Energy, Sankey Diagrams and Efficiency",
+  "ids": [
+   1276
+  ]
+ },
+ {
+  "uid": "U1119",
+  "text": "PPT order: slides 17–25",
+  "ids": [
+   1277
+  ]
+ },
+ {
+  "uid": "U1120",
+  "text": "6.3 Conservation of energy",
+  "ids": [
+   1278
+  ]
+ },
+ {
+  "uid": "U1121",
+  "text": "PRINCIPLE OF CONSERVATION OF ENERGY  Energy cannot be created or destroyed; it can only be stored or transferred. Therefore, total energy before = total energy after.",
+  "ids": [
+   1279
+  ]
+ },
+ {
+  "uid": "U1122",
+  "text": "COMMON CONFUSION  “Wasted” energy is not destroyed. It has been transferred to unwanted stores, usually the internal energy of the surroundings.",
+  "ids": [
+   1280
+  ]
+ },
+ {
+  "uid": "U1123",
+  "text": "PPT Practice — Conservation calculation",
+  "ids": [
+   1281
+  ]
+ },
+ {
+  "uid": "U1124",
+  "text": "A car burns 3 × 10⁵ J of fuel (chemical energy) per second. It has 1.3 × 10⁵ J of kinetic energy and gains 0.7 × 10⁵ J of gravitational potential energy as it goes up a slope. How much energy transfers away from the car through thermal energy transfer? Assume that acceleration due to gravity g = 10 m/s².",
+  "ids": [
+   1282
+  ]
+ },
+ {
+  "uid": "U1125",
+  "text": "STEP-BY-STEP ANSWER  1. Total input each second = 3.0 × 10⁵ J.",
+  "ids": [
+   1283
+  ]
+ },
+ {
+  "uid": "U1126",
+  "text": "2. Energy accounted for = 1.3 × 10⁵ + 0.7 × 10⁵ = 2.0 × 10⁵ J.",
+  "ids": [
+   1284
+  ]
+ },
+ {
+  "uid": "U1127",
+  "text": "3. Thermal energy transferred away = 3.0 × 10⁵ − 2.0 × 10⁵ = 1.0 × 10⁵ J each second.",
+  "ids": [
+   1285
+  ]
+ },
+ {
+  "uid": "U1128",
+  "text": "Answer: 1.0 × 10⁵ J per second.",
+  "ids": [
+   1286
+  ]
+ },
+ {
+  "uid": "U1129",
+  "text": "PPT Question 8",
+  "ids": [
+   1287
+  ]
+ },
+ {
+  "uid": "U1130",
+  "text": "8(a) A light bulb is supplied with 60 J of energy each second. How many joules of energy are transferred from the bulb each second?",
+  "ids": [
+   1288
+  ]
+ },
+ {
+  "uid": "U1131",
+  "text": "STEP-BY-STEP ANSWER  By conservation of energy, total output each second = total input each second.",
+  "ids": [
+   1289
+  ]
+ },
+ {
+  "uid": "U1132",
+  "text": "Input = 60 J each second.",
+  "ids": [
+   1290
+  ]
+ },
+ {
+  "uid": "U1133",
+  "text": "Answer: 60 J each second.",
+  "ids": [
+   1291
+  ]
+ },
+ {
+  "uid": "U1134",
+  "text": "8(b) 4 J of energy are transferred from the lamp each second as light. How many joules of energy are transferred each second by heating?",
+  "ids": [
+   1292
+  ]
+ },
+ {
+  "uid": "U1135",
+  "text": "STEP-BY-STEP ANSWER  1. Total energy transferred each second = 60 J.",
+  "ids": [
+   1293
+  ]
+ },
+ {
+  "uid": "U1136",
+  "text": "2. Useful light transfer = 4 J.",
+  "ids": [
+   1294
+  ]
+ },
+ {
+  "uid": "U1137",
+  "text": "3. Heating transfer = 60 − 4 = 56 J.",
+  "ids": [
+   1295
+  ]
+ },
+ {
+  "uid": "U1138",
+  "text": "Answer: 56 J each second.",
+  "ids": [
+   1296
+  ]
+ },
+ {
+  "uid": "U1139",
+  "text": "Sankey diagrams",
+  "ids": [
+   1297
+  ]
+ },
+ {
+  "uid": "U1140",
+  "text": "KEY DEFINITION  A Sankey diagram is a flow diagram that represents conservation of energy; the width of each arrow is proportional to the energy transferred.",
+  "ids": [
+   1298
+  ]
+ },
+ {
+  "uid": "U1141",
+  "text": "Sankey diagram from the PPT.",
+  "ids": [
+   1299
+  ]
+ },
+ {
+  "uid": "U1142",
+  "text": "READING A SANKEY DIAGRAM  Input arrow = total energy supplied. Straight/right arrow = useful output. Downward branches usually represent wasted energy. Arrow widths must balance.",
+  "ids": [
+   1300
+  ]
+ },
+ {
+  "uid": "U1143",
+  "text": "Energy efficiency",
+  "ids": [
+   1301
+  ]
+ },
+ {
+  "uid": "U1144",
+  "text": "KEY DEFINITION  Efficiency is the fraction (or percentage) of the input energy that is usefully transferred.",
+  "ids": [
+   1302
+  ]
+ },
+ {
+  "uid": "U1145",
+  "text": "FORMULA  efficiency = useful energy output ÷ total energy input; percentage efficiency = (useful energy output ÷ total energy input) × 100%.",
+  "ids": [
+   1303
+  ]
+ },
+ {
+  "uid": "U1146",
+  "text": "Energy becoming dissipated",
+  "ids": [
+   1304
+  ]
+ },
+ {
+  "uid": "U1147",
+  "text": "KEY IDEA  Energy tends to become dissipated (spread out) into the surroundings during energy changes, often as thermal energy. Once spread out, it is difficult to transfer usefully again.",
+  "ids": [
+   1305
+  ]
+ },
+ {
+  "uid": "U1148",
+  "text": "PPT Questions 11–14",
+  "ids": [
+   1306
+  ]
+ },
+ {
+  "uid": "U1149",
+  "text": "11. Describe the energy transfers taking place when charging a mobile phone, including the energy that is wasted.",
+  "ids": [
+   1307
+  ]
+ },
+ {
+  "uid": "U1150",
+  "text": "GREEN ANSWER  Electrical energy is transferred by the charging current to the phone. The useful transfer increases the chemical energy store of the battery. Some energy is transferred by heating to the phone, charger and surroundings, increasing their internal energy; this is the wasted/dissipated energy.",
+  "ids": [
+   1308
+  ]
+ },
+ {
+  "uid": "U1151",
+  "text": "12. Calculate the efficiency of the energy-efficient lamp from the data shown in the PPT: 25 J electrical input gives 15 J light output.",
+  "ids": [
+   1309
+  ]
+ },
+ {
+  "uid": "U1152",
+  "text": "STEP-BY-STEP ANSWER  1. efficiency = useful energy output ÷ total energy input",
+  "ids": [
+   1310
+  ]
+ },
+ {
+  "uid": "U1153",
+  "text": "2. efficiency = 15 J ÷ 25 J = 0.60",
+  "ids": [
+   1311
+  ]
+ },
+ {
+  "uid": "U1154",
+  "text": "3. percentage efficiency = 0.60 × 100% = 60%",
+  "ids": [
+   1312
+  ]
+ },
+ {
+  "uid": "U1155",
+  "text": "Answer: 0.60 or 60%.",
+  "ids": [
+   1313
+  ]
+ },
+ {
+  "uid": "U1156",
+  "text": "13. A tidal-power station is expected to produce 32 TJ of energy (1 TJ = 10¹² J) when the tides provide it with 100 TJ of gravitational potential energy. What is the efficiency of the power station?",
+  "ids": [
+   1314
+  ]
+ },
+ {
+  "uid": "U1157",
+  "text": "STEP-BY-STEP ANSWER  1. efficiency = useful output ÷ total input",
+  "ids": [
+   1315,
+   1320
+  ]
+ },
+ {
+  "uid": "U1158",
+  "text": "2. efficiency = 32 TJ ÷ 100 TJ = 0.32",
+  "ids": [
+   1316
+  ]
+ },
+ {
+  "uid": "U1159",
+  "text": "3. percentage efficiency = 0.32 × 100% = 32%",
+  "ids": [
+   1317
+  ]
+ },
+ {
+  "uid": "U1160",
+  "text": "Answer: 0.32 or 32%.",
+  "ids": [
+   1318
+  ]
+ },
+ {
+  "uid": "U1161",
+  "text": "14. A tungsten-filament lamp is 4% efficient. How much electrical energy must be supplied to the lamp each second when it produces 6 J of light per second?",
+  "ids": [
+   1319
+  ]
+ },
+ {
+  "uid": "U1162",
+  "text": "3. 0.04 = 6 J ÷ input",
+  "ids": [
+   1321
+  ]
+ },
+ {
+  "uid": "U1163",
+  "text": "4. input = 6 J ÷ 0.04 = 150 J",
+  "ids": [
+   1322
+  ]
+ },
+ {
+  "uid": "U1164",
+  "text": "Answer: 150 J of electrical energy each second.",
+  "ids": [
+   1323
+  ]
+ },
+ {
+  "uid": "U1165",
+  "text": "Energy Calculations",
+  "ids": [
+   1325
+  ]
+ },
+ {
+  "uid": "U1166",
+  "text": "PPT sequence: 26–28 GPE  →  29–30 KE  →  31 Questions 15–21  →  32 KE derivation  →  33 Chapter Summary",
+  "ids": [
+   1326
+  ]
+ },
+ {
+  "uid": "U1167",
+  "text": "PPT 26–28 • Gravitational Potential Energy",
+  "ids": [
+   1327
+  ]
+ },
+ {
+  "uid": "U1168",
+  "text": "6.4 Gravitational potential energy (g.p.e.)",
+  "ids": [
+   1328
+  ]
+ },
+ {
+  "uid": "U1169",
+  "text": "KEY DEFINITION  Gravitational potential energy is the energy store of an object because of its position in a gravitational field. Raising an object increases its g.p.e.",
+  "ids": [
+   1329
+  ]
+ },
+ {
+  "uid": "U1170",
+  "text": "FORMULA  change in g.p.e. = weight × change in height = mass × gravitational field strength × change in height.   ΔEₚ = mgΔh",
+  "ids": [
+   1330
+  ]
+ },
+ {
+  "uid": "U1171",
+  "text": "The PPT shows that greater height gives greater gravitational potential energy.",
+  "ids": [
+   1331
+  ]
+ },
+ {
+  "uid": "U1172",
+  "text": "COMMON CONFUSION  The zero level for g.p.e. is chosen as a reference level. The important quantity in calculations is the change in height, Δh.",
+  "ids": [
+   1332
+  ]
+ },
+ {
+  "uid": "U1173",
+  "text": "PPT 29–30 • Kinetic Energy",
+  "ids": [
+   1333
+  ]
+ },
+ {
+  "uid": "U1174",
+  "text": "Kinetic energy (KE)",
+  "ids": [
+   1334
+  ]
+ },
+ {
+  "uid": "U1175",
+  "text": "KEY DEFINITION  Kinetic energy is the energy store of a moving object. Any matter that is moving has kinetic energy.",
+  "ids": [
+   1335
+  ]
+ },
+ {
+  "uid": "U1176",
+  "text": "FORMULA  Eₖ = ½mv²",
+  "ids": [
+   1336
+  ]
+ },
+ {
+  "uid": "U1177",
+  "text": "COMMON CONFUSION  Velocity/speed is squared. Doubling speed makes kinetic energy four times as large if mass is unchanged; doubling mass only doubles kinetic energy.",
+  "ids": [
+   1337
+  ]
+ },
+ {
+  "uid": "U1178",
+  "text": "PPT concept check",
+  "ids": [
+   1338
+  ]
+ },
+ {
+  "uid": "U1179",
+  "text": "Which will affect the kinetic energy more: increasing the mass or increasing the velocity? Explain using Eₖ = ½mv².",
+  "ids": [
+   1339
+  ]
+ },
+ {
+  "uid": "U1180",
+  "text": "GREEN ANSWER  Increasing velocity/speed has the greater effect because v is squared in Eₖ = ½mv².",
+  "ids": [
+   1340
+  ]
+ },
+ {
+  "uid": "U1181",
+  "text": "Doubling mass doubles Eₖ, but doubling speed gives 2² = 4 times the kinetic energy.",
+  "ids": [
+   1341
+  ]
+ },
+ {
+  "uid": "U1182",
+  "text": "PPT 31 • Practice Questions 15–21",
+  "ids": [
+   1342
+  ]
+ },
+ {
+  "uid": "U1183",
+  "text": "PPT Questions 15–21",
+  "ids": [
+   1343
+  ]
+ },
+ {
+  "uid": "U1184",
+  "text": "15. In the following examples, is the object’s g.p.e. increasing, decreasing or remaining constant?\n(a) A balloon rises in the air.\n(b) A bird flies at a constant height on its migration route.\n(c) A raindrop falls from the sky.",
+  "ids": [
+   1344
+  ]
+ },
+ {
+  "uid": "U1185",
+  "text": "GREEN ANSWER  (a) Balloon rises → g.p.e. increases.",
+  "ids": [
+   1345
+  ]
+ },
+ {
+  "uid": "U1186",
+  "text": "(b) Bird at constant height → g.p.e. remains constant.",
+  "ids": [
+   1346
+  ]
+ },
+ {
+  "uid": "U1187",
+  "text": "(c) Raindrop falls → g.p.e. decreases.",
+  "ids": [
+   1347
+  ]
+ },
+ {
+  "uid": "U1188",
+  "text": "16. It is claimed that Superman can jump 200 metres vertically upwards. If he has a mass of 100 kg, by how much does his g.p.e. increase? Use g = 10 N/kg.",
+  "ids": [
+   1348
+  ]
+ },
+ {
+  "uid": "U1189",
+  "text": "STEP-BY-STEP ANSWER  1. ΔEₚ = mgΔh",
+  "ids": [
+   1349
+  ]
+ },
+ {
+  "uid": "U1190",
+  "text": "2. m = 100 kg, g = 10 N/kg, Δh = 200 m",
+  "ids": [
+   1350
+  ]
+ },
+ {
+  "uid": "U1191",
+  "text": "Answer: 2.0 × 10⁵ J.",
+  "ids": [
+   1351
+  ]
+ },
+ {
+  "uid": "U1192",
+  "text": "17. A raindrop weighs 1 × 10⁻³ N. Its g.p.e. decreases by 0.8 J when it falls from a cloud. How high was the cloud?",
+  "ids": [
+   1352
+  ]
+ },
+ {
+  "uid": "U1193",
+  "text": "STEP-BY-STEP ANSWER  1. Change in g.p.e. = weight × change in height",
+  "ids": [
+   1353
+  ]
+ },
+ {
+  "uid": "U1194",
+  "text": "Answer: 800 m.",
+  "ids": [
+   1354
+  ]
+ },
+ {
+  "uid": "U1195",
+  "text": "18. What does v represent in the equation Eₖ = ½mv²?",
+  "ids": [
+   1355
+  ]
+ },
+ {
+  "uid": "U1196",
+  "text": "GREEN ANSWER  v represents the speed of the object, measured in m/s.",
+  "ids": [
+   1356
+  ]
+ },
+ {
+  "uid": "U1197",
+  "text": "19. How much kinetic energy is stored by a bullet with a mass of 10.5 g travelling at 553 m/s?",
+  "ids": [
+   1357
+  ]
+ },
+ {
+  "uid": "U1198",
+  "text": "STEP-BY-STEP ANSWER  1. Convert mass: 10.5 g = 0.0105 kg.",
+  "ids": [
+   1358
+  ]
+ },
+ {
+  "uid": "U1199",
+  "text": "2. Eₖ = ½mv²",
+  "ids": [
+   1359
+  ]
+ },
+ {
+  "uid": "U1200",
+  "text": "Answer: 1.61 × 10³ J (3 s.f.).",
+  "ids": [
+   1360
+  ]
+ },
+ {
+  "uid": "U1201",
+  "text": "20. Usain Bolt has a mass of 86 kg. When he runs at 12 m/s, what is his kinetic energy?",
+  "ids": [
+   1361
+  ]
+ },
+ {
+  "uid": "U1202",
+  "text": "STEP-BY-STEP ANSWER  1. Eₖ = ½mv²",
+  "ids": [
+   1362
+  ]
+ },
+ {
+  "uid": "U1203",
+  "text": "Answer: 6.2 × 10³ J (2 s.f.).",
+  "ids": [
+   1363
+  ]
+ },
+ {
+  "uid": "U1204",
+  "text": "21. Which has more kinetic energy, a 2.0 g bee flying at 1.0 m/s, or a 1.0 g wasp flying at 2.0 m/s? Show your working.",
+  "ids": [
+   1364
+  ]
+ },
+ {
+  "uid": "U1205",
+  "text": "STEP-BY-STEP ANSWER  Bee:",
+  "ids": [
+   1365
+  ]
+ },
+ {
+  "uid": "U1206",
+  "text": "1. m = 2.0 g = 0.0020 kg",
+  "ids": [
+   1366
+  ]
+ },
+ {
+  "uid": "U1207",
+  "text": "Wasp:",
+  "ids": [
+   1367
+  ]
+ },
+ {
+  "uid": "U1208",
+  "text": "3. m = 1.0 g = 0.0010 kg",
+  "ids": [
+   1368
+  ]
+ },
+ {
+  "uid": "U1209",
+  "text": "Answer: the wasp has more kinetic energy; it has twice the bee’s kinetic energy.",
+  "ids": [
+   1369
+  ]
+ },
+ {
+  "uid": "U1210",
+  "text": "PPT 32 • Why Eₖ = ½mv²?",
+  "ids": [
+   1370
+  ]
+ },
+ {
+  "uid": "U1211",
+  "text": "Link to work done (as shown in the PPT)",
+  "ids": [
+   1371
+  ]
+ },
+ {
+  "uid": "U1212",
+  "text": "For an object accelerated from rest by a force: W = Fs = mas. Using v² = u² + 2as with u = 0 gives a = v²/(2s), so W = ½mv². This links work done to kinetic energy.",
+  "ids": [
+   1372
+  ]
+ },
+ {
+  "uid": "U1213",
+  "text": "LESSON END",
+  "ids": [
+   1373
+  ]
+ },
+ {
+  "uid": "U1214",
+  "text": "PPT 33 • Chapter Summary",
+  "ids": [
+   1374
+  ]
+ },
+ {
+  "uid": "U1215",
+  "text": "Chapter Summary",
+  "ids": [
+   1375
+  ]
+ },
+ {
+  "uid": "U1216",
+  "text": "End-of-class summary table",
+  "ids": [
+   1376
+  ]
+ },
+ {
+  "uid": "U1217",
+  "text": "Where it is stored",
+  "ids": [
+   1378
+  ]
+ },
+ {
+  "uid": "U1218",
+  "text": "car, runner, moving ball",
+  "ids": [
+   1382
+  ]
+ },
+ {
+  "uid": "U1219",
+  "text": "object raised in a gravitational field",
+  "ids": [
+   1385
+  ]
+ },
+ {
+  "uid": "U1220",
+  "text": "book on shelf, lifted mass, water behind dam",
+  "ids": [
+   1386
+  ]
+ },
+ {
+  "uid": "U1221",
+  "text": "ΔEₚ = mgΔh\n(or Eₚ = mgh from a chosen zero level)",
+  "ids": [
+   1387
+  ]
+ },
+ {
+  "uid": "U1222",
+  "text": "—\nNo calculation formula used in this chapter",
+  "ids": [
+   1391,
+   1395,
+   1399,
+   1403,
+   1407
+  ]
+ },
+ {
+  "uid": "U1223",
+  "text": "radioactive source, nuclear fuel",
+  "ids": [
+   1394
+  ]
+ },
+ {
+  "uid": "U1224",
+  "text": "stretched/compressed/deformed object",
+  "ids": [
+   1397
+  ]
+ },
+ {
+  "uid": "U1225",
+  "text": "spring, elastic band, bow",
+  "ids": [
+   1398
+  ]
+ },
+ {
+  "uid": "U1226",
+  "text": "particle kinetic + potential energies",
+  "ids": [
+   1401
+  ]
+ },
+ {
+  "uid": "U1227",
+  "text": "hot water, heated metal, surroundings",
+  "ids": [
+   1402
+  ]
+ },
+ {
+  "uid": "U1228",
+  "text": "positions of electric charges",
+  "ids": [
+   1405
+  ]
+ },
+ {
+  "uid": "U1229",
+  "text": "separated/charged objects",
+  "ids": [
+   1406
+  ]
+ },
+ {
+  "uid": "U1230",
+  "text": "Other Chapter 6 calculation:  efficiency = useful energy output ÷ total energy input;  percentage efficiency = (useful energy output ÷ total energy input) × 100%",
+  "ids": [
+   1408
+  ]
+ },
+ {
+  "uid": "U1231",
+  "text": "Pathway",
+  "ids": [
+   1409
+  ]
+ },
+ {
+  "uid": "U1232",
+  "text": "How transfer occurs",
+  "ids": [
+   1410
+  ]
+ },
+ {
+  "uid": "U1233",
+  "text": "Mechanical working",
+  "ids": [
+   1412
+  ]
+ },
+ {
+  "uid": "U1234",
+  "text": "by a force doing work",
+  "ids": [
+   1413
+  ]
+ },
+ {
+  "uid": "U1235",
+  "text": "lifting an object, pushing a trolley",
+  "ids": [
+   1414
+  ]
+ },
+ {
+  "uid": "U1236",
+  "text": "Heating / thermal transfer",
+  "ids": [
+   1415
+  ]
+ },
+ {
+  "uid": "U1237",
+  "text": "because of temperature difference",
+  "ids": [
+   1416
+  ]
+ },
+ {
+  "uid": "U1238",
+  "text": "hot object warming surroundings",
+  "ids": [
+   1417
+  ]
+ },
+ {
+  "uid": "U1239",
+  "text": "Radiation",
+  "ids": [
+   1418
+  ]
+ },
+ {
+  "uid": "U1240",
+  "text": "by electromagnetic waves",
+  "ids": [
+   1419
+  ]
+ },
+ {
+  "uid": "U1241",
+  "text": "light from a lamp",
+  "ids": [
+   1420
+  ]
+ },
+ {
+  "uid": "U1242",
+  "text": "Electrical working",
+  "ids": [
+   1421
+  ]
+ },
+ {
+  "uid": "U1243",
+  "text": "by an electric current",
+  "ids": [
+   1422
+  ]
+ },
+ {
+  "uid": "U1244",
+  "text": "mains electricity supplying a hair dryer",
+  "ids": [
+   1423
+  ]
+ },
+ {
+  "uid": "U1245",
+  "text": "ONE-LINE SUMMARY  Energy is stored in stores and transferred between stores. Total energy is conserved. Efficiency tells us what fraction is useful; the rest is usually dissipated to the surroundings.",
+  "ids": [
+   1424
+  ]
+ },
+ {
+  "uid": "U1246",
+  "text": "LESSON EXAM",
+  "ids": [
+   1425
+  ]
+ },
+ {
+  "uid": "U1247",
+  "text": "IGCSE Exam-Style Challenge",
+  "ids": [
+   1426
+  ]
+ },
+ {
+  "uid": "U1248",
+  "text": "About 45 minutes",
+  "ids": [
+   1427
+  ]
+ },
+ {
+  "uid": "U1249",
+  "text": "EXAM HABIT  Show all working. Write units. Use the correct energy store/transfer terminology. For explanations, state what happens to the energy and where it goes.",
+  "ids": [
+   1428
+  ]
+ },
+ {
+  "uid": "U1250",
+  "text": "1. Energy stores and transfers [7 marks]",
+  "ids": [
+   1429
+  ]
+ },
+ {
+  "uid": "U1251",
+  "text": "A cyclist accelerates from rest and then brakes to a stop.\n(a) State the main energy store that decreases as the cyclist accelerates. [1]\n(b) State the main energy store that increases. [1]\n(c) Describe the main energy transfers when braking. [3]\n(d) Explain why the total energy is still conserved. [2]",
+  "ids": [
+   1430
+  ]
+ },
+ {
+  "uid": "U1252",
+  "text": "GREEN ANSWER  (a) Chemical energy store of the cyclist’s body/food decreases. [1]",
+  "ids": [
+   1431
+  ]
+ },
+ {
+  "uid": "U1253",
+  "text": "(b) Kinetic energy store of the cyclist/bicycle increases. [1]",
+  "ids": [
+   1432
+  ]
+ },
+ {
+  "uid": "U1254",
+  "text": "(c) During braking, the kinetic energy store decreases. Friction transfers energy mechanically to the brakes, tyres, road and surroundings, increasing their internal energy; some energy may also be transferred by sound. [3]",
+  "ids": [
+   1433
+  ]
+ },
+ {
+  "uid": "U1255",
+  "text": "(d) Energy is not destroyed: it is transferred to other stores. Total energy before = total energy after. [2]",
+  "ids": [
+   1434
+  ]
+ },
+ {
+  "uid": "U1256",
+  "text": "2. Gravitational potential energy [6 marks]",
+  "ids": [
+   1435
+  ]
+ },
+ {
+  "uid": "U1257",
+  "text": "A 12 kg box is lifted vertically by 5.0 m. Take g = 10 N/kg.\n(a) Calculate the increase in g.p.e. [3]\n(b) If only 800 J of the input energy increases the box’s g.p.e., explain what happened to the remaining energy. [3]",
+  "ids": [
+   1436
+  ]
+ },
+ {
+  "uid": "U1258",
+  "text": "STEP-BY-STEP ANSWER  (a) ΔEₚ = mgΔh = 12 × 10 × 5.0 = 600 J. [3]",
+  "ids": [
+   1437
+  ]
+ },
+ {
+  "uid": "U1259",
+  "text": "(b) As written, this part conflicts with (a), because the g.p.e. increase is 600 J, not 800 J. If the intended wording is ‘800 J of input energy is supplied’, then wasted energy = 800 − 600 = 200 J. This 200 J is dissipated, mainly as internal/thermal energy of the surroundings. [3]",
+  "ids": [
+   1438
+  ]
+ },
+ {
+  "uid": "U1260",
+  "text": "3. Kinetic energy [6 marks]",
+  "ids": [
+   1439
+  ]
+ },
+ {
+  "uid": "U1261",
+  "text": "A 900 kg car travels at 20 m/s.\n(a) Calculate its kinetic energy. [3]\n(b) The speed doubles while mass stays constant. State by what factor the kinetic energy changes and explain why. [3]",
+  "ids": [
+   1440
+  ]
+ },
+ {
+  "uid": "U1262",
+  "text": "STEP-BY-STEP ANSWER  (a) Eₖ = ½mv² = ½ × 900 × 20² = 450 × 400 = 180,000 J = 1.8 × 10⁵ J. [3]",
+  "ids": [
+   1441
+  ]
+ },
+ {
+  "uid": "U1263",
+  "text": "(b) Kinetic energy becomes 4 times as large because Eₖ ∝ v². Doubling v gives 2² = 4. [3]",
+  "ids": [
+   1442
+  ]
+ },
+ {
+  "uid": "U1264",
+  "text": "4. Sankey diagram and efficiency [7 marks]",
+  "ids": [
+   1443
+  ]
+ },
+ {
+  "uid": "U1265",
+  "text": "A machine receives 500 J of energy. 325 J is transferred usefully and the rest is wasted.\n(a) Calculate the wasted energy. [2]\n(b) Calculate the efficiency as a decimal. [2]\n(c) Calculate the percentage efficiency. [1]\n(d) Describe how this could be shown on a Sankey diagram. [2]",
+  "ids": [
+   1444
+  ]
+ },
+ {
+  "uid": "U1266",
+  "text": "STEP-BY-STEP ANSWER  (a) Wasted energy = 500 − 325 = 175 J. [2]",
+  "ids": [
+   1445
+  ]
+ },
+ {
+  "uid": "U1267",
+  "text": "(b) efficiency = 325 ÷ 500 = 0.65. [2]",
+  "ids": [
+   1446
+  ]
+ },
+ {
+  "uid": "U1268",
+  "text": "(c) percentage efficiency = 0.65 × 100% = 65%. [1]",
+  "ids": [
+   1447
+  ]
+ },
+ {
+  "uid": "U1269",
+  "text": "(d) Draw a 500 J input arrow. Split it into a 325 J straight/right useful-output arrow and a 175 J downward wasted-energy branch. Arrow widths must be proportional and total output width must equal input width. [2]",
+  "ids": [
+   1448
+  ]
+ },
+ {
+  "uid": "U1270",
+  "text": "5. Energy transfer pathways [7 marks]",
+  "ids": [
+   1449
+  ]
+ },
+ {
+  "uid": "U1271",
+  "text": "For each device, describe the starting energy store or input and the main useful and wasted transfers: (i) electric lamp, (ii) hair dryer, (iii) car moving uphill. Use correct transfer-pathway language. [7]",
+  "ids": [
+   1450
+  ]
+ },
+ {
+  "uid": "U1272",
+  "text": "GREEN ANSWER  (i) Electric lamp: electrical working supplies energy → useful transfer by radiation (light); wasted transfer by heating to the lamp/surroundings.",
+  "ids": [
+   1451
+  ]
+ },
+ {
+  "uid": "U1273",
+  "text": "(ii) Hair dryer: electrical working supplies energy → useful heating of air/hair and mechanical transfer producing moving air; some energy is dissipated as sound and unwanted heating.",
+  "ids": [
+   1452
+  ]
+ },
+ {
+  "uid": "U1274",
+  "text": "(iii) Car moving uphill: chemical energy store of the fuel decreases → energy is transferred mechanically to increase the car’s gravitational potential energy (and kinetic energy if it speeds up); some energy is dissipated by heating and sound.",
+  "ids": [
+   1453
+  ]
+ },
+ {
+  "uid": "U1275",
+  "text": "6. Conservation and dissipation [7 marks]",
+  "ids": [
+   1454
+  ]
+ },
+ {
+  "uid": "U1276",
+  "text": "A ball is dropped from a height and bounces to a lower height.\n(a) Describe the changes in gravitational potential and kinetic energy as it falls. [3]\n(b) Explain why it does not return to its original height after the bounce. [3]\n(c) State the principle that still applies to the total energy. [1]",
+  "ids": [
+   1455
+  ]
+ },
+ {
+  "uid": "U1277",
+  "text": "GREEN ANSWER  (a) As the ball falls, its gravitational potential energy decreases and its kinetic energy increases. [3]",
+  "ids": [
+   1456
+  ]
+ },
+ {
+  "uid": "U1278",
+  "text": "(b) During impact and motion, some energy is transferred to internal energy stores of the ball, ground and surroundings and by sound. Therefore less energy remains in the ball’s mechanical stores for the rebound, so it reaches a lower height. [3]",
+  "ids": [
+   1457
+  ]
+ },
+ {
+  "uid": "U1279",
+  "text": "(c) Principle of conservation of energy. [1]",
+  "ids": [
+   1458
+  ]
+ },
+ {
+  "uid": "U1280",
+  "text": "1. Which topic is strongest for you: energy stores, energy transfers, conservation, Sankey diagrams, efficiency, g.p.e. or kinetic energy? Why?",
+  "ids": [
+   1460
+  ]
+ },
+ {
+  "uid": "U1281",
+  "text": "SUGGESTED RESPONSE  Student response — no single correct answer. A good response names one topic and gives a specific reason or example.",
+  "ids": [
+   1461
+  ]
+ },
+ {
+  "uid": "U1282",
+  "text": "2. Which PPT practice question or exam-style question was most challenging? What caused the difficulty?",
+  "ids": [
+   1462
+  ]
+ },
+ {
+  "uid": "U1283",
+  "text": "SUGGESTED RESPONSE  Student response — no single correct answer. A good response identifies the question and explains the difficulty (for example: choosing the formula, unit conversion, terminology, or interpreting a Sankey diagram).",
+  "ids": [
+   1463
+  ]
+ },
+ {
+  "uid": "U1284",
+  "text": "SUGGESTED RESPONSE  Student response — no single correct answer. Example: ‘I must convert grams to kilograms before using Eₖ = ½mv².’",
+  "ids": [
+   1465
+  ]
+ },
+ {
+  "uid": "U1285",
+  "text": "SUGGESTED RESPONSE  Student response — no single correct answer. This should be a genuine question about any Chapter 6 topic that is still unclear.",
+  "ids": [
+   1467
+  ]
+ },
+ {
+  "uid": "U1286",
+  "text": "Confidence after Chapter 6:     1     2     3     4     5",
+  "ids": [
+   1468
+  ]
+ }
+]
