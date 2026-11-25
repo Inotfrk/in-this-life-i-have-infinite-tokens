@@ -189,16 +189,17 @@ gh pr merge --merge
 
 ## 4. 验证
 
-**当前仓库没有可测代码**：C++/Qt 实现与 Node 后端已于 2026-11-18 清空（旧内容见 git 历史），
-构建脚本、Dockerfile、`.devcontainer/` 与沙箱脚本/文档随之移除，`package.yml` 也已删除。
+**当前仓库没有可测代码**：C++/Qt 实现与 Node 后端于 2026-11-18 清空，worldsim 原型于 2026-11-25 清空
+（旧内容见 git 历史），构建脚本、Dockerfile、`.devcontainer/`、沙箱脚本与 `package.yml` 一并移除。
 
 所以现在的规矩是：
 
 1. 改动只涉及规则 / 文档时**不跑构建**，但要检查 Markdown 链接、命令示例与 `TODO.md` 状态是否仍然正确；
-2. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`；
-3. **当前唯一的可验证入口**是 worldsim 的离线单测：`python3 -m unittest discover -s tests`（不联网、
-   不需要 API key）；演示用 `python3 -m examples.mvp_demo`。改 `worldsim/` 必须先跑通它；
-4. 新实现落地时，**同时**恢复构建脚本、沙箱与 CI，并回到本节写清验证命令；在那之前不 pretend 有测试。
+2. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`，
+   也不要引用已清空的 `worldsim/`、`tests/`、`examples/`、`docs/design-*.md`、`docs/server-plan.md`、
+   `docs/software-guide.md`、`docs/worldsim-mvp.md` 与 `docs/screenshots/`；
+3. 新实现落地时，**同时**恢复构建脚本、沙箱、CI 与测试入口，并回到本节写清验证命令；
+   在那之前不 pretend 有测试。
 
 新实现接回后要恢复的验证标准（照抄即可）：
 
