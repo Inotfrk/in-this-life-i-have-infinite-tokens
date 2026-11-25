@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3D 装机模拟器 · Demo</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">🖥️</span>
+      <span>3D 装机模拟器</span>
+      <span class="tag">平台模块 · demo</span>
+    </div>
+    <div class="hint">左侧拖拽部件到机箱 · 左键旋转 / 滚轮缩放 / 右键平移</div>
+    <div class="quick" id="quickStats">—</div>
+  </header>
+
+  <main>
+    <aside class="panel palette">
+      <div class="panel-title">部件库</div>
+      <div class="filters" id="filters"></div>
+      <div class="parts" id="parts"></div>
+    </aside>
+
+    <section class="viewport" id="viewport">
+      <div class="drop-hint" id="dropHint">把「机箱」拖进来开始装机</div>
+      <div class="toolbar">
+        <button id="btnAuto">一键装满</button>
+        <button id="btnReset">清空</button>
+        <button id="btnView">重置视角</button>
+      </div>
+    </section>
+
+    <aside class="panel inspector">
+      <div class="card" id="detailCard"></div>
+      <div class="card" id="scoreCard"></div>
+      <div class="card" id="bomCard"></div>
+    </aside>
+  </main>
+
+  <!-- esbuild 打好的单文件包；file:// 下比裸 ES module 稳（不受模块 CORS 限制） -->
+  <script defer src="../dist/app.js"></script>
+</body>
+</html>
