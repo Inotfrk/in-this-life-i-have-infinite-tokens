@@ -6,13 +6,14 @@
  *
  * 性能上的取舍（笔记本核显 / Wayland 高分屏尤其明显）：
  * - 像素比封顶 1.5，别让高分屏按 DPR=2 去渲染两倍多的像素；
- * - 灯光只留三盏；
+ * - 用 RoomEnvironment 生成 IBL（PBR 金属没有环境贴图就是黑的），再加四盏灯；
  * - 容器尺寸或 devicePixelRatio 变化时才重设缓冲区；
  * - 页面不可见时跳过渲染。
  */
 
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 const MAX_PIXEL_RATIO = 1.5;
 const BG = 0x0b0b0d;
@@ -43,6 +44,20 @@ export function createScene(container) {
   renderer.toneMappingExposure = 1.05;
   container.appendChild(renderer.domElement);
 
+  // PBR 金属没有环境贴图就是一坨黑，用内置的 RoomEnvironment 生成一张 IBL
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environmentIntensity = 0.55;
+  pmrem.dispose();
+
+  // 把实际用的 GPU 打出来，方便判断到底有没有硬件加速
+  {
+    const gl = renderer.getContext();
+    const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = debugInfo ? gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL) : 'unknown';
+    console.log('[pcbuilder] webgl', name);
+  }
+
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.target.set(0, 22, 0);
   controls.enableDamping = true;
@@ -52,25 +67,28 @@ export function createScene(container) {
   controls.maxPolarAngle = Math.PI * 0.52;
   controls.zoomSpeed = 0.9;
 
-  // 三盏灯：暖环境光 + 主光 + 冷轮廓
-  scene.add(new THREE.HemisphereLight(0xffe9d0, 0x151312, 1.0));
-  const key = new THREE.DirectionalLight(0xffe2bd, 2.1);
+  // 环境光打底 + 暖色主光 + 冷色轮廓 + 正面补光
+  scene.add(new THREE.HemisphereLight(0xfff1dd, 0x2a2622, 0.9));
+  const key = new THREE.DirectionalLight(0xffe6c2, 2.4);
   key.position.set(70, 90, 60);
   scene.add(key);
-  const rim = new THREE.DirectionalLight(0x9fd3c7, 0.8);
+  const rim = new THREE.DirectionalLight(0xbfe0d6, 0.7);
   rim.position.set(-80, 40, -70);
   scene.add(rim);
+  const fill = new THREE.DirectionalLight(0xfff4e6, 0.45);
+  fill.position.set(-30, 20, 80);
+  scene.add(fill);
 
   // 地面：暗色圆台 + 细网格 + 暖色呼吸边
   const floor = new THREE.Mesh(
     new THREE.CircleGeometry(120, 64),
-    new THREE.MeshStandardMaterial({ color: 0x131315, roughness: 0.95, metalness: 0.05 })
+    new THREE.MeshStandardMaterial({ color: 0x141416, roughness: 0.94, metalness: 0.04 })
   );
   floor.rotation.x = -Math.PI / 2;
   floor.position.y = -0.2;
   scene.add(floor);
 
-  const grid = new THREE.GridHelper(240, 48, 0x3a3a3f, 0x1c1c1f);
+  const grid = new THREE.GridHelper(240, 48, 0x4a4a50, 0x26262a);
   scene.add(grid);
 
   const ring = new THREE.Mesh(
