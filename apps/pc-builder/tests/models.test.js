@@ -23,19 +23,36 @@ test('每个部件都能生成非空 Group，并带上识别信息', () => {
 });
 
 test('外形尺寸与机箱/插槽量级匹配（单位：厘米）', () => {
-  const sizes = {};
   for (const part of PARTS) {
     const group = makePart(part);
     const box = new THREE.Box3().setFromObject(group);
     const size = new THREE.Vector3();
     box.getSize(size);
-    sizes[part.category] = size;
     assert.ok(size.length() > 0, `${part.id} 的包围盒是空的`);
     assert.ok(size.y < 120 && size.x < 120 && size.z < 120, `${part.id} 尺寸异常：${size.toArray()}`);
+    if (part.category === 'case') {
+      assert.ok(Math.abs(size.y - 46.5) < 1, `${part.id} 机箱高度应该 46.5cm，实际 ${size.y.toFixed(2)}`);
+    }
   }
-  assert.ok(sizes.case.y >= 45 && sizes.case.y <= 55, '机箱高度应该在 50cm 左右');
-  assert.ok(sizes.gpu.z >= 30 && sizes.gpu.z <= 40, '显卡长度应该在 34cm 左右');
-  assert.ok(sizes.cooler.y >= 15, '双塔散热应该高于 15cm');
+});
+
+test('显卡长度、散热器高度都读 metrics（换型号模型真的会变）', () => {
+  const gpus = PARTS.filter((p) => p.category === 'gpu');
+  for (const gpu of gpus) {
+    const size = new THREE.Vector3();
+    new THREE.Box3().setFromObject(makePart(gpu)).getSize(size);
+    const expected = gpu.metrics.lengthMM / 10;
+    // 挡板会往卡尾多伸出约 1cm，留 1.5cm 容差
+    assert.ok(Math.abs(size.z - expected) < 1.5, `${gpu.id} 长度应约 ${expected}cm，实际 ${size.z.toFixed(2)}`);
+  }
+  const coolers = PARTS.filter((p) => p.category === 'cooler');
+  for (const cooler of coolers) {
+    const size = new THREE.Vector3();
+    new THREE.Box3().setFromObject(makePart(cooler)).getSize(size);
+    const expected = cooler.metrics.heightMM / 10;
+    assert.ok(Math.abs(size.x - expected) < 1.2, `${cooler.id} 塔高应约 ${expected}cm，实际 ${size.x.toFixed(2)}`);
+    assert.ok(size.y >= 14, `${cooler.id} 塔宽应该在 15cm 左右`);
+  }
 });
 
 test('拖拽后不会残留上一个部件的引用', () => {

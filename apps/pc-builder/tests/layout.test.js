@@ -5,7 +5,7 @@ import {
   BOARD, BOARD_FEATURES, CASE, MOUNTS, PART_BOXES,
   boxesOverlap, interiorBounds, mountPoint, overlapVolume, rotateBox, translateBox
 } from '../src/layout.js';
-import { coolerInterference, installedBoxes, normDeg } from '../src/assembly.js';
+import { coolerInterference, installedBoxes, normDeg, seatAttempt } from '../src/assembly.js';
 
 test('机箱按 O11D EVO 的真实尺寸建（285 × 465 × 459 mm）', () => {
   assert.equal(CASE.width, 28.5);
@@ -109,5 +109,38 @@ test('安装基准点都在机箱内部（机箱自己的基准点在底板上�
     assert.ok(x > CASE.xLeft && x < CASE.xRight, `${category} x`);
     assert.ok(y >= 0 && y <= CASE.yCeil, `${category} y`);
     assert.ok(z > CASE.zBack && z < CASE.zFront, `${category} z`);
+  }
+});
+
+test('包围盒跟着型号走：长显卡更高更长，矮散热器塔身更短', () => {
+  const shortGpu = { metrics: { lengthMM: 245 } };
+  const longGpu = { metrics: { lengthMM: 336 } };
+  const box245 = installedBoxes('gpu', 0, shortGpu)[0];
+  const box336 = installedBoxes('gpu', 0, longGpu)[0];
+  assert.ok(Math.abs((box245.max[2] - box245.min[2]) - 24.9) < 0.05, '245mm 的卡 + 挡板约 24.9cm');
+  assert.ok(Math.abs((box336.max[2] - box336.min[2]) - 34.0) < 0.05, '336mm 的卡 + 挡板约 34.0cm');
+  assert.ok(box336.max[2] > box245.max[2], '336mm 的卡要更长');
+
+  const tall = installedBoxes('cooler', 0, { metrics: { heightMM: 165 } });
+  const low = installedBoxes('cooler', 0, { metrics: { heightMM: 145 } });
+  assert.ok(tall[1].min[0] < low[1].min[0] - 1, '165mm 的塔身比 145mm 伸得更远');
+  assert.ok(low[1].min[0] > CASE.xLeft, '矮塔也还在机箱里');
+});
+
+test('塔身朝玻璃伸出：箱子够窄时高塔装不下、矮塔还能装', () => {
+  const tall = seatAttempt({ category: 'cooler', degrees: 0, distance: 0, installed: {}, part: { metrics: { heightMM: 165 } } });
+  assert.equal(tall.ok, true);
+
+  // 把玻璃内表面往里推 2cm（模拟更窄的箱子）：165mm 的塔会顶到玻璃，145mm 的不会
+  const original = CASE.xLeft;
+  CASE.xLeft = -12;
+  try {
+    const tallResult = seatAttempt({ category: 'cooler', degrees: 0, distance: 0, installed: {}, part: { metrics: { heightMM: 165 } } });
+    const lowResult = seatAttempt({ category: 'cooler', degrees: 0, distance: 0, installed: {}, part: { metrics: { heightMM: 145 } } });
+    assert.equal(tallResult.ok, false);
+    assert.match(tallResult.reason, /玻璃|侧板/);
+    assert.equal(lowResult.ok, true, '矮塔应该还能装下');
+  } finally {
+    CASE.xLeft = original;
   }
 });

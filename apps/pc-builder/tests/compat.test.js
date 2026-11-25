@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { PARTS } from '../src/catalog.js';
+import { demoBuild } from '../src/catalog.js';
 import { checkCompatibility, isBuildComplete } from '../src/compat.js';
 
-const byCategory = () => Object.fromEntries(PARTS.map((p) => [p.category, p]));
+const byCategory = () => demoBuild();
 const codes = (issues) => issues.map((i) => i.code);
 
 test('整套 demo 部件是兼容的', () => {
