@@ -100,3 +100,32 @@ test('开机自检：缺件、没硅脂、风道反了都会被点出来', () =>
   const missing = postCheck({ parts: { cpu: cpuPart }, paste: null, installed: {} });
   assert.equal(missing.ok, false);
 });
+
+test('每个类别在安装位上都能装上（机箱不能卡自己、电源不能卡托盘）', () => {
+  const categories = ['case', 'motherboard', 'cpu', 'cooler', 'ram', 'gpu', 'storage', 'psu'];
+  for (const category of categories) {
+    const result = seatAttempt({ category, degrees: 0, distance: 0, installed: { ram: { degrees: 0 } } });
+    assert.equal(result.ok, true, `${category} 应该装得上，实际：${result.reason}`);
+  }
+});
+
+test('机箱自己的包围盒比内腔大，也不能被判成撞墙', () => {
+  const result = seatAttempt({ category: 'case', degrees: 0, distance: 0 });
+  assert.equal(result.ok, true);
+  assert.equal(result.kind, 'ok');
+});
+
+test('机箱离桌面中心太远还是不给装', () => {
+  const result = seatAttempt({ category: 'case', degrees: 0, distance: 24 });
+  assert.equal(result.ok, false);
+  assert.equal(result.kind, 'far');
+});
+
+test('电源在副仓里，贴着托盘也算装好（只是不能横过来）', () => {
+  const ok = seatAttempt({ category: 'psu', degrees: 0, distance: 0.5 });
+  assert.equal(ok.ok, true);
+  const flipped = seatAttempt({ category: 'psu', degrees: 180, distance: 0.5 });
+  assert.equal(flipped.ok, true, '风扇朝托盘能塞进去，只是温度遭罪');
+  const sideways = seatAttempt({ category: 'psu', degrees: 90, distance: 0.5 });
+  assert.equal(sideways.ok, false);
+});
