@@ -1,0 +1,18 @@
+{
+  "id": "pc-builder",
+  "name": "3D 装机模拟器",
+  "version": "0.1.0",
+  "type": "app-module",
+  "status": "demo",
+  "description": "平台的一个模块：在 3D 机箱里拖拽装机，按厂商筛选部件，给出参数、兼容性检查与综合性能评估。",
+  "entry": "main.js",
+  "renderer": "src/index.html",
+  "capabilities": [
+    "3d-scene",
+    "drag-and-drop",
+    "vendor-filter",
+    "specs",
+    "compatibility",
+    "performance-score"
+  ]
+}

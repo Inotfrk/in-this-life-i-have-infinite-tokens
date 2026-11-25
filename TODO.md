@@ -405,3 +405,14 @@
   `WorldEngine` / `AIThread`，验证「agent 实例化 + 互相通信 + 独立记忆 + 独立数值 + 每实例队列调度」。
   原说明保留如下：Manager 用名字做 key 管理实例，注册表加 `asyncio.Lock`，
   每个实例一条队列与专属 worker 保证不串线；趋势层用 DeGroot 占位，后续换理论模型。
+
+### T-032 3D 装机模拟器 demo（Electron + Three.js 模块）
+
+- 状态：done
+- 目标分支：`lihaoyuan114-FedoraChan-pcbuilder`
+- 优先级：P1
+- 依赖：无
+- 涉及文件：`apps/pc-builder/`（`main.js`、`src/{index.html,styles.css,app.js,scene.js,models.js,catalog.js,compat.js,perf.js}`、`tests/`、`module.json`、`README.md`）
+- 验收：`cd apps/pc-builder && npm test` 19 项全绿（离线）；`npm run build` 成功；浏览器实测首帧有内容（像素探针 9.9% 非背景像素）
+- 说明：平台的一个模块，3D 机箱里拖拽装 8 个类别各一个部件，按厂商筛选，展示真实参数（CPU 频率、显存、SSD 读写等），
+  做插槽 / 内存类型 / 显卡限长 / 散热限高 / 电源功率的兼容性检查，并给出游戏与生产力两套加权评分、帧数估算与瓶颈提示。
