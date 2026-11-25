@@ -9,9 +9,9 @@
 <body>
   <header class="topbar">
     <div class="brand">
-      <span class="logo">🖥️</span>
-      <span>3D 装机模拟器</span>
-      <span class="tag">平台模块 · demo</span>
+      <span class="logo" aria-hidden="true">▦</span>
+      <span>装机工作台<small>PC BUILDER</small></span>
+      <span class="tag">交互原型</span>
     </div>
     <div class="hint">左侧拖拽部件到机箱 · 左键旋转 / 滚轮缩放 / 右键平移</div>
     <div class="quick">
@@ -23,21 +23,24 @@
 
   <main>
     <aside class="panel palette">
-      <div class="panel-title">部件库</div>
+      <div class="panel-title"><span>硬件部件库</span><span class="section-index">01 / LIBRARY</span></div>
+      <p class="panel-description">选择厂商，拖入部件开始搭建。<br>也可以双击部件快速安装。</p>
       <div class="filters" id="filters"></div>
       <div class="parts" id="parts"></div>
     </aside>
 
-    <section class="viewport" id="viewport">
+    <section class="viewport" id="viewport" aria-label="三维装机工作区">
+      <div class="stage-label"><span class="live-dot"></span> 装配视图 <small>REALTIME 3D</small></div>
       <div class="drop-hint" id="dropHint">把「机箱」拖进来开始装机</div>
       <div class="toolbar">
-        <button id="btnAuto">一键装满</button>
-        <button id="btnReset">清空</button>
-        <button id="btnView">重置视角</button>
+        <button id="btnView" title="恢复默认相机位置">↺ 重置视角</button>
+        <button id="btnReset" title="移除所有已安装部件">清空配置</button>
+        <button id="btnAuto" class="primary">＋ 示例装机</button>
       </div>
     </section>
 
     <aside class="panel inspector">
+      <div class="panel-title"><span>配置概览</span><span class="section-index">02 / INSPECTOR</span></div>
       <div class="card" id="detailCard"></div>
       <div class="card" id="scoreCard"></div>
       <div class="card" id="bomCard"></div>
