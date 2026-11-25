@@ -103,7 +103,7 @@ apps/pc-builder/
 
 ```bash
 cd apps/pc-builder
-npm test            # node --test，16 个用例
+npm test            # node --test，19 个用例
 npm run check:syntax
 ```
 
@@ -119,6 +119,15 @@ npm run check:syntax
 1. 把 `.glb` 放进 `assets/`；
 2. 在 `models.js` 里用 `GLTFLoader` 加载，返回同样的 `THREE.Group`；
 3. 保持 `group.userData = { partId, category }` 不变——拖拽、选中、评分都不用改。
+
+## 性能与体验
+
+- **帧率**：像素比封顶 1.5（高分屏按 DPR=2 渲染等于四倍像素）；灯光只留三盏；页面隐藏时暂停渲染；
+  监听 `devicePixelRatio` 变化（浏览器缩放 / 换显示器）重设缓冲区，并配合 `ResizeObserver` 做尺寸自适应。
+- **拖拽不会被机箱挡住**：只有「正在拖的那一类」插槽参与射线检测——机箱插槽是个包住全部内件的大盒子，
+  它若参与命中会永远挡在最前面，这正是之前「隔着玻璃怎么都放不进去」的原因。没打中插槽时还有兜底：
+  机箱在场就直接放进对应插槽。
+- **主题**：石墨 + 琥珀（不再是深蓝），部件按类别分组，装过的部件带「已装」角标，页头有实时帧率。
 
 ## 已知边界
 
