@@ -26,7 +26,7 @@ export function createScene(container) {
   scene.fog = new THREE.Fog(0x070b12, 190, 340);
 
   const camera = new THREE.PerspectiveCamera(42, 1, 0.5, 1200);
-  camera.position.set(74, 62, 92);
+  camera.position.set(64, 50, 78);
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -34,7 +34,7 @@ export function createScene(container) {
   container.appendChild(renderer.domElement);
 
   const controls = new OrbitControls(camera, renderer.domElement);
-  controls.target.set(0, 24, 0);
+  controls.target.set(0, 22, 0);
   controls.enableDamping = true;
   controls.dampingFactor = 0.08;
   controls.minDistance = 45;

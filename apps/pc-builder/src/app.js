@@ -381,8 +381,8 @@ function toast(text) {
 document.getElementById('btnAuto').onclick = autoFill;
 document.getElementById('btnReset').onclick = clearAll;
 document.getElementById('btnView').onclick = () => {
-  world.camera.position.set(74, 62, 92);
-  world.controls.target.set(0, 24, 0);
+  world.camera.position.set(64, 50, 78);
+  world.controls.target.set(0, 22, 0);
   world.controls.update();
 };
 
@@ -392,6 +392,29 @@ refresh();
 // 截图 / 自动化验收用：?autofill=1 直接装满
 const params = new URLSearchParams(location.search);
 if (params.has('autofill')) autoFill();
+
+// ?snapshot=1：把 WebGL 帧读回 2D canvas 再导出 dataURL（无头环境取 3D 预览图用）
+if (params.has('snapshot')) {
+  requestAnimationFrame(() => {
+    world.render();
+    const gl = world.renderer.getContext();
+    const w = gl.drawingBufferWidth;
+    const h = gl.drawingBufferHeight;
+    const pixels = new Uint8Array(w * h * 4);
+    gl.readPixels(0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+    const flat = document.createElement('canvas');
+    flat.width = w;
+    flat.height = h;
+    const ctx = flat.getContext('2d');
+    const image = ctx.createImageData(w, h);
+    for (let y = 0; y < h; y += 1) {
+      const from = (h - 1 - y) * w * 4;
+      image.data.set(pixels.subarray(from, from + w * 4), y * w * 4);
+    }
+    ctx.putImageData(image, 0, 0);
+    console.log('SNAPSHOT:' + flat.toDataURL('image/png'));
+  });
+}
 
 // ?probe=1：读回像素，证明场景真的画出了东西（无头浏览器截图抓不到 WebGL 内容时用）
 if (params.has('probe')) {

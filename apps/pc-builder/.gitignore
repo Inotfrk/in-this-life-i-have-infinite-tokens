@@ -6,3 +6,5 @@ node_modules/
 dist/
 smoke.png
 smoke-ff.png
+preview.png
+ff.log
