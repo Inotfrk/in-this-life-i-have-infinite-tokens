@@ -241,7 +241,8 @@ function setDragging(flag) {
 function carryDistance(carry) {
   const [mx, my, mz] = mountPoint(carry.part.category);
   const p = carry.group.position;
-  if (carry.part.category === 'case') return Math.hypot(p.x - mx, p.z - mz);
+  // 机箱只能放在中心，所以它永远算「对准」
+  if (carry.part.category === 'case') return 0;
   return Math.hypot(p.y - my, p.z - mz);
 }
 
@@ -257,7 +258,8 @@ function updateCarry(event) {
   const [mx, my, mz] = mountPoint(carry.part.category);
   carry.moved = true;
   if (carry.part.category === 'case') {
-    carry.group.position.set(hit.x, 0, hit.z);
+    // 机箱是整台机器的参照系，只能待在桌面中心，拖不走
+    carry.group.position.set(0, 0, 0);
   } else {
     carry.group.position.set(hit.x, hit.y, hit.z);
   }
@@ -274,9 +276,11 @@ function updateCarry(event) {
   carry.verdict = verdict;
   hudOri.textContent = `${normDeg(carry.degrees)}°`;
   hudOri.className = verdict.ok ? 'ok' : (verdict.kind === 'far' ? 'warn' : 'bad');
-  hudAim.textContent = verdict.ok
-    ? '已对准，松手装入'
-    : (verdict.kind === 'far' ? `还差 ${carry.distance.toFixed(1)}cm` : verdict.reason);
+  hudAim.textContent = carry.part.category === 'case'
+    ? '机箱固定在桌面中心，松手放好'
+    : verdict.ok
+      ? '已对准，松手装入'
+      : (verdict.kind === 'far' ? `还差 ${carry.distance.toFixed(1)}cm` : verdict.reason);
   hudAim.className = verdict.ok ? 'ok' : 'bad';
 
   const rect = viewport.getBoundingClientRect();
@@ -1109,6 +1113,11 @@ function hidePartMenu() {
   menuLoose = null;
 }
 
+// 菜单自己在按下时别把事件冒到画布：否则画布的 pointerdown 会先把菜单关掉，
+// 等 click 到按钮时 menuTarget 已经是 null —— 表现就是「点了没反应」
+menuEl.addEventListener('pointerdown', (event) => event.stopPropagation());
+menuEl.addEventListener('pointerup', (event) => event.stopPropagation());
+
 menuEl.querySelectorAll('[data-act]').forEach((btn) => {
   btn.onclick = () => {
     const act = btn.dataset.act;
@@ -1584,6 +1593,28 @@ function runFreePlacementTest() {
   state.carrying.verdict = null;
   finishCarry(null);
   check('散件拖出去也能放回部件库', loose.length === 0);
+
+  // 机箱只能待在桌面中心；拖它不会把里面的部件弄掉
+  autoFill();
+  const gpuBefore = installed.get('gpu').group.position.clone();
+  const rect = viewport.getBoundingClientRect();
+  beginGrab('case', { clientX: rect.left + 100, clientY: rect.top + 100 });
+  updateCarry({ clientX: rect.left + rect.width * 0.8, clientY: rect.top + rect.height * 0.8 });
+  check('机箱拖不走（锁在中心）', state.carrying?.group.position.length() < 0.001);
+  finishCarry(null);
+  check('机箱放回后八件都在', CATEGORIES.every((c) => installed.has(c.id)) && loose.length === 0);
+  check('部件位置没被机箱拖动带跑', installed.get('gpu').group.position.distanceTo(gpuBefore) < 0.01);
+
+  // 菜单里的「放回部件库」要真的生效（以前画布的 pointerdown 会先把菜单关掉，点了没反应）
+  autoFill();
+  showPartMenu('gpu', { clientX: rect.left + 260, clientY: rect.top + 260 });
+  const removeBtn = menuEl.querySelector('[data-act="remove"]');
+  removeBtn.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+  removeBtn.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
+  removeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  check('菜单「放回部件库」真的把部件删掉了', !installed.has('gpu') && loose.length === 0);
+
+
 
   const failed = results.filter((r) => !r.ok);
   console.log(`[selftest] ${failed.length ? 'FREEPLACE_FAIL' : 'FREEPLACE_PASS'} (${results.length - failed.length}/${results.length})`);
