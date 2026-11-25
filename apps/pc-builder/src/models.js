@@ -395,32 +395,35 @@ function makeGpu(part) {
   const shroud = plastic(part.color, { roughness: 0.5, metalness: 0.25 });
   const backplate = metal(0x1a1e24, { roughness: 0.45, metalness: 0.55 });
 
-  // 卡身：X 方向是「从主板往玻璃伸出 13.2cm」，Y 是厚度（风扇朝 -Y）
-  g.add(box(H, TH, L, shroud, -H / 2, 0, L / 2));
-  // 背板（朝上）
-  g.add(box(H, 0.25, L, backplate, -H / 2, TH / 2 + 0.1, L / 2));
+  // 卡身：X 方向是「从主板往玻璃伸出 13.2cm」，Y 是厚度。
+  // PCB 贴着插槽那一层（y≈0），散热器和风扇整块挂在下面——真机就是这样，
+  // 之前以插槽为中心上下各一半，会插进上面的 M.2 马甲里。
+  const bodyY = -TH / 2 + 0.35;
+  g.add(box(H, TH, L, shroud, -H / 2, bodyY, L / 2));
+  // 背板（朝上，正好压在插槽上方一点点）
+  g.add(box(H, 0.25, L, backplate, -H / 2, bodyY + TH / 2 + 0.12, L / 2));
   // 三把 100mm 风扇朝下
   for (const z of [L * 0.22, L * 0.5, L * 0.78]) {
     const f = fan({ radius: 5.0, thickness: 0.8, axis: 'y', frame: 0x0b0d10, blade: 0x15171b, hub: 0x2a2d33 });
-    f.position.set(-H / 2, -TH / 2 - 0.1, z);
+    f.position.set(-H / 2, bodyY - TH / 2 - 0.1, z);
     g.add(f);
   }
   // 侧面（朝玻璃）的导光条，模拟 GEFORCE RTX 灯条
-  g.add(box(0.15, 0.9, L * 0.55, emissive(0x8b9bff, 1.1), -H - 0.02, 0.9, L * 0.45));
+  g.add(box(0.15, 0.9, L * 0.55, emissive(0x8b9bff, 1.1), -H - 0.02, bodyY + 0.9, L * 0.45));
   // 银灰色腰线，让卡身侧面不至于一条黑
-  g.add(box(0.12, 1.1, L * 0.92, metal(0x7c8592, { roughness: 0.35 }), -H - 0.01, -1.7, L * 0.5));
-  // 金手指（插进 PCIe 插槽）+ PCB
-  g.add(box(3.0, 0.35, 8.6, plastic(0x0e1a12, { roughness: 0.8 }), -1.5, -TH / 2 + 0.2, 4.4));
-  g.add(box(2.8, 0.05, 8.4, plastic(0xd4af37, { metalness: 1, roughness: 0.3 }), -1.5, -TH / 2 + 0.4, 4.4));
-  // 后置挡板（贴机箱背板）+ 三个 DP + 一个 HDMI
-  g.add(box(0.35, TH, 1.2, metal(0x9aa3ad, { roughness: 0.35 }), -TH / 2 + 1.0, 0, -0.4));
+  g.add(box(0.12, 1.1, L * 0.92, metal(0x7c8592, { roughness: 0.35 }), -H - 0.01, bodyY - 1.7, L * 0.5));
+  // 金手指（插进 PCIe 插槽）+ PCB：贴着槽那一层
+  g.add(box(3.0, 0.35, 8.6, plastic(0x0e1a12, { roughness: 0.8 }), -1.5, 0.1, 4.4));
+  g.add(box(2.8, 0.05, 8.4, plastic(0xd4af37, { metalness: 1, roughness: 0.3 }), -1.5, -0.08, 4.4));
+  // 后置挡板（贴机箱背板，从插槽往下一整块）+ 三个 DP + 一个 HDMI
+  g.add(box(0.35, TH + 0.6, 1.2, metal(0x9aa3ad, { roughness: 0.35 }), -TH / 2 + 1.0, bodyY, -0.4));
   for (let i = 0; i < 3; i += 1) {
-    g.add(box(0.5, 0.9, 0.5, plastic(0x11151a), -TH / 2 + 1.0, -1.2 + i * 1.0, -0.9));
+    g.add(box(0.5, 0.9, 0.5, plastic(0x11151a), -TH / 2 + 1.0, bodyY - 1.2 + i * 1.0, -0.9));
   }
-  // 16-pin 供电口
-  g.add(box(0.9, 1.1, 2.0, plastic(0x0b0d10), -H + 0.6, TH / 2 + 0.2, L * 0.62));
+  // 16-pin 供电口（在背板这一侧）
+  g.add(box(0.9, 1.1, 2.0, plastic(0x0b0d10), -H + 0.6, bodyY + TH / 2 + 0.15, L * 0.62));
   // 支撑条
-  g.add(box(0.4, 0.4, L * 0.8, metal(0x4b5563, { roughness: 0.4 }), -H * 0.55, TH / 2 + 0.35, L * 0.5));
+  g.add(box(0.4, 0.4, L * 0.8, metal(0x4b5563, { roughness: 0.4 }), -H * 0.55, bodyY + TH / 2 + 0.3, L * 0.5));
   return g;
 }
 
