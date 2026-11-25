@@ -423,14 +423,16 @@
 - 目标分支：`lihaoyuan114-FedoraChan-render-opt`
 - 优先级：P1
 - 依赖：T-032
-- 涉及文件：`apps/pc-builder/src/{layout,models,scene,app,paste,physics,assembly}.js`、
-  `src/{index.html,styles.css}`、`tests/{layout,assembly,paste,physics}.test.js`、`main.js`、`README.md`
-- 验收：`cd apps/pc-builder && npm test` 57 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
-  无头浏览器 `?selftest=1` 输出 `SELFTEST_PASS (14/14)`
+- 涉及文件：`apps/pc-builder/src/{layout,models,scene,app,paste,physics,assembly,tutorial}.js`、
+  `src/{index.html,styles.css}`、`tests/{layout,assembly,paste,physics,tutorial}.test.js`、`main.js`、`README.md`
+- 验收：`cd apps/pc-builder && npm test` 65 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
+  无头浏览器 `?selftest=1` 输出 `SELFTEST_PASS (18/18)` + `FREEPLACE_PASS (11/11)` + `TUTORIAL_PASS (9/9)`
 - 说明：上一版的机箱布局是错的（主板贴在后板上、散热器竖着摆顶部、显卡悬空）。
   这次按官方规格与实机照片重做：O11D EVO 285×465×459 双仓、ATX 305×244 竖装、
   塔冷垂直于主板朝玻璃侧板伸出、显卡水平挂装风扇朝下、电源在副仓立放。
   新增：拖拽必须进容差且朝向正确才装得上（不再一键到位）、防呆装错直接塞不进、
   散热器/电源装错只影响温度、没对准松手会掉件（重力/反弹/摩擦）、
-  以及装完 CPU 先抹硅脂（涂法 × 用量 → 覆盖率 → 热阻惩罚）与一键开机自检。
+  以及装完 CPU 先抹硅脂（涂法 × 用量 → 覆盖率 → 热阻惩罚）、六步硅脂教程（高亮对应控件、
+  按真实装配状态判定每步完成）与一键开机自检。交互后来改成自由摆放：装好的可以拿起来移动 /
+  丢到桌面，缺前置条件只是标「未生效」，落地不再自动回正。
 
