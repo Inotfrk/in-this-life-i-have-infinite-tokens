@@ -9,7 +9,7 @@
 
 import {
   BOARD, BOARD_FEATURES, CASE, MOUNTS, PART_BOXES, COOLER_SUBBOXES,
-  boxesOverlap, mountPoint, overlapVolume, rotateBox, translateBox
+  boxesOverlap, mountPoint, overlapVolume, partBox, rotateBox, translateBox
 } from './layout.js';
 
 export const normDeg = (d) => (((Math.round(d / 90) * 90) % 360) + 360) % 360;
@@ -23,8 +23,11 @@ const KEYED_REASON = {
   motherboard: '主板孔位和铜柱对不上，只能按这个方向装'
 };
 
-/** 装好的部件在机箱里的世界 AABB（内存是一根一个盒子） */
-export function installedBoxes(category, degrees = 0) {
+/**
+ * 装好的部件在机箱里的世界 AABB（内存是一根一个盒子）。
+ * 传了 part 就按它的真实长度 / 高度算，不传就用该类别的基础盒子。
+ */
+export function installedBoxes(category, degrees = 0, part = null) {
   const deg = normDeg(degrees);
   if (category === 'ram') {
     return MOUNTS.ram.slots.map((z) => translateBox(rotateBox(PART_BOXES.ram, deg), [
@@ -33,21 +36,29 @@ export function installedBoxes(category, degrees = 0) {
       z
     ]));
   }
-  if (category === 'cooler') return coolerBoxes(deg);
-  const box = PART_BOXES[category];
+  if (category === 'cooler') return coolerBoxes(deg, part);
+  const box = partBox(category, part);
   if (!box) return [];
   return [translateBox(rotateBox(box, deg), mountPoint(category))];
 }
 
-export function coolerBoxes(degrees = 0) {
+/** 散热器的子盒：矮一点的型号，塔身按比例缩，风扇也跟着挪进来 */
+export function coolerBoxes(degrees = 0, part = null) {
   const deg = normDeg(degrees);
   const at = mountPoint('cooler');
-  return COOLER_SUBBOXES.map((sub) => translateBox(rotateBox(sub, deg), at));
+  const scale = (part?.metrics?.heightMM ?? 165) / 165;
+  return COOLER_SUBBOXES.map((sub) => {
+    const scaled = {
+      min: [sub.min[0] < 0 ? sub.min[0] * scale : sub.min[0], sub.min[1], sub.min[2]],
+      max: [sub.max[0] < 0 ? sub.max[0] * scale : sub.max[0], sub.max[1], sub.max[2]]
+    };
+    return translateBox(rotateBox(scaled, deg), at);
+  });
 }
 
 /** 散热器会不会压到内存 / 顶到玻璃、顶盖、背板 */
-export function coolerInterference(degrees, installed = {}) {
-  const boxes = coolerBoxes(degrees);
+export function coolerInterference(degrees, installed = {}, part = null) {
+  const boxes = coolerBoxes(degrees, part);
   const hits = new Set();
   if (installed.ram) {
     const ram = installedBoxes('ram', installed.ram.degrees ?? 0);
@@ -74,14 +85,14 @@ export function coolerInterference(degrees, installed = {}) {
  * - 机箱自己就是容器，它的包围盒本来就比内腔大，不能拿内腔去卡它；
  * - 电源在右侧副仓（托盘后面），卡它的是副仓的墙，不是主板托盘。
  */
-export function caseInterference(category, degrees = 0) {
+export function caseInterference(category, degrees = 0, part = null) {
   if (category === 'case') return [];
   const hits = [];
   const rear = category === 'psu';
   const xMin = rear ? CASE.xRearChamber : CASE.xLeft + 0.15;
   const xMax = rear ? CASE.xRight : CASE.xTray;
   // 0.02cm 的浮点容差：贴着墙面不算撞
-  for (const box of installedBoxes(category, degrees)) {
+  for (const box of installedBoxes(category, degrees, part)) {
     if (box.min[0] < xMin - 0.02) hits.push(rear ? '副仓隔板' : '玻璃侧板');
     if (box.max[0] > xMax + 0.02) hits.push(rear ? '右侧板' : '主板托盘');
     if (box.min[1] < CASE.yFloor - 0.02) hits.push('机箱底板');
@@ -100,7 +111,7 @@ export function caseInterference(category, degrees = 0) {
  * @param {number} input.distance    部件中心离安装位的距离（cm）
  * @param {object} [input.installed] 已装部件 { category: { degrees } }
  */
-export function seatAttempt({ category, degrees = 0, distance = 0, installed = {} }) {
+export function seatAttempt({ category, degrees = 0, distance = 0, installed = {}, part = null }) {
   const mount = MOUNTS[category];
   if (!mount) return { ok: false, kind: 'unknown', reason: '不认识的部件类别' };
   const deg = normDeg(degrees);
@@ -122,7 +133,9 @@ export function seatAttempt({ category, degrees = 0, distance = 0, installed = {
     return { ok: false, kind: 'blocked', reason: '电源仓只有 8.6cm 宽，横过来塞不进去', degrees: deg };
   }
 
-  const hits = category === 'cooler' ? coolerInterference(deg, installed) : caseInterference(category, deg);
+  const hits = category === 'cooler'
+    ? coolerInterference(deg, installed, part)
+    : caseInterference(category, deg, part);
   if (hits.length) {
     return { ok: false, kind: 'blocked', reason: `装不进去：${hits.join('、')} 挡住了`, degrees: deg, hits };
   }

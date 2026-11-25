@@ -240,3 +240,17 @@ export const SUBBOXES = {
   ]
 };
 
+
+/**
+ * 按具体型号算包围盒：机箱内腔是固定的，但显卡长度、散热器高度各家不同。
+ * 没给 part 时退回该类别的基础盒子。
+ */
+export function partBox(category, part = null) {
+  const base = PART_BOXES[category];
+  if (!base) return null;
+  if (!part) return base;
+  const box = { min: [...base.min], max: [...base.max] };
+  if (category === 'cooler') box.min[0] = -((part.metrics?.heightMM ?? 165) / 10);
+  if (category === 'gpu') box.max[2] = (part.metrics?.lengthMM ?? 336) / 10;
+  return box;
+}

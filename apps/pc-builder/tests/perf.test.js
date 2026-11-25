@@ -1,10 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-import { CATEGORIES, PARTS } from '../src/catalog.js';
+import { CATEGORIES, demoBuild } from '../src/catalog.js';
 import { loadEstimate, scoreBuild } from '../src/perf.js';
 
-const byCategory = () => Object.fromEntries(PARTS.map((p) => [p.category, p]));
+const byCategory = () => demoBuild();
 
 test('功耗估算与电源建议合理', () => {
   const load = loadEstimate(byCategory());

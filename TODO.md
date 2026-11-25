@@ -425,7 +425,7 @@
 - 依赖：T-032
 - 涉及文件：`apps/pc-builder/src/{layout,models,scene,app,paste,physics,assembly,tutorial}.js`、
   `src/{index.html,styles.css}`、`tests/{layout,assembly,paste,physics,tutorial}.test.js`、`main.js`、`README.md`
-- 验收：`cd apps/pc-builder && npm test` 65 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
+- 验收：`cd apps/pc-builder && npm test` 72 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
   无头浏览器 `?selftest=1` 输出 `SELFTEST_PASS (18/18)` + `FREEPLACE_PASS (11/11)` + `TUTORIAL_PASS (9/9)`
 - 说明：上一版的机箱布局是错的（主板贴在后板上、散热器竖着摆顶部、显卡悬空）。
   这次按官方规格与实机照片重做：O11D EVO 285×465×459 双仓、ATX 305×244 竖装、
@@ -435,4 +435,7 @@
   以及装完 CPU 先抹硅脂（涂法 × 用量 → 覆盖率 → 热阻惩罚）、六步硅脂教程（高亮对应控件、
   按真实装配状态判定每步完成）与一键开机自检。交互后来改成自由摆放：装好的可以拿起来移动 /
   丢到桌面，缺前置条件只是标「未生效」，落地不再自动回正。
+  部件库扩到多型号（5 CPU / 5 显卡 / 4 散热器 / 4 内存 / 3 主板 / 3 硬盘 / 3 电源），
+  显卡长度与散热器高度直接改模型与碰撞盒，翻车组合（插槽 / 内存世代 / 电源功率 / 散热能力）
+  都能真实报出来。
 

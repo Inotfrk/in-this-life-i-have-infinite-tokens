@@ -64,6 +64,27 @@ npm start -- --no-sandbox
 进度点会变绿；中途关掉再打开会从没完成的那一步接着走。
 步骤数据与检查点在 `src/tutorial.js`（纯函数，可单测），卡片渲染在 `app.js`。
 
+## 部件库（多型号）
+
+| 类别 | 型号数 | 例子 |
+| --- | --- | --- |
+| 机箱 | 1 | Lian Li O11 Dynamic EVO（整套布局就是按它写的，其它箱子暂时不支持） |
+| 主板 | 3 | B650E-F（AM5）、MAG B760（LGA1700）、X670E HERO（AM5 旗舰） |
+| 处理器 | 5 | 7800X3D / 7600 / 7950X / i5-14600K / i9-14900K，AM5 与 LGA1700 混着放 |
+| 散热器 | 4 | NH-D15（165mm/250W）→ Assassin X 120（145mm/150W） |
+| 内存 | 4 | DDR5 6000/6400/7200，外加一条 DDR4-3200（插 DDR5 板子上会被拦） |
+| 显卡 | 5 | RTX 4060 Ti（245mm/160W）→ 4090（336mm/450W）、RX 7800 XT |
+| 硬盘 | 3 | 990 PRO、SN850X、Crucial T700（PCIe 5.0） |
+| 电源 | 3 | 650W / 850W / 1200W |
+
+换型号不只是换颜色：**显卡长度、散热器高度会直接改 3D 模型和碰撞盒**
+（`models.js` 读 `metrics.lengthMM / heightMM`，`layout.partBox()` 按型号算包围盒），
+所以 245mm 的短卡和 336mm 的长卡在场景里真的不一样长，145mm 的矮塔也真的更矮。
+
+配套的翻车组合都有依据：i9-14900K 插 AM5 板子报插槽错误、DDR4 插 DDR5 板报内存类型错误、
+650W 电源带 4090 + i9 报功率不足、150W 的散热器压 253W 的 CPU 报散热告警。
+默认演示配置在 `catalog.js` 的 `DEMO_BUILD`（八个 id），示例装机与测试都用它。
+
 ## 真实依据（尺寸与朝向）
 
 模型不是凭感觉摆的，关键数字来自厂商规格与实机照片：
@@ -123,11 +144,12 @@ apps/pc-builder/
     paste.js         硅脂模型（涂法 / 覆盖率 / 溢出 / 热阻惩罚）+ 硅脂网格
     physics.js       极简刚体：重力 / 反弹 / 摩擦 / 静止
     assembly.js      装配判定（容差 / 防呆 / 干涉）、朝向后果、温度与自检
-    catalog.js       部件数据（一个类别一个 demo 部件）+ 厂商表
+    catalog.js       部件数据（每类 2~5 个型号）+ 厂商表 + DEMO_BUILD
     compat.js        兼容性规则
     perf.js          性能评分（纯函数）
     resources.js     移除对象时释放 GPU 资源
-  tests/             node:test 用例（65 个），不依赖 Electron
+  tutorial.js       六步硅脂教程的步骤数据与完成判定（纯函数）
+  tests/             node:test 用例（72 个），不依赖 Electron
 ```
 
 ## 数据模型
@@ -167,7 +189,7 @@ apps/pc-builder/
 
 ```bash
 cd apps/pc-builder
-npm test            # node --test，65 个用例
+npm test            # node --test，72 个用例
 npm run build
 npm run check:syntax
 ```
