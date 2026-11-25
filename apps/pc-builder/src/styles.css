@@ -90,3 +90,4 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1
 
 /* 提示条挪到画布顶部：底部已经被教程卡片占住，提示会看不见 */
 .drop-hint{bottom:auto;top:96px;z-index:5}
+.toolbar button.active{background:#e0a458;border-color:#e0a458;color:#221a10;font-weight:600}

@@ -344,6 +344,11 @@ function rotateCarry(step = 90) {
     toast('先按住一个部件再旋转');
     return;
   }
+  // 机箱是整台机器的参照系，转它没有任何意义
+  if (state.carrying.part.category === 'case') {
+    toast('机箱不用旋转');
+    return;
+  }
   state.carrying.degrees = normDeg(state.carrying.degrees + step);
   const carry = state.carrying;
   carry.group.rotation.x = THREE.MathUtils.degToRad(carry.degrees);
@@ -514,22 +519,86 @@ function commitInstall(part, group, degrees, from = null) {
   refresh();
 }
 
-function removeCategory(category) {
+/**
+ * 把一件装好的部件变成「掉落物」：从当前姿态开始自由落体。
+ * 机箱/主板没了的时候，压在它们上面的部件就该掉下来，而不是凭空消失或者浮在半空。
+ */
+function detachToLoose(category) {
   const entry = installed.get(category);
-  if (entry) {
-    disposeObject(entry.group);
-    installed.delete(category);
-  }
+  if (!entry) return null;
+  installed.delete(category);
+
+  const { group, degrees } = entry;
+  const box = PART_BOXES[category];
+  const center = boxCenter(category);
+  const rot = THREE.MathUtils.degToRad(degrees);
+  const offset = center.clone().applyAxisAngle(X_AXIS, rot);
+  const position = [
+    group.position.x + offset.x,
+    group.position.y + offset.y,
+    group.position.z + offset.z
+  ];
+  const half = [
+    (box.max[0] - box.min[0]) / 2,
+    (box.max[1] - box.min[1]) / 2,
+    (box.max[2] - box.min[2]) / 2
+  ];
+  // 没有机箱了就只能落到桌面上，有机箱就落到内腔底板
+  const onTable = !installed.has('case') && category !== 'case';
+  const bodyBounds = onTable
+    ? { min: [-200, 0, -200], max: [200, 120, 200] }
+    : { min: [...bounds.min], max: [...bounds.max] };
+
+  const body = createBody({
+    half,
+    position,
+    rotation: degrees,
+    velocity: [0, -12, 0],
+    spin: [40, 0, 18]
+  });
+  loose.push({ body, group, center, bounds: bodyBounds });
+  world.invalidate();
+  return entry;
+}
+
+/** 某个部件被拿走以后，压在它上面的部件有哪些 */
+function dependentsOf(category) {
   if (category === 'case') {
-    // 机箱拆了，里面的部件一起拆（地上的散件留着，改落到桌面）
-    for (const key of [...installed.keys()]) removeCategory(key);
-    hintEl.classList.remove('hidden');
-    for (const item of loose) item.bounds = { min: [-200, 0, -200], max: [200, 120, 200] };
-    if (installed.size) toast('机箱拆下来了');
+    return ['motherboard', 'cpu', 'cooler', 'ram', 'gpu', 'storage', 'psu'].filter((c) => installed.has(c));
+  }
+  if (category === 'motherboard') {
+    return ['cpu', 'cooler', 'ram', 'gpu', 'storage'].filter((c) => installed.has(c));
+  }
+  if (category === 'cpu') return installed.has('cooler') ? ['cooler'] : [];
+  return [];
+}
+
+function removeCategory(category) {
+  if (!installed.has(category)) {
+    if (state.selected === category) state.selected = null;
+    refresh();
+    return;
   }
   if (category === 'cpu') state.paste = null;
   if (category === 'cooler' && state.paste) state.paste = { ...state.paste, pressed: true };
+
+  // 先把它压着的部件变成掉落物（顺序：依赖它的先掉，再删它自己）
+  const falling = dependentsOf(category);
+  for (const key of falling) detachToLoose(key);
+
+  const entry = installed.get(category);
+  disposeObject(entry.group);
+  installed.delete(category);
   if (state.selected === category) state.selected = null;
+
+  if (category === 'case') {
+    hintEl.classList.remove('hidden');
+    // 机箱没了，地上的东西只能落在桌面
+    for (const item of loose) item.bounds = { min: [-200, 0, -200], max: [200, 120, 200] };
+    toast(falling.length ? '机箱放回去了，里面的部件掉了一地' : '机箱放回部件库了');
+  } else if (falling.length) {
+    toast('支撑它的部件没了，上面的东西掉下来了');
+  }
   refresh();
 }
 
@@ -1030,6 +1099,7 @@ window.addEventListener('keydown', (event) => {
   }
   if (event.key === 'Escape') {
     hidePartMenu();
+    stopCinema();
     cancelCarry();
     return;
   }
@@ -1041,6 +1111,10 @@ window.addEventListener('keydown', (event) => {
 // 点击选择已装部件；按住拖动则把它拿起来（移动 / 拆下 / 丢掉）
 const down = new THREE.Vector2();
 viewport.addEventListener('pointerdown', (event) => {
+  if (cinema) {
+    stopCinema();
+    return;
+  }
   if (event.button !== 0 || state.carrying) return;
   down.set(event.clientX, event.clientY);
   hidePartMenu();
@@ -1056,6 +1130,7 @@ viewport.addEventListener('pointerdown', (event) => {
   setDragging(true);
   hidePartMenu();
 });
+viewport.addEventListener('wheel', () => stopCinema(), { passive: true });
 viewport.addEventListener('pointerup', (event) => {
   const grab = state.grab;
   state.grab = null;
@@ -1145,6 +1220,59 @@ menuEl.querySelectorAll('[data-act]').forEach((btn) => {
   };
 });
 
+// ---------------------------------------------------------------- 电影镜头（自动环绕检视）
+
+/**
+ * 一条闭合的相机轨道：整机 → 散热器 → 显卡 → 机背 → 斜侧，循环播放。
+ * 点画面任意处、滚轮、Esc 或再点一次按钮都会退出，交还轨道控制。
+ */
+const CINEMA_SHOTS = [
+  { position: [-64, 44, 70], target: [-1, 21, 0] },
+  { position: [-30, 36, 40], target: [-4, 30, -8] },
+  { position: [-24, 17, 30], target: [-2, 17, -4] },
+  { position: [22, 30, -36], target: [0, 24, -4] },
+  { position: [-58, 26, -14], target: [-4, 20, -8] }
+];
+let cinema = null;
+
+function startCinema() {
+  cancelCarry();
+  hidePartMenu();
+  cinema = {
+    curve: new THREE.CatmullRomCurve3(CINEMA_SHOTS.map((s) => new THREE.Vector3(...s.position)), true, 'catmullrom', 0.35),
+    targets: CINEMA_SHOTS.map((s) => new THREE.Vector3(...s.target)),
+    t: 0
+  };
+  setDragging(true);
+  document.getElementById('btnCinema').classList.add('active');
+  world.invalidate();
+}
+
+function stopCinema() {
+  if (!cinema) return;
+  cinema = null;
+  setDragging(false);
+  document.getElementById('btnCinema').classList.remove('active');
+  world.controls.update();
+  world.render();
+}
+
+/** 每帧推进：返回 true 表示还要下一帧 */
+function tickCinema(dt) {
+  if (!cinema) return false;
+  cinema.t = (cinema.t + dt * 0.045) % 1;
+  const u = cinema.t;
+  world.camera.position.copy(cinema.curve.getPointAt(u));
+  const n = cinema.targets.length;
+  const seg = u * n;
+  const i = Math.floor(seg) % n;
+  const k = seg - Math.floor(seg);
+  const eased = k * k * (3 - 2 * k);
+  world.controls.target.copy(cinema.targets[i].clone().lerp(cinema.targets[(i + 1) % n], eased));
+  world.controls.update();
+  return true;
+}
+
 // ---------------------------------------------------------------- 每帧
 
 let lastFrame = 0;
@@ -1161,7 +1289,7 @@ world.onFrame((time) => {
     if (fpsEl) fpsEl.textContent = `${fps} fps`;
   }
 
-  let active = false;
+  let active = tickCinema(dt);
 
   for (const item of loose) {
     if (item.body.resting) continue;
@@ -1319,6 +1447,7 @@ document.getElementById('btnAuto').onclick = autoFill;
 document.getElementById('btnReset').onclick = clearAll;
 document.getElementById('btnBoot').onclick = runBoot;
 document.getElementById('btnRotate').onclick = () => rotateCarry(90);
+document.getElementById('btnCinema').onclick = () => (cinema ? stopCinema() : startCinema());
 document.getElementById('btnView').onclick = () => {
   world.camera.position.set(...HOME_CAMERA.position);
   world.controls.target.set(...HOME_CAMERA.target);
@@ -1347,6 +1476,25 @@ if (params.has('parts')) {
   state.selected = null;
   refresh();
 }
+// ?remove=case / motherboard：拆掉某件，看依赖它的部件掉下来（截图 / 验收用）
+if (params.has('remove')) {
+  removeCategory(params.get('remove'));
+  // 让掉落物直接算到静止，截图才看得见
+  settleAll(loose.map((item) => item.body), loose[0]?.bounds ?? bounds, 8);
+  for (const item of loose) {
+    const rot = THREE.MathUtils.degToRad(item.body.rotation);
+    const offset = item.center.clone().applyAxisAngle(X_AXIS, rot);
+    item.group.position.set(
+      item.body.position[0] - offset.x,
+      item.body.position[1] - offset.y,
+      item.body.position[2] - offset.z
+    );
+    item.group.rotation.x = rot;
+  }
+  world.render();
+}
+// ?cinema=1 直接开电影镜头（截图 / 演示用）
+if (params.has('cinema')) startCinema();
 // ?menu=gpu 直接弹出部件菜单（截图 / 验收用）
 if (params.has('menu')) {
   const category = params.get('menu');
@@ -1613,6 +1761,42 @@ function runFreePlacementTest() {
   removeBtn.dispatchEvent(new PointerEvent('pointerup', { bubbles: true }));
   removeBtn.dispatchEvent(new MouseEvent('click', { bubbles: true }));
   check('菜单「放回部件库」真的把部件删掉了', !installed.has('gpu') && loose.length === 0);
+
+  // 机箱按 R 不旋转
+  autoFill();
+  beginGrab('case', { clientX: rect.left + 100, clientY: rect.top + 100 });
+  rotateCarry(90);
+  check('机箱按 R 不旋转', state.carrying.degrees === 0);
+  cancelCarry();
+
+  // 把机箱放回：里面的部件按物理掉下来，而不是凭空消失
+  autoFill();
+  const beforeCount = installed.size;
+  removeCategory('case');
+  check('机箱没了，其它部件都变成掉落物', installed.size === 0 && loose.length === beforeCount - 1, 'loose=' + loose.length);
+  settleAll(loose.map((item) => item.body), { min: [-200, 0, -200], max: [200, 120, 200] }, 8);
+  check('掉落物会落到地面上', loose.every((item) => item.body.resting || item.body.position[1] < 20));
+  clearAll();
+
+  // 主板没了：插在上面的部件掉下来，机箱还在
+  autoFill();
+  removeCategory('motherboard');
+  check('主板没了，CPU/散热/内存/显卡/硬盘都掉下来',
+    ['cpu', 'cooler', 'ram', 'gpu', 'storage'].every((c) => !installed.has(c)) && loose.length === 5,
+    'loose=' + loose.length);
+  check('机箱和电源还在', installed.has('case') && installed.has('psu'));
+  clearAll();
+
+  // 电影镜头
+  startCinema();
+  const camBefore = world.camera.position.clone();
+  tickCinema(0.8);
+  check('电影镜头会推镜头', world.camera.position.distanceTo(camBefore) > 1);
+  check('电影镜头期间锁着视角控制', world.controls.enabled === false);
+  check('按钮是激活态', document.getElementById('btnCinema').classList.contains('active'));
+  stopCinema();
+  check('退出后恢复视角控制', world.controls.enabled === true);
+
 
 
 
