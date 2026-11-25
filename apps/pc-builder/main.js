@@ -18,6 +18,8 @@ const SOFTWARE = process.env.PC_BUILDER_SOFTWARE === '1' || process.env.SMOKE ==
 if (SOFTWARE) {
   app.disableHardwareAcceleration();
   app.commandLine.appendSwitch('disable-gpu');
+  // 没有 GPU 的环境里 Chromium 不再默认回退到 SwiftShader，必须显式打开
+  app.commandLine.appendSwitch('enable-unsafe-swiftshader');
 } else {
   app.commandLine.appendSwitch('ignore-gpu-blocklist');
   if (process.platform === 'linux') app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
@@ -40,10 +42,15 @@ async function createWindow() {
     if (level >= 2) console.log('[renderer]', message);
   });
 
-  await win.loadFile(path.join(__dirname, 'src', 'index.html'));
+  // 无头验收时可以带参数：PC_BUILDER_QUERY='autofill=1'
+  const query = process.env.PC_BUILDER_QUERY || '';
+  await win.loadFile(
+    path.join(__dirname, 'src', 'index.html'),
+    query ? { search: `?${query.replace(/^\?/, '')}` } : undefined
+  );
 
   if (SMOKE) {
-    await new Promise((resolve) => setTimeout(resolve, 2500));
+    await new Promise((resolve) => setTimeout(resolve, Number(process.env.PC_BUILDER_WAIT || 2500)));
     try {
       const image = await win.webContents.capturePage();
       await fs.writeFile(path.join(__dirname, 'smoke.png'), image.toPNG());

@@ -416,3 +416,21 @@
 - 验收：`cd apps/pc-builder && npm test` 19 项全绿（离线）；`npm run build` 成功；浏览器实测首帧有内容（像素探针 9.9% 非背景像素）
 - 说明：平台的一个模块，3D 机箱里拖拽装 8 个类别各一个部件，按厂商筛选，展示真实参数（CPU 频率、显存、SSD 读写等），
   做插槽 / 内存类型 / 显卡限长 / 散热限高 / 电源功率的兼容性检查，并给出游戏与生产力两套加权评分、帧数估算与瓶颈提示。
+
+### T-033 装机模拟器：真实布局 + 硅脂 + 拖拽对准 + 物理 + 装错后果
+
+- 状态：done
+- 目标分支：`lihaoyuan114-FedoraChan-render-opt`
+- 优先级：P1
+- 依赖：T-032
+- 涉及文件：`apps/pc-builder/src/{layout,models,scene,app,paste,physics,assembly}.js`、
+  `src/{index.html,styles.css}`、`tests/{layout,assembly,paste,physics}.test.js`、`main.js`、`README.md`
+- 验收：`cd apps/pc-builder && npm test` 53 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
+  无头浏览器 `?selftest=1` 输出 `SELFTEST_PASS (14/14)`
+- 说明：上一版的机箱布局是错的（主板贴在后板上、散热器竖着摆顶部、显卡悬空）。
+  这次按官方规格与实机照片重做：O11D EVO 285×465×459 双仓、ATX 305×244 竖装、
+  塔冷垂直于主板朝玻璃侧板伸出、显卡水平挂装风扇朝下、电源在副仓立放。
+  新增：拖拽必须进容差且朝向正确才装得上（不再一键到位）、防呆装错直接塞不进、
+  散热器/电源装错只影响温度、没对准松手会掉件（重力/反弹/摩擦）、
+  以及装完 CPU 先抹硅脂（涂法 × 用量 → 覆盖率 → 热阻惩罚）与一键开机自检。
+
