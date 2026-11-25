@@ -84,10 +84,13 @@ export function stepBody(body, dt, bounds) {
   const speed = Math.hypot(...body.velocity);
   if (onFloor && speed < SLEEP_SPEED) {
     body.velocity = [0, 0, 0];
-    body.spin = [0, 0, 0];
-    body.rotation = Math.round(body.rotation / 90) * 90;
-    body.position[1] = floorY;
-    body.resting = true;
+    // 角速度慢慢停，姿态保留：以前这里会强行掰回 90° 整数倍，看着像「自动回正」
+    body.spin = body.spin.map((v) => v * 0.7);
+    if (Math.hypot(...body.spin) < 6) {
+      body.spin = [0, 0, 0];
+      body.position[1] = floorY;
+      body.resting = true;
+    }
   }
   return body;
 }

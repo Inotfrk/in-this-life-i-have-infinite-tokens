@@ -63,7 +63,8 @@ const state = {
   pastePattern: 'dot',
   pasteAmount: IDEAL_ML,
   boot: null,
-  anim: null
+  anim: null,
+  grab: null
 };
 
 const bounds = {
@@ -213,11 +214,6 @@ function updateCarry(event) {
 }
 
 function startCarry(part, event) {
-  const guard = prerequisiteOf(part.category);
-  if (guard) {
-    toast(guard);
-    return;
-  }
   cancelCarry();
   const group = makePart(part);
   const [x, y, z] = mountPoint(part.category);
@@ -247,8 +243,11 @@ function startCarry(part, event) {
 }
 
 function cancelCarry() {
-  if (!state.carrying) return;
-  disposeObject(state.carrying.group);
+  const carry = state.carrying;
+  if (!carry) return;
+  // onCancel：库里的部件直接丢掉；从安装位/桌面拿起来的放回原处
+  if (carry.onCancel) carry.onCancel();
+  else disposeObject(carry.group);
   state.carrying = null;
   hudEl.hidden = true;
   aim.classList.remove('on');
@@ -294,14 +293,23 @@ function dropLoose(carry, velocity) {
     (box.max[1] - box.min[1]) / 2,
     (box.max[2] - box.min[2]) / 2
   ];
+  // 落点决定它落在哪：在机箱投影范围内就掉进机箱，否则落在桌面上
+  const dropped = carry.group.position;
+  const overCase = installed.has('case')
+    && Math.abs(dropped.x) < CASE.width / 2
+    && Math.abs(dropped.z) < CASE.depth / 2;
+  const bodyBounds = overCase
+    ? { min: [...bounds.min], max: [...bounds.max] }
+    : { min: [-200, 0, -200], max: [200, 120, 200] };
+
   const body = createBody({
     half,
     position,
     rotation: carry.degrees,
-    velocity: [velocity.x, Math.min(0, velocity.y) - 40, velocity.z],
-    spin: [140, 0, 0]
+    velocity: [velocity.x * 0.4, Math.min(0, velocity.y) * 0.3 - 6, velocity.z * 0.4],
+    spin: [40, 0, 0]
   });
-  loose.push({ body, group: carry.group, center });
+  loose.push({ body, group: carry.group, center, bounds: bodyBounds });
   state.carrying = null;
   hudEl.hidden = true;
   aim.classList.remove('on');
@@ -334,13 +342,11 @@ function finishCarry(event) {
     hudEl.hidden = true;
     aim.classList.remove('on');
     showGhosts(null);
-    toast(`已装入 ${carry.part.name}`);
-  } else if (!installed.has('case')) {
-    cancelCarry();
-    toast('先把机箱放好，掉下去的部件才有地方落');
+    const blocked = prerequisiteOf(carry.part.category);
+    toast(blocked ? `${carry.part.name} 放好了，但${blocked}` : `已装入 ${carry.part.name}`);
   } else {
     const velocity = carry.velocity ?? new THREE.Vector3();
-    toast(verdict.reason ?? '没对准，部件掉下去了');
+    toast(`${verdict.reason ?? '没对准'}——先放在这里，等下再拖一次`);
     dropLoose(carry, velocity);
   }
   void event;
@@ -348,15 +354,36 @@ function finishCarry(event) {
 
 // ---------------------------------------------------------------- 装机
 
+/**
+ * 有没有「起作用」：不再拦着装，缺前置条件也能放上去，只是不参与评分。
+ * 返回 null 表示生效，否则返回一句说明。
+ */
 function prerequisiteOf(category) {
   if (category === 'case') return null;
-  if (!installed.has('case')) return '先把机箱拖进来，才有地方装别的';
-  // 只有「插在主板上的东西」才需要先有主板；主板自己不需要
-  if (['cpu', 'ram', 'gpu', 'storage'].includes(category) && !installed.has('motherboard')) {
-    return '先把主板装进去，才有插槽';
+  if (!installed.has('case')) return '还没有机箱，暂时不起作用';
+  if (['motherboard', 'cpu', 'ram', 'gpu', 'storage'].includes(category) && !installed.has('motherboard')) {
+    return '还没有主板，插不上去，暂时不起作用';
   }
-  if (category === 'cooler' && !installed.has('cpu')) return '先装 CPU，散热器才有地方扣';
+  if (category === 'cooler' && !installed.has('cpu')) return '还没有 CPU，散热器没得扣';
   return null;
+}
+
+/** 类别 → { effective, reason } */
+function effectiveness() {
+  const map = {};
+  for (const category of installed.keys()) {
+    const reason = prerequisiteOf(category);
+    map[category] = { effective: reason === null, reason };
+  }
+  return map;
+}
+
+/** 只有生效的部件才进评分 / 兼容性 / 温度 */
+function effectiveParts() {
+  const mask = effectiveness();
+  return Object.fromEntries([...installed]
+    .filter(([category]) => mask[category]?.effective)
+    .map(([category, entry]) => [category, entry.part]));
 }
 
 function commitInstall(part, group, degrees, from = null) {
@@ -372,8 +399,8 @@ function commitInstall(part, group, degrees, from = null) {
 
   if (part.category === 'cooler') pressPaste();
   if (part.category === 'cpu') state.paste = null;
-  // 从手里滑进插槽的那一下：0.18 秒的缓出
-  if (from && from.distanceTo(target) > 0.05) {
+  // 滑进插槽的那一下：机箱例外（整台滑过去很怪），其余 0.3 秒缓出
+  if (from && part.category !== 'case' && from.distanceTo(target) > 0.05) {
     state.anim = { group, from: from.clone(), to: target.clone(), t: 0 };
   }
   refresh();
@@ -386,9 +413,11 @@ function removeCategory(category) {
     installed.delete(category);
   }
   if (category === 'case') {
+    // 机箱拆了，里面的部件一起拆（地上的散件留着，改落到桌面）
     for (const key of [...installed.keys()]) removeCategory(key);
     hintEl.classList.remove('hidden');
-    loose.splice(0, loose.length).forEach((item) => disposeObject(item.group));
+    for (const item of loose) item.bounds = { min: [-200, 0, -200], max: [200, 120, 200] };
+    if (installed.size) toast('机箱拆下来了');
   }
   if (category === 'cpu') state.paste = null;
   if (category === 'cooler' && state.paste) state.paste = { ...state.paste, pressed: true };
@@ -475,7 +504,7 @@ function mountPasteMesh() {
 // ---------------------------------------------------------------- 开机自检
 
 function runBoot() {
-  const parts = installedParts();
+  const parts = effectiveParts();
   const result = postCheck({
     parts,
     installed: installedRecord(),
@@ -526,12 +555,18 @@ function renderParts() {
     for (const part of list) {
       const el = document.createElement('div');
       const isInstalled = installed.has(part.category);
-      el.className = `part${isInstalled ? ' installed' : ''}`;
+      const blocked = isInstalled ? prerequisiteOf(part.category) : null;
+      const badge = !isInstalled
+        ? ''
+        : blocked
+          ? '<span class="badge idle" title="' + blocked + '">未生效</span>'
+          : '<span class="badge">已装</span>';
+      el.className = `part${isInstalled ? ' installed' : ''}${blocked ? ' idle' : ''}`;
       el.dataset.id = part.id;
       el.dataset.category = part.category;
       el.innerHTML = `
         <div>
-          <div class="name">${part.name}${isInstalled ? '<span class="badge">已装</span>' : ''}</div>
+          <div class="name">${part.name}${badge}</div>
           <div class="meta">${part.vendor} · ¥${part.price.toLocaleString('zh-CN')}</div>
         </div>`;
       el.title = part.summary;
@@ -555,6 +590,10 @@ function renderDetail() {
       ? `硅脂覆盖率 ${Math.round(state.paste.coverage * 100)}% · ${state.paste.pressed ? '已压开' : '还没压开'}`
       : '还没涂硅脂'}</div>`
     : '';
+  const blocked = prerequisiteOf(part.category);
+  const idleRow = blocked
+    ? `<div class="paste-note error">未生效：${blocked}</div>`
+    : '';
   detailEl.innerHTML = `
     <h3>部件详情</h3>
     <div style="font-weight:600;margin-bottom:2px">${part.name}</div>
@@ -562,7 +601,9 @@ function renderDetail() {
     <p class="muted" style="margin:0 0 8px">${part.summary}</p>
     <table class="specs">${rows}</table>
     <div class="paste-note">安装朝向：${info.label}${info.note ? ` · ${info.note}` : ''}</div>
+    ${idleRow}
     ${pasteRow}
+    <p class="muted" style="margin:8px 0 0">按住它就能拖出来重新摆，按 Delete 直接拆下。</p>
     <button class="remove" id="btnRemove">拆下这个部件</button>`;
   detailEl.querySelector('#btnRemove').onclick = () => removeCategory(part.category);
 }
@@ -618,7 +659,7 @@ function bar(label, value) {
 }
 
 function renderThermal() {
-  const parts = installedParts();
+  const parts = effectiveParts();
   const report = thermalReport({ parts, paste: state.paste, orientations: orientations() });
   const cls = (t) => (t == null ? '' : t >= 90 ? 'hot' : t >= 75 ? 'warm' : 'cool');
   const boot = state.boot;
@@ -641,14 +682,20 @@ function renderThermal() {
 }
 
 function renderScore() {
-  const parts = installedParts();
+  const parts = effectiveParts();
   const score = scoreBuild(parts);
   const issues = checkCompatibility(parts);
   const totalPrice = Object.values(parts).reduce((sum, p) => sum + p.price, 0);
-  const issueRows = issues
-    .filter((i) => i.level !== 'info' || !installed.size)
-    .map((i) => `<li class="${i.level}">${i.text}</li>`)
-    .join('') || '<li class="info">所有检查通过，可以开机。</li>';
+  const missing = CATEGORIES.filter((c) => !parts[c.id]).map((c) => c.label);
+  const idleCount = [...installed.keys()].filter((category) => !parts[category]).length;
+  const issueRows = [
+    ...issues.filter((i) => i.level !== 'info').map((i) => `<li class="${i.level}">${i.text}</li>`),
+    missing.length ? `<li class="info">还缺：${missing.join('、')}</li>` : '',
+    idleCount ? `<li class="warn">有 ${idleCount} 件装上了但未生效（缺前置条件）</li>` : '',
+    !missing.length && !idleCount && !issues.some((i) => i.level !== 'info')
+      ? '<li class="info">所有检查通过，可以开机。</li>'
+      : ''
+  ].join('');
 
   scoreEl.innerHTML = `
     <h3>综合评估</h3>
@@ -725,7 +772,109 @@ partsEl.addEventListener('pointerdown', (event) => {
   startCarry(part, event);
 });
 
+/** 点中机箱里的某个部件：优先非机箱 */
+function hitPart(event) {
+  pointerToNdc(event);
+  raycaster.setFromCamera(pointer, world.camera);
+  const targets = [
+    ...[...installed.values()].map((v) => v.group),
+    ...loose.map((item) => item.group)
+  ];
+  const hits = raycaster.intersectObjects(targets, true);
+  let node = null;
+  let fallback = null;
+  for (const hit of hits) {
+    let n = hit.object;
+    while (n && !n.userData?.partId) n = n.parent;
+    if (!n) continue;
+    if (n.userData.category !== 'case') {
+      node = n;
+      break;
+    }
+    fallback ??= n;
+  }
+  return node ?? fallback;
+}
+
+/** 把已经装好的部件重新拿起来拖（移动 / 换位置 / 丢掉） */
+function beginGrab(category, event) {
+  cancelCarry();
+  const entry = installed.get(category);
+  if (!entry) return;
+  const { part, group, degrees } = entry;
+  installed.delete(category);
+  if (category === 'cooler' && state.paste) state.paste = { ...state.paste, pressed: true };
+  if (state.selected === category) state.selected = null;
+  state.carrying = {
+    part, group, degrees,
+    onCancel: () => commitInstall(part, group, degrees),
+    distance: Infinity,
+    verdict: null,
+    moved: true,
+    lastPointer: { x: event.clientX, y: event.clientY, t: performance.now() },
+    velocity: new THREE.Vector3()
+  };
+  hudEl.hidden = false;
+  hudOri.textContent = `${degrees}°`;
+  showGhosts(category);
+  tintGhosts(category, false);
+  refresh();
+  updateCarry(event);
+}
+
+function beginGrabLoose(item, event) {
+  cancelCarry();
+  const index = loose.indexOf(item);
+  if (index < 0) return;
+  loose.splice(index, 1);
+  const part = partById(item.group.userData.partId);
+  if (!part) return;
+  const degrees = normDeg(item.body.rotation);
+  const saved = {
+    position: [...item.body.position],
+    rotation: item.body.rotation,
+    groupPosition: item.group.position.clone(),
+    groupRotation: item.group.rotation.x
+  };
+  item.group.rotation.x = THREE.MathUtils.degToRad(degrees);
+  state.carrying = {
+    part, group: item.group, degrees,
+    onCancel: () => {
+      item.body.position = saved.position;
+      item.body.rotation = saved.rotation;
+      item.body.velocity = [0, 0, 0];
+      item.body.spin = [0, 0, 0];
+      item.body.resting = true;
+      item.group.position.copy(saved.groupPosition);
+      item.group.rotation.x = saved.groupRotation;
+      loose.push(item);
+    },
+    distance: Infinity,
+    verdict: null,
+    moved: true,
+    lastPointer: { x: event.clientX, y: event.clientY, t: performance.now() },
+    velocity: new THREE.Vector3()
+  };
+  hudEl.hidden = false;
+  hudOri.textContent = `${degrees}°`;
+  showGhosts(part.category);
+  tintGhosts(part.category, false);
+  refresh();
+  updateCarry(event);
+}
+
 document.addEventListener('pointermove', (event) => {
+  // 按住机箱里的部件拖动 = 把它拿起来
+  if (state.grab && !state.carrying) {
+    if (Math.hypot(event.clientX - state.grab.x, event.clientY - state.grab.y) > 4) {
+      const target = state.grab.target;
+      state.grab = null;
+      if (target.loose) beginGrabLoose(target.loose, event);
+      else beginGrab(target.category, event);
+      return;
+    }
+  }
+
   const carry = state.carrying;
   if (!carry) return;
   if (carry.lastPointer) {
@@ -762,34 +911,27 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-// 点击选择已装部件
+// 点击选择已装部件；按住拖动则把它拿起来（移动 / 拆下 / 丢掉）
 const down = new THREE.Vector2();
 viewport.addEventListener('pointerdown', (event) => {
+  if (event.button !== 0 || state.carrying) return;
   down.set(event.clientX, event.clientY);
+  const node = hitPart(event);
+  if (!node) {
+    state.grab = null;
+    return;
+  }
+  const category = node.userData.category;
+  const looseItem = loose.find((item) => item.group === node || item.group.getObjectById(node.id));
+  state.grab = { x: event.clientX, y: event.clientY, target: { category, loose: looseItem ?? null } };
 });
 viewport.addEventListener('pointerup', (event) => {
+  const grab = state.grab;
+  state.grab = null;
   if (event.button !== 0 || state.carrying) return;
+  if (!grab) return;
   if (Math.hypot(event.clientX - down.x, event.clientY - down.y) > 4) return;
-  pointerToNdc(event);
-  raycaster.setFromCamera(pointer, world.camera);
-  const groups = [...installed.values()].map((v) => v.group);
-  const hits = raycaster.intersectObjects(groups, true);
-  if (!hits.length) return;
-  let node = null;
-  let fallback = null;
-  for (const hit of hits) {
-    let n = hit.object;
-    while (n && !n.userData?.partId) n = n.parent;
-    if (!n) continue;
-    if (n.userData.category !== 'case') {
-      node = n;
-      break;
-    }
-    fallback ??= n;
-  }
-  node ??= fallback;
-  if (!node) return;
-  state.selected = node.userData.category;
+  state.selected = grab.target.loose ? null : grab.target.category;
   refresh();
 });
 
@@ -813,7 +955,7 @@ world.onFrame((time) => {
 
   for (const item of loose) {
     if (item.body.resting) continue;
-    stepBody(item.body, dt, bounds);
+    stepBody(item.body, dt, item.bounds ?? bounds);
     const rot = THREE.MathUtils.degToRad(item.body.rotation);
     const offset = item.center.clone().applyAxisAngle(X_AXIS, rot);
     item.group.position.set(
@@ -827,7 +969,7 @@ world.onFrame((time) => {
 
   if (state.anim) {
     const anim = state.anim;
-    anim.t = Math.min(1, anim.t + dt * 5.5);
+    anim.t = Math.min(1, anim.t + dt * 3.4);
     const k = 1 - (1 - anim.t) ** 3;
     anim.group.position.lerpVectors(anim.from, anim.to, k);
     active = anim.t < 1;
@@ -1018,3 +1160,50 @@ if (new URLSearchParams(location.search).has('selftest')) {
   setTimeout(runSelfTest, 120);
 }
 
+
+// 自由摆放相关的补充自检：拿起来移动、丢到桌面、缺前置条件只是「不生效」
+function runFreePlacementTest() {
+  const results = [];
+  const check = (name, ok, detail = '') => {
+    results.push({ name, ok });
+    console.log(`[selftest] ${ok ? 'ok  ' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`);
+  };
+  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+
+  clearAll();
+  dragInstall(byCategory.case);
+  dragInstall(byCategory.gpu);
+  check('没有主板也能把显卡放上去', installed.has('gpu'));
+  check('但显卡此刻不生效', effectiveParts().gpu === undefined);
+  check('面板给得出原因', Boolean(prerequisiteOf('gpu')));
+
+  dragInstall(byCategory.motherboard);
+  check('补上主板后显卡自动生效', Boolean(effectiveParts().gpu));
+
+  // 拿起来 → 放回原处
+  beginGrab('gpu', { clientX: 400, clientY: 300 });
+  check('已装部件能被拿起来', !installed.has('gpu') && state.carrying?.part.category === 'gpu');
+  check('拿起来时挂上了「取消即归位」', typeof state.carrying.onCancel === 'function');
+  check('先装个电源好测 Esc', dragInstall(byCategory.psu));
+  beginGrab('psu', { clientX: 400, clientY: 300 });
+  cancelCarry();
+  check('Esc 取消会把部件放回原位', installed.has('psu'));
+
+  // 拿起来 → 直接丢到桌面上
+  beginGrab('gpu', { clientX: 400, clientY: 300 });
+  state.carrying.group.position.set(60, 10, 0);
+  state.carrying.distance = 60;
+  state.carrying.verdict = null;
+  finishCarry(null);
+  check('丢得远就落在桌面上', loose.length === 1 && loose[0].bounds.min[0] < -100);
+  check('桌面散件可以被重新拿起', (() => { beginGrabLoose(loose[0], { clientX: 10, clientY: 10 }); return Boolean(state.carrying); })());
+  cancelCarry();
+  check('取消后散件回到桌面', loose.length === 1);
+
+  const failed = results.filter((r) => !r.ok);
+  console.log(`[selftest] ${failed.length ? 'FREEPLACE_FAIL' : 'FREEPLACE_PASS'} (${results.length - failed.length}/${results.length})`);
+}
+
+if (new URLSearchParams(location.search).has('selftest')) {
+  setTimeout(runFreePlacementTest, 600);
+}
