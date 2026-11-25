@@ -13,7 +13,7 @@
       <span>装机工作台<small>PC BUILDER</small></span>
       <span class="tag">交互原型</span>
     </div>
-    <div class="hint">左侧拖拽部件到机箱 · 左键旋转 / 滚轮缩放 / 右键平移</div>
+    <div class="hint">拖部件到插槽附近才对得上 · R 旋转 · 左键转视角 / 滚轮缩放</div>
     <div class="quick">
       <span class="fps" id="fpsChip">– fps</span>
       <span class="divider">·</span>
@@ -32,9 +32,16 @@
     <section class="viewport" id="viewport" aria-label="三维装机工作区">
       <div class="stage-label"><span class="live-dot"></span> 装配视图 <small>REALTIME 3D</small></div>
       <div class="drop-hint" id="dropHint">把「机箱」拖进来开始装机</div>
+      <div class="hud" id="hud" hidden>
+        <div class="hud-row"><span class="hud-key">朝向</span><span id="hudOri">0°</span></div>
+        <div class="hud-row"><span class="hud-key">对准</span><span id="hudAim">—</span></div>
+        <div class="hud-tip">R 旋转 90° · 拖到插槽附近松手</div>
+      </div>
       <div class="toolbar">
+        <button id="btnRotate" title="拖拽时旋转 90°（快捷键 R）">⟳ 旋转</button>
         <button id="btnView" title="恢复默认相机位置">↺ 重置视角</button>
         <button id="btnReset" title="移除所有已安装部件">清空配置</button>
+        <button id="btnBoot" title="跑一遍开机自检">⚡ 开机自检</button>
         <button id="btnAuto" class="primary">＋ 示例装机</button>
       </div>
     </section>
@@ -42,6 +49,8 @@
     <aside class="panel inspector">
       <div class="panel-title"><span>配置概览</span><span class="section-index">02 / INSPECTOR</span></div>
       <div class="card" id="detailCard"></div>
+      <div class="card" id="pasteCard"></div>
+      <div class="card" id="thermalCard"></div>
       <div class="card" id="scoreCard"></div>
       <div class="card" id="bomCard"></div>
     </aside>

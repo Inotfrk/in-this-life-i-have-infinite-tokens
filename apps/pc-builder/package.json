@@ -10,7 +10,7 @@
     "start": "npm run build && electron .",
     "start:smoke": "npm run build && SMOKE=1 electron . --no-sandbox",
     "test": "node --test",
-    "check:syntax": "node --check main.js && node --check src/app.js && node --check src/scene.js && node --check src/models.js && node --check src/catalog.js && node --check src/compat.js && node --check src/perf.js && node --check src/resources.js"
+    "check:syntax": "node --check main.js && node --check src/app.js && node --check src/scene.js && node --check src/models.js && node --check src/layout.js && node --check src/assembly.js && node --check src/paste.js && node --check src/physics.js && node --check src/catalog.js && node --check src/compat.js && node --check src/perf.js && node --check src/resources.js"
   },
   "dependencies": {
     "three": "^0.170.0"
