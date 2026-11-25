@@ -430,7 +430,20 @@ function finishCarry(event) {
     hideGuide();
     const blocked = prerequisiteOf(carry.part.category);
     toast(blocked ? `${carry.part.name} 放好了，但${blocked}` : `已装入 ${carry.part.name}`);
+  } else if (carry.fromWorld) {
+    // 从机箱里 / 桌面上拿起来的：放歪就是「放回部件库」——直接从世界删掉
+    disposeObject(carry.group);
+    state.carrying = null;
+    hudEl.hidden = true;
+    aim.classList.remove('on');
+    showGhosts(null);
+    setDragging(false);
+    hideGuide();
+    state.selected = null;
+    toast('已放回部件库');
+    refresh();
   } else {
+    // 从部件库里新拖出来的：没对准就按物理掉在机箱里 / 桌面上，等下再拖
     const velocity = carry.velocity ?? new THREE.Vector3();
     toast(`${verdict.reason ?? '没对准'}——先放在这里，等下再拖一次`);
     dropLoose(carry, velocity);
@@ -691,8 +704,8 @@ function renderDetail() {
     <div class="paste-note">安装朝向：${info.label}${info.note ? ` · ${info.note}` : ''}</div>
     ${idleRow}
     ${pasteRow}
-    <p class="muted" style="margin:8px 0 0">按住它就能拖出来重新摆，按 Delete 直接拆下。</p>
-    <button class="remove" id="btnRemove">拆下这个部件</button>`;
+    <p class="muted" style="margin:8px 0 0">按住它就能拖出来重新摆；拖到别处松手 = 放回部件库（Delete 同效）。</p>
+    <button class="remove" id="btnRemove">↩ 放回部件库</button>`;
   detailEl.querySelector('#btnRemove').onclick = () => removeCategory(part.category);
 }
 
@@ -912,6 +925,7 @@ function beginGrab(category, event) {
   if (state.selected === category) state.selected = null;
   state.carrying = {
     part, group, degrees,
+    fromWorld: true,
     onCancel: () => commitInstall(part, group, degrees),
     distance: Infinity,
     verdict: null,
@@ -945,6 +959,7 @@ function beginGrabLoose(item, event) {
   item.group.rotation.x = THREE.MathUtils.degToRad(degrees);
   state.carrying = {
     part, group: item.group, degrees,
+    fromWorld: true,
     onCancel: () => {
       item.body.position = saved.position;
       item.body.rotation = saved.rotation;
@@ -1544,16 +1559,31 @@ function runFreePlacementTest() {
   check('Esc 取消会把部件放回原位', installed.has('psu'));
   check('取消后视角控制恢复', world.controls.enabled === true);
 
-  // 拿起来 → 直接丢到桌面上
+  // 已装的部件拖出去放歪 → 放回部件库（从世界删除，不再掉在桌上）
   beginGrab('gpu', { clientX: 400, clientY: 300 });
   state.carrying.group.position.set(60, 10, 0);
   state.carrying.distance = 60;
   state.carrying.verdict = null;
   finishCarry(null);
-  check('丢得远就落在桌面上', loose.length === 1 && loose[0].bounds.min[0] < -100);
+  check('拖出去放歪 = 放回部件库', !installed.has('gpu') && loose.length === 0);
+
+  // 从部件库新拖出来、没对准的才会按物理掉在外面
+  startCarry(byCategory.ram, null);
+  state.carrying.moved = true;
+  state.carrying.group.position.set(60, 20, 0);
+  state.carrying.distance = 60;
+  state.carrying.verdict = null;
+  finishCarry(null);
+  check('新部件没对准会掉在桌面上', loose.length === 1 && loose[0].bounds.min[0] < -100);
   check('桌面散件可以被重新拿起', (() => { beginGrabLoose(loose[0], { clientX: 10, clientY: 10 }); return Boolean(state.carrying); })());
   cancelCarry();
   check('取消后散件回到桌面', loose.length === 1);
+  beginGrabLoose(loose[0], { clientX: 10, clientY: 10 });
+  state.carrying.group.position.set(80, 12, 0);
+  state.carrying.distance = 80;
+  state.carrying.verdict = null;
+  finishCarry(null);
+  check('散件拖出去也能放回部件库', loose.length === 0);
 
   const failed = results.filter((r) => !r.ok);
   console.log(`[selftest] ${failed.length ? 'FREEPLACE_FAIL' : 'FREEPLACE_PASS'} (${results.length - failed.length}/${results.length})`);
