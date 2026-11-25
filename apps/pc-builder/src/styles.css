@@ -52,3 +52,29 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1
 
 .badge.idle{background:#faf3df;color:#967324}
 .part.idle{background:#fdfbf3}
+
+/* ---- 硅脂教程 ---- */
+.tutorial{position:absolute;left:50%;transform:translateX(-50%);bottom:22px;width:min(420px,calc(100% - 44px));z-index:3;background:#16181dee;border:1px solid #2f343d;border-radius:12px;padding:14px 16px;color:#e9e7e0;backdrop-filter:blur(8px);box-shadow:0 10px 30px #00000055}
+.tutorial[hidden]{display:none}
+.tutorial-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.tutorial-kicker{font-size:10px;letter-spacing:1px;color:#e0a458;font-weight:600}
+.tutorial-progress{margin-left:auto;font-size:10px;color:#98a0ad;font-variant-numeric:tabular-nums}
+.tutorial-close{border:none;background:transparent;color:#8d94a1;padding:0 2px;font-size:12px;border-radius:4px}
+.tutorial-close:hover{color:#fff;background:#262b33}
+.tutorial h4{margin:0 0 6px;font-size:13px;font-weight:650;color:#fff}
+.tutorial p{margin:0 0 6px;font-size:11px;line-height:1.75;color:#c9cbc6}
+.tutorial .tutorial-tip{color:#8f9aa6;font-size:10px;border-left:2px solid #e0a45855;padding-left:8px;margin-bottom:10px}
+.tutorial-dots{display:flex;gap:5px;margin:2px 0 10px}
+.tutorial-dots i{width:7px;height:7px;border-radius:50%;background:#3a3f48;display:block}
+.tutorial-dots i.active{background:#e0a458}
+.tutorial-dots i.done{background:#4ade80}
+.tutorial-actions{display:flex;gap:8px}
+.tutorial-actions button{flex:1;font-size:11px;padding:7px 10px;background:#232730;border-color:#333945;color:#dfe2e6}
+.tutorial-actions button:hover{background:#2b303a;border-color:#414854}
+.tutorial-actions button.primary{background:#e0a458;border-color:#e0a458;color:#221a10;font-weight:600}
+.tutorial-actions button.primary:hover{background:#eebd7d}
+.tutorial-actions button:disabled{opacity:.4;cursor:not-allowed}
+@keyframes tutorial-pulse{0%{box-shadow:0 0 0 0 #e0a45877}70%{box-shadow:0 0 0 7px #e0a45800}100%{box-shadow:0 0 0 0 #e0a45800}}
+.tutorial-target{outline:2px solid #e0a458;outline-offset:3px;border-radius:10px;animation:tutorial-pulse 1.6s ease-out 2}
+.tutorial-link{width:100%;margin-top:10px;font-size:10px;padding:7px;background:#f7f4ec;border-color:#e6dcc7;color:#8a6a2f;border-radius:8px}
+.tutorial-link:hover{background:#f3ecdc;border-color:#d9c9a6}
