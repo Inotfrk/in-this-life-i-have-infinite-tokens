@@ -50,3 +50,5 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1
 .boot-list li.error{background:#fceee9;color:#a34334}
 .boot-list li.warn{background:#faf3df;color:#967324}
 
+.badge.idle{background:#faf3df;color:#967324}
+.part.idle{background:#fdfbf3}
