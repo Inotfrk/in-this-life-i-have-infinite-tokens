@@ -32,6 +32,12 @@
     <section class="viewport" id="viewport" aria-label="三维装机工作区">
       <div class="stage-label"><span class="live-dot"></span> 装配视图 <small>REALTIME 3D</small></div>
       <div class="drop-hint" id="dropHint">把「机箱」拖进来开始装机</div>
+      <div class="part-menu" id="partMenu" hidden>
+        <div class="part-menu-title" id="partMenuTitle">部件</div>
+        <button data-act="grab">✋ 拿起移动</button>
+        <button data-act="remove" class="danger">🗑 拆下</button>
+        <button data-act="close">✕ 取消</button>
+      </div>
       <div class="hud" id="hud" hidden>
         <div class="hud-row"><span class="hud-key">朝向</span><span id="hudOri">0°</span></div>
         <div class="hud-row"><span class="hud-key">对准</span><span id="hudAim">—</span></div>

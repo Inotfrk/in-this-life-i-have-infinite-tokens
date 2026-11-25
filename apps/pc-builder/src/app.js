@@ -15,7 +15,7 @@ import { makePart } from './models.js';
 import { disposeObject } from './resources.js';
 import { checkCompatibility } from './compat.js';
 import { scoreBuild } from './perf.js';
-import { BOARD, BOARD_FEATURES, CASE, MOUNTS, PART_BOXES, mountPoint } from './layout.js';
+import { BOARD, BOARD_FEATURES, CASE, MOUNTS, PART_BOXES, mountPoint, partBox } from './layout.js';
 import { normDeg, orientationInfo, postCheck, seatAttempt, thermalReport } from './assembly.js';
 import { IDEAL_ML, PATTERNS, evaluatePaste, makePasteMesh, usablePaste } from './paste.js';
 import { createBody, settleAll, stepBody } from './physics.js';
@@ -56,6 +56,61 @@ try {
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
 const X_AXIS = new THREE.Vector3(1, 0, 0);
+
+/** 拖拽时的引导虚线：从部件连到它要去的安装位，绿=能装、橙=还不行 */
+const guideMat = new THREE.LineDashedMaterial({
+  color: 0x4ade80, dashSize: 1.0, gapSize: 0.7, transparent: true, opacity: 0.95,
+  depthTest: false, depthWrite: false
+});
+const guide = new THREE.Line(
+  new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3()]),
+  guideMat
+);
+guide.frustumCulled = false;
+guide.renderOrder = 10;
+guide.visible = false;
+world.scene.add(guide);
+
+/** 目标位置的小圆环：告诉用户「要落到这里」 */
+const guideRing = new THREE.Mesh(
+  new THREE.TorusGeometry(1.4, 0.08, 6, 32),
+  new THREE.MeshBasicMaterial({ color: 0x4ade80, transparent: true, opacity: 0.95, depthTest: false, depthWrite: false })
+);
+guideRing.renderOrder = 10;
+guideRing.visible = false;
+world.scene.add(guideRing);
+
+function updateGuide(category, ok) {
+  const carry = state.carrying;
+  if (!carry) return hideGuide();
+  const [mx, my, mz] = mountPoint(category);
+  const box = boxCenter(category);
+  const rot = THREE.MathUtils.degToRad(carry.degrees);
+  const from = box.clone().applyAxisAngle(X_AXIS, rot).add(carry.group.position);
+  const to = new THREE.Vector3(mx, my, mz);
+  const pos = guide.geometry.attributes.position;
+  pos.setXYZ(0, from.x, from.y, from.z);
+  pos.setXYZ(1, to.x, to.y, to.z);
+  pos.needsUpdate = true;
+  guide.geometry.computeBoundingSphere();
+  guide.computeLineDistances();
+  const color = ok ? 0x4ade80 : 0xe0a458;
+  guide.material.color.set(color);
+  guideRing.material.color.set(color);
+  guide.visible = true;
+
+  // 机箱落在桌面上，环躺平；其余部件贴在主板平面上，环立起来
+  guideRing.position.copy(to);
+  guideRing.rotation.set(category === 'case' ? Math.PI / 2 : 0, category === 'case' ? 0 : Math.PI / 2, 0);
+  guideRing.visible = true;
+  world.invalidate();
+}
+
+function hideGuide() {
+  guide.visible = false;
+  guideRing.visible = false;
+  world.invalidate();
+}
 
 /** 类别 → { part, group, degrees } */
 const installed = new Map();
@@ -158,11 +213,18 @@ function tintGhosts(category, ok) {
 
 // ---------------------------------------------------------------- 拖拽
 
-/** 拖拽平面：主板类部件在主板前面的一块竖直平面，机箱是桌面 */
+/**
+ * 拖拽平面：主板类部件贴着主板那一层（只往玻璃方向让 0.8cm，免得和 PCB 打架），
+ * 太厚的部件（塔冷、长显卡）会被机箱玻璃挡住，所以按它的包围盒算一个安全偏移。
+ * 这样拖的时候部件是在「安装面」上滑，而不是浮在半空——不会穿模，也看得清要往哪挪。
+ */
 function dragPlane(category) {
   if (category === 'case') return new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
-  const x = mountPoint(category)[0] - 7.5;
-  return new THREE.Plane(new THREE.Vector3(1, 0, 0), -x);
+  const box = partBox(category, null);
+  const mountX = mountPoint(category)[0];
+  const limitOffset = (CASE.xLeft + 0.6) - box.min[0] - mountX;
+  const offset = Math.max(-0.8, limitOffset);
+  return new THREE.Plane(new THREE.Vector3(1, 0, 0), -(mountX + offset));
 }
 
 const pointerToNdc = (event) => {
@@ -170,6 +232,11 @@ const pointerToNdc = (event) => {
   pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
   pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
 };
+
+/** 拖拽 / 拿取时锁住轨道控制，免得一边移动部件一边把视角甩走 */
+function setDragging(flag) {
+  world.controls.enabled = !flag;
+}
 
 function carryDistance(carry) {
   const [mx, my, mz] = mountPoint(carry.part.category);
@@ -219,6 +286,7 @@ function updateCarry(event) {
   aim.style.borderColor = verdict.ok ? '#4ade80' : '#e0a458';
 
   tintGhosts(carry.part.category, verdict.ok);
+  updateGuide(carry.part.category, verdict.ok);
   world.invalidate();
 }
 
@@ -242,6 +310,7 @@ function startCarry(part, event) {
     lastPointer: event ? { x: event.clientX, y: event.clientY, t: performance.now() } : null,
     velocity: new THREE.Vector3()
   };
+  setDragging(true);
   hudEl.hidden = false;
   hudOri.textContent = '0°';
   hudAim.textContent = '拖到插槽附近';
@@ -258,6 +327,8 @@ function cancelCarry() {
   if (carry.onCancel) carry.onCancel();
   else disposeObject(carry.group);
   state.carrying = null;
+  setDragging(false);
+  hideGuide();
   hudEl.hidden = true;
   aim.classList.remove('on');
   showGhosts(null);
@@ -284,6 +355,7 @@ function rotateCarry(step = 90) {
   hudAim.textContent = verdict.ok ? '已对准，松手装入' : verdict.reason;
   hudAim.className = verdict.ok ? 'ok' : 'bad';
   tintGhosts(carry.part.category, verdict.ok);
+  updateGuide(carry.part.category, verdict.ok);
   world.invalidate();
 }
 
@@ -321,6 +393,8 @@ function dropLoose(carry, velocity) {
   });
   loose.push({ body, group: carry.group, center, bounds: bodyBounds });
   state.carrying = null;
+  setDragging(false);
+  hideGuide();
   hudEl.hidden = true;
   aim.classList.remove('on');
   showGhosts(null);
@@ -352,6 +426,8 @@ function finishCarry(event) {
     hudEl.hidden = true;
     aim.classList.remove('on');
     showGhosts(null);
+    setDragging(false);
+    hideGuide();
     const blocked = prerequisiteOf(carry.part.category);
     toast(blocked ? `${carry.part.name} 放好了，但${blocked}` : `已装入 ${carry.part.name}`);
   } else {
@@ -409,6 +485,11 @@ function commitInstall(part, group, degrees, from = null) {
 
   if (part.category === 'cooler') pressPaste();
   if (part.category === 'cpu') state.paste = null;
+  // 上一段的滑入动画还没走完就换人了：先把上一件直接归位，别停在半路
+  if (state.anim && state.anim.group !== group) {
+    state.anim.group.position.copy(state.anim.to);
+    state.anim = null;
+  }
   // 滑进插槽的那一下：机箱例外（整台滑过去很怪），其余 0.3 秒缓出
   if (from && part.category !== 'case' && from.distanceTo(target) > 0.05) {
     state.anim = { group, from: from.clone(), to: target.clone(), t: 0 };
@@ -838,6 +919,7 @@ function beginGrab(category, event) {
     lastPointer: { x: event.clientX, y: event.clientY, t: performance.now() },
     velocity: new THREE.Vector3()
   };
+  setDragging(true);
   hudEl.hidden = false;
   hudOri.textContent = `${degrees}°`;
   showGhosts(category);
@@ -879,6 +961,7 @@ function beginGrabLoose(item, event) {
     lastPointer: { x: event.clientX, y: event.clientY, t: performance.now() },
     velocity: new THREE.Vector3()
   };
+  setDragging(true);
   hudEl.hidden = false;
   hudOri.textContent = `${degrees}°`;
   showGhosts(part.category);
@@ -927,6 +1010,7 @@ window.addEventListener('keydown', (event) => {
     return;
   }
   if (event.key === 'Escape') {
+    hidePartMenu();
     cancelCarry();
     return;
   }
@@ -940,6 +1024,7 @@ const down = new THREE.Vector2();
 viewport.addEventListener('pointerdown', (event) => {
   if (event.button !== 0 || state.carrying) return;
   down.set(event.clientX, event.clientY);
+  hidePartMenu();
   const node = hitPart(event);
   if (!node) {
     state.grab = null;
@@ -948,15 +1033,92 @@ viewport.addEventListener('pointerdown', (event) => {
   const category = node.userData.category;
   const looseItem = loose.find((item) => item.group === node || item.group.getObjectById(node.id));
   state.grab = { x: event.clientX, y: event.clientY, target: { category, loose: looseItem ?? null } };
+  // 按在部件上就别转视角了（要转视角请按住空白处）
+  setDragging(true);
+  hidePartMenu();
 });
 viewport.addEventListener('pointerup', (event) => {
   const grab = state.grab;
   state.grab = null;
-  if (event.button !== 0 || state.carrying) return;
+  if (event.button !== 0 || state.carrying) {
+    setDragging(false);
+    return;
+  }
   if (!grab) return;
-  if (Math.hypot(event.clientX - down.x, event.clientY - down.y) > 4) return;
-  state.selected = grab.target.loose ? null : grab.target.category;
-  refresh();
+  if (Math.hypot(event.clientX - down.x, event.clientY - down.y) > 4) {
+    setDragging(false);
+    return;
+  }
+  setDragging(false);
+  if (grab.target.loose) {
+    // 放在外面的散件：也能弹菜单（拿起 / 收走）
+    showPartMenu(null, event, grab.target.loose);
+    return;
+  }
+  // 点已装部件 → 弹出「拿起移动 / 拆下 / 取消」菜单
+  showPartMenu(grab.target.category, event);
+});
+
+// ---------------------------------------------------------------- 部件菜单（点击 → 拆下 / 移动）
+
+const menuEl = document.getElementById('partMenu');
+const menuTitle = document.getElementById('partMenuTitle');
+let menuTarget = null;
+let menuLoose = null;
+let menuPoint = null;
+
+function showPartMenu(category, event, looseItem = null) {
+  const entry = category ? installed.get(category) : null;
+  const part = entry?.part ?? (looseItem ? partById(looseItem.group.userData.partId) : null);
+  if (!part) return;
+  menuTarget = category;
+  menuLoose = looseItem;
+  menuPoint = { clientX: event.clientX, clientY: event.clientY };
+  if (entry) {
+    state.selected = category;
+    renderDetail();
+    drawSelection();
+  }
+  menuTitle.textContent = part.name + (looseItem ? '（放在外面）' : '');
+  const rect = viewport.getBoundingClientRect();
+  menuEl.hidden = false;
+  const left = Math.min(Math.max(8, event.clientX - rect.left + 10), rect.width - 170);
+  const top = Math.min(Math.max(8, event.clientY - rect.top + 10), rect.height - 150);
+  menuEl.style.left = `${left}px`;
+  menuEl.style.top = `${top}px`;
+}
+
+function hidePartMenu() {
+  menuEl.hidden = true;
+  menuTarget = null;
+  menuLoose = null;
+}
+
+menuEl.querySelectorAll('[data-act]').forEach((btn) => {
+  btn.onclick = () => {
+    const act = btn.dataset.act;
+    const category = menuTarget;
+    const looseItem = menuLoose;
+    const point = menuPoint;
+    hidePartMenu();
+    if (act === 'close') return;
+    if (act === 'remove') {
+      if (looseItem) {
+        const index = loose.indexOf(looseItem);
+        if (index >= 0) loose.splice(index, 1);
+        disposeObject(looseItem.group);
+        toast('已把外面的部件收走');
+        renderScore();
+        renderThermal();
+      } else if (category) {
+        removeCategory(category);
+        toast('已拆下');
+      }
+    } else if (act === 'grab') {
+      if (looseItem) beginGrabLoose(looseItem, point ?? { clientX: 0, clientY: 0 });
+      else if (category) beginGrab(category, point ?? { clientX: 0, clientY: 0 });
+    }
+  };
 });
 
 // ---------------------------------------------------------------- 每帧
@@ -1161,6 +1323,48 @@ if (params.has('parts')) {
   state.selected = null;
   refresh();
 }
+// ?menu=gpu 直接弹出部件菜单（截图 / 验收用）
+if (params.has('menu')) {
+  const category = params.get('menu');
+  if (installed.has(category)) {
+    const rect = viewport.getBoundingClientRect();
+    showPartMenu(category, { clientX: rect.left + rect.width * 0.45, clientY: rect.top + rect.height * 0.55 });
+  }
+}
+// ?carry=gpu&carryAt=x,y,z 直接把某个部件拿在手上（截图 / 验收用）
+if (params.has('carry')) {
+  const part = partById(params.get('carry')) ?? PARTS.find((p) => p.category === params.get('carry'));
+  if (part) {
+    startCarry(part, null);
+    const carry = state.carrying;
+    if (carry) {
+      carry.moved = true;
+      const at = params.get('carryAt');
+      if (at) {
+        const [x, y, z] = at.split(',').map(Number);
+        carry.group.position.set(x, y, z);
+      } else {
+        carry.group.position.set(...mountPoint(part.category));
+        carry.group.position.x -= 6;
+      }
+      carry.distance = carryDistance(carry);
+      carry.verdict = seatAttempt({
+        category: part.category,
+        degrees: carry.degrees,
+        distance: carry.distance,
+        installed: installedRecord(),
+        part
+      });
+      carry.group.rotation.x = THREE.MathUtils.degToRad(carry.degrees);
+      tintGhosts(part.category, carry.verdict.ok);
+      updateGuide(part.category, carry.verdict.ok);
+      hudOri.textContent = `${carry.degrees}°`;
+      hudAim.textContent = carry.verdict.ok ? '已对准，松手装入' : carry.verdict.reason;
+      hudAim.className = carry.verdict.ok ? 'ok' : 'bad';
+      refresh();
+    }
+  }
+}
 // ?tutorial=1 直接打开硅脂教程（截图 / 演示用）；?tutorial=3 打开第 4 步
 if (params.has('tutorial')) {
   state.tutorial.autoShown = true;
@@ -1331,11 +1535,14 @@ function runFreePlacementTest() {
   // 拿起来 → 放回原处
   beginGrab('gpu', { clientX: 400, clientY: 300 });
   check('已装部件能被拿起来', !installed.has('gpu') && state.carrying?.part.category === 'gpu');
+  check('拖拽时轨道控制被锁住', world.controls.enabled === false);
+  check('拖拽时出现引导虚线', guide.visible === true);
   check('拿起来时挂上了「取消即归位」', typeof state.carrying.onCancel === 'function');
   check('先装个电源好测 Esc', dragInstall(byCategory.psu));
   beginGrab('psu', { clientX: 400, clientY: 300 });
   cancelCarry();
   check('Esc 取消会把部件放回原位', installed.has('psu'));
+  check('取消后视角控制恢复', world.controls.enabled === true);
 
   // 拿起来 → 直接丢到桌面上
   beginGrab('gpu', { clientX: 400, clientY: 300 });

@@ -213,7 +213,7 @@ export const PART_BOXES = {
   cpu: { min: [-0.5, -2.0, -2.0], max: [0.02, 2.0, 2.0] },
   cooler: { min: [-16.5, -7.5, -8.1], max: [0.1, 7.5, 8.1] },
   ram: { min: [-3.5, 0, -0.35], max: [0.16, 13.3, 0.35] },
-  gpu: { min: [-13.2, -2.7, -0.4], max: [0.1, 2.7, 33.6] },
+  gpu: { min: [-13.2, -5.4, -0.4], max: [0.1, 0.6, 33.6] },
   storage: { min: [-0.6, -1.1, -4.0], max: [0.05, 1.1, 4.0] },
   psu: { min: [-4.3, -7.5, -8.0], max: [4.3, 7.5, 8.0] },
   case: { min: [-CASE.width / 2, 0, -CASE.depth / 2], max: [CASE.width / 2, CASE.height, CASE.depth / 2] }

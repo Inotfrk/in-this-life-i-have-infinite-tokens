@@ -13,9 +13,15 @@ const SLEEP_SPEED = 6;     // cm/s，低于这个速度且贴着地面就判定�
 const MAX_SPEED = 900;
 
 /** 旋转 90° 整数倍之后的世界半长 */
+/**
+ * 任意角度下的世界 AABB 半长（只绕 X 轴转）。
+ * 以前这里把角度取整到 90° 的倍数，斜着躺的部件会「陷进」地板——现在按真实投影算。
+ */
 export function orientedHalfExtents(half, degrees) {
-  const step = ((Math.round(degrees / 90) % 4) + 4) % 4;
-  return step % 2 === 0 ? [...half] : [half[0], half[2], half[1]];
+  const rad = (degrees * Math.PI) / 180;
+  const c = Math.abs(Math.cos(rad));
+  const s = Math.abs(Math.sin(rad));
+  return [half[0], half[1] * c + half[2] * s, half[1] * s + half[2] * c];
 }
 
 /**
@@ -81,6 +87,12 @@ export function stepBody(body, dt, bounds) {
   // 贴地静止判定
   const floorY = bounds.min[1] + half[1];
   const onFloor = Math.abs(body.position[1] - floorY) < 0.02;
+  // 贴着地面就吃摩擦力（以前只在撞墙时衰减，部件会在底板上一直滑）
+  if (onFloor) {
+    body.velocity[0] *= 0.86;
+    body.velocity[2] *= 0.86;
+    body.spin = body.spin.map((v) => v * 0.86);
+  }
   const speed = Math.hypot(...body.velocity);
   if (onFloor && speed < SLEEP_SPEED) {
     body.velocity = [0, 0, 0];
