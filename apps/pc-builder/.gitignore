@@ -1,0 +1,8 @@
+node_modules/
+.npm-cache/
+.electron-cache/
+.home/
+.ffprofile/
+dist/
+smoke.png
+smoke-ff.png
