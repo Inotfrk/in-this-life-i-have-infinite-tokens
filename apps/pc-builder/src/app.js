@@ -473,6 +473,14 @@ if (params.has('probe')) {
     for (let i = 0; i < pixels.length; i += 4) {
       if (pixels[i] + pixels[i + 1] + pixels[i + 2] > 150) lit += 1;
     }
-    console.log('[pcbuilder] pixel-probe', { w, h, lit, ratio: +(lit / (w * h)).toFixed(4) });
+    const stats = world.renderer.info.render;
+    console.log('[pcbuilder] pixel-probe', {
+      w,
+      h,
+      lit,
+      ratio: +(lit / (w * h)).toFixed(4),
+      drawCalls: stats.calls,
+      triangles: stats.triangles
+    });
   });
 }
