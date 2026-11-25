@@ -21,6 +21,7 @@ const scoreEl = document.getElementById('scoreCard');
 const bomEl = document.getElementById('bomCard');
 const hintEl = document.getElementById('dropHint');
 const quickEl = document.getElementById('quickStats');
+const fpsEl = document.getElementById('fpsChip');
 
 let world;
 try {
@@ -47,6 +48,20 @@ let vendorFilter = null;
 let selectionBox = null;
 let hintTimer = 0;
 
+// 帧率指示 + 页头汇总，每 0.5 秒刷新一次，不额外开定时器
+let quickText = '—';
+let fpsFrames = 0;
+let fpsLast = performance.now();
+world.onFrame((time) => {
+  fpsFrames += 1;
+  if (time - fpsLast < 500) return;
+  const fps = Math.round((fpsFrames * 1000) / (time - fpsLast));
+  fpsFrames = 0;
+  fpsLast = time;
+  if (fpsEl) fpsEl.textContent = `${fps} fps`;
+  if (quickEl) quickEl.textContent = quickText;
+});
+
 const categoryOf = (id) => CATEGORIES.find((c) => c.id === id);
 const labelOf = (id) => categoryOf(id)?.label ?? id;
 const installedParts = () => Object.fromEntries([...installed].map(([k, v]) => [k, v.part]));
@@ -61,7 +76,7 @@ function buildSlots() {
     const [w, h, d] = slot.size;
     const geo = new THREE.BoxGeometry(w, h, d);
     const mat = new THREE.MeshBasicMaterial({
-      color: 0x3b82f6,
+      color: 0x8b8b92,
       transparent: true,
       opacity: 0.05,
       depthWrite: false
@@ -71,7 +86,7 @@ function buildSlots() {
     mesh.position.set(slot.position[0] + offset[0], slot.position[1] + offset[1], slot.position[2] + offset[2]);
     mesh.userData.category = cat.id;
 
-    const lineMat = new THREE.LineBasicMaterial({ color: 0x60a5fa, transparent: true, opacity: 0.28 });
+    const lineMat = new THREE.LineBasicMaterial({ color: 0xc9c9cf, transparent: true, opacity: 0.28 });
     const lines = new THREE.LineSegments(new THREE.EdgesGeometry(geo), lineMat);
     mesh.add(lines);
 
@@ -82,24 +97,27 @@ function buildSlots() {
 }
 buildSlots();
 
-function showSlots(visible) {
+/**
+ * 只让「正在拖的那一类」插槽参与命中：
+ * 机箱插槽是个包住全部内件的大盒子，如果它也参与射线，永远会挡在最前面，
+ * 于是隔着机箱怎么放都放不进去。visible 只开目标类别，射线自然穿不过去。
+ */
+function showSlots(visible, onlyCategory = null) {
   for (const [id, ghost] of slotGhosts) {
-    ghost.visible = visible;
-    ghost.material.opacity = 0.05;
-    ghost.children[0].material.opacity = 0.28;
-    if (visible && installed.has(id)) {
-      ghost.material.opacity = 0.015;
-      ghost.children[0].material.opacity = 0.1;
-    }
+    const allowed = !onlyCategory || id === onlyCategory;
+    ghost.visible = visible && allowed;
+    ghost.material.opacity = allowed ? 0.05 : 0;
+    ghost.children[0].material.opacity = allowed ? 0.28 : 0;
   }
 }
 
 function highlight(categoryId) {
   for (const [id, ghost] of slotGhosts) {
+    if (!ghost.visible) continue;
     const active = id === categoryId;
-    ghost.material.opacity = active ? 0.22 : 0.04;
-    ghost.children[0].material.opacity = active ? 0.9 : 0.22;
-    ghost.children[0].material.color.set(active ? 0x22d3ee : 0x60a5fa);
+    ghost.material.opacity = active ? 0.2 : 0.04;
+    ghost.children[0].material.opacity = active ? 0.95 : 0.2;
+    ghost.children[0].material.color.set(active ? 0xe0a458 : 0xc9c9cf);
   }
 }
 
@@ -170,7 +188,7 @@ partsEl.addEventListener('dragstart', (event) => {
   if (!el) return;
   event.dataTransfer.setData('text/plain', el.dataset.id);
   event.dataTransfer.effectAllowed = 'copy';
-  showSlots(true);
+  showSlots(true, el.dataset.category);
   highlight(el.dataset.category);
 });
 
@@ -195,7 +213,12 @@ viewport.addEventListener('drop', (event) => {
   showSlots(false);
   if (!part) return;
   if (!hit) {
-    toast('拖到机箱里的高亮插槽上');
+    // 没打中插槽时兜底：机箱已经在场，就直接放进该类别的插槽，避免「隔着玻璃怎么都放不进去」
+    if (part.category !== 'case' && installed.has('case')) {
+      placePart(part);
+      return;
+    }
+    toast('把机箱拖到台面上先');
     return;
   }
   if (hit.userData.category !== part.category) {
@@ -226,8 +249,20 @@ viewport.addEventListener('pointerup', (event) => {
   const groups = [...installed.values()].map((v) => v.group);
   const hits = raycaster.intersectObjects(groups, true);
   if (!hits.length) return;
-  let node = hits[0].object;
-  while (node && !node.userData?.partId) node = node.parent;
+  // 机箱的玻璃壳在最前面，直接取第一个会永远选中机箱；优先选内部部件
+  let node = null;
+  let fallback = null;
+  for (const hit of hits) {
+    let n = hit.object;
+    while (n && !n.userData?.partId) n = n.parent;
+    if (!n) continue;
+    if (n.userData.category !== 'case') {
+      node = n;
+      break;
+    }
+    fallback ??= n;
+  }
+  node ??= fallback;
   if (!node) return;
   selectedCategory = node.userData.category;
   refresh();
@@ -267,22 +302,30 @@ function renderParts() {
   for (const cat of CATEGORIES) {
     const list = PARTS.filter((p) => p.category === cat.id && (!vendorFilter || p.vendor === vendorFilter));
     if (!list.length) continue;
+
+    const group = document.createElement('div');
+    group.className = 'part-group';
+    const head = document.createElement('div');
+    head.className = 'group-head';
+    head.innerHTML = `<span>${cat.icon} ${cat.label}</span><span class="count">${list.length}</span>`;
+    group.appendChild(head);
+
     for (const part of list) {
       const el = document.createElement('div');
-      el.className = `part${installed.has(part.category) ? ' installed' : ''}`;
+      const isInstalled = installed.has(part.category);
+      el.className = `part${isInstalled ? ' installed' : ''}`;
       el.draggable = true;
       el.dataset.id = part.id;
       el.dataset.category = part.category;
       el.innerHTML = `
-        <div class="icon">${cat.icon}</div>
         <div>
-          <div class="name">${part.name}</div>
-          <div class="meta">${cat.label} · ${part.vendor}</div>
-        </div>
-        <div class="price">¥${part.price.toLocaleString('zh-CN')}</div>`;
+          <div class="name">${part.name}${isInstalled ? '<span class="badge">已装</span>' : ''}</div>
+          <div class="meta">${part.vendor} · ¥${part.price.toLocaleString('zh-CN')}</div>
+        </div>`;
       el.title = part.summary;
-      partsEl.appendChild(el);
+      group.appendChild(el);
     }
+    partsEl.appendChild(group);
   }
 }
 
@@ -334,7 +377,8 @@ function renderScore() {
     </div>
     <ul class="issues">${issueRows}</ul>`;
 
-  quickEl.textContent = `¥${totalPrice.toLocaleString('zh-CN')} · 预估 ${score.load.total}W`;
+  quickText = `¥${totalPrice.toLocaleString('zh-CN')} · 预估 ${score.load.total}W`;
+  quickEl.textContent = quickText;
 }
 
 function renderBom() {
@@ -353,7 +397,7 @@ function drawSelection() {
     selectionBox = null;
   }
   if (!selectedCategory || !installed.has(selectedCategory)) return;
-  selectionBox = new THREE.BoxHelper(installed.get(selectedCategory).group, 0x22d3ee);
+  selectionBox = new THREE.BoxHelper(installed.get(selectedCategory).group, 0xe0a458);
   world.scene.add(selectionBox);
 }
 
