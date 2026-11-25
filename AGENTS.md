@@ -189,17 +189,18 @@ gh pr merge --merge
 
 ## 4. 验证
 
-**当前仓库没有可测代码**：C++/Qt 实现与 Node 后端于 2026-11-18 清空，worldsim 原型于 2026-11-25 清空
-（旧内容见 git 历史），构建脚本、Dockerfile、`.devcontainer/`、沙箱脚本与 `package.yml` 一并移除。
+**仓库里现在只有一个可测模块**：`apps/pc-builder`（Electron + Three.js 的 3D 装机模拟器 demo）。
+C++/Qt 实现、Node 后端、worldsim 原型与相关设计文档都已清空（旧内容见 git 历史）。
 
 所以现在的规矩是：
 
-1. 改动只涉及规则 / 文档时**不跑构建**，但要检查 Markdown 链接、命令示例与 `TODO.md` 状态是否仍然正确；
-2. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`，
+1. 改动 `apps/pc-builder`：先 `cd apps/pc-builder && npm test`（node:test，离线，不需要 Electron / 显卡），
+   再 `npm run build`（esbuild 打包 `dist/app.js`）并 `npm run check:syntax`；测试不过不得进入上一层；
+2. 改动只涉及规则 / 文档时**不跑构建**，但要检查 Markdown 链接、命令示例与 `TODO.md` 状态是否仍然正确；
+3. 不要再引用已删除的 `scripts/sandbox.*`、`scripts/desktop.sh`、`docs/docker-sandbox*.md`，
    也不要引用已清空的 `worldsim/`、`tests/`、`examples/`、`docs/design-*.md`、`docs/server-plan.md`、
    `docs/software-guide.md`、`docs/worldsim-mvp.md` 与 `docs/screenshots/`；
-3. 新实现落地时，**同时**恢复构建脚本、沙箱、CI 与测试入口，并回到本节写清验证命令；
-   在那之前不 pretend 有测试。
+4. 新实现落地时，**同时**恢复构建、沙箱与 CI，并回到本节写清验证命令；在那之前不 pretend 有测试。
 
 新实现接回后要恢复的验证标准（照抄即可）：
 
