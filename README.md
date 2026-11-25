@@ -1,11 +1,16 @@
 # In this life I have infinite tokens.
 
-> **仓库当前状态：只剩协作规则。**
+> **仓库当前状态：协作规则 + 一个 demo 模块。**
 > 上一版原型——AI 历史沙盘 `worldsim`（agent 通信 / 记忆 / 队列）——连同它的设计文档
 > `docs/worldsim-mvp.md` 已于 2026-11-25 清空；更早的 C++/Qt 实现、Node 后端、设计稿与截图
 > 也已经从工作区移除。所有旧内容都留在 git 历史里，需要时用 `git log --all --oneline` 找到 SHA 再翻。
 >
-> 现在仓库里只保留「怎么协作」这一层：
+> 现有的模块：
+>
+> - [apps/pc-builder](apps/pc-builder/README.md)：**3D 装机模拟器 demo**（Electron + Three.js），
+>   拖拽装机、按厂商筛选、参数面板、兼容性检查与综合评分。
+>
+> 剩下的部分只讲「怎么协作」：
 >
 > - 完整规则：[AGENTS.md](AGENTS.md)（每次对话自动加载）
 > - 待办队列：[TODO.md](TODO.md)（唯一清单）
