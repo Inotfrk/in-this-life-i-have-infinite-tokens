@@ -9,7 +9,7 @@
  */
 
 import * as THREE from 'three';
-import { CATEGORIES, PARTS, VENDORS, partById } from './catalog.js';
+import { CATEGORIES, PARTS, demoBuild, partById, usedVendors } from './catalog.js';
 import { createScene, HOME_CAMERA } from './scene.js';
 import { makePart } from './models.js';
 import { disposeObject } from './resources.js';
@@ -201,7 +201,8 @@ function updateCarry(event) {
     category: carry.part.category,
     degrees: carry.degrees,
     distance: carry.distance,
-    installed: installedRecord()
+    installed: installedRecord(),
+    part: carry.part
   });
   carry.verdict = verdict;
   hudOri.textContent = `${normDeg(carry.degrees)}°`;
@@ -275,7 +276,8 @@ function rotateCarry(step = 90) {
     category: carry.part.category,
     degrees: carry.degrees,
     distance: carry.distance,
-    installed: installedRecord()
+    installed: installedRecord(),
+    part: carry.part
   });
   carry.verdict = verdict;
   hudOri.textContent = `${carry.degrees}° · ${orientationInfo(carry.part.category, carry.degrees).label}`;
@@ -448,20 +450,16 @@ function clearAll() {
 /** 示例装机：按真机顺序走一遍（含涂硅脂） */
 function autoFill() {
   clearAll();
-  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
-  const order = [
-    ['case', 0], ['motherboard', 0], ['cpu', 0], ['ram', 0],
-    ['paste', 0], ['cooler', 0], ['gpu', 0], ['storage', 0], ['psu', 0]
-  ];
-  for (const [category, degrees] of order) {
+  const demo = demoBuild();
+  const order = ['case', 'motherboard', 'cpu', 'ram', 'paste', 'cooler', 'gpu', 'storage', 'psu'];
+  for (const category of order) {
     if (category === 'paste') {
       applyPasteNow({ patternId: 'dot', amount: IDEAL_ML });
       continue;
     }
-    const part = byCategory[category];
+    const part = demo[category];
     if (!part) continue;
-    const group = makePart(part);
-    commitInstall(part, group, degrees);
+    commitInstall(part, makePart(part), 0);
   }
   state.selected = 'gpu';
   refresh();
@@ -534,7 +532,7 @@ function renderFilters() {
   all.onclick = () => { state.vendor = null; renderFilters(); renderParts(); };
   filtersEl.appendChild(all);
 
-  for (const vendor of VENDORS) {
+  for (const vendor of usedVendors()) {
     const chip = document.createElement('button');
     chip.className = `chip${state.vendor === vendor ? ' active' : ''}`;
     chip.textContent = vendor;
@@ -562,7 +560,8 @@ function renderParts() {
 
     for (const part of list) {
       const el = document.createElement('div');
-      const isInstalled = installed.has(part.category);
+      // 只给「真正装着的那个型号」打标，同类别其它型号不算
+      const isInstalled = installed.get(part.category)?.part.id === part.id;
       const blocked = isInstalled ? prerequisiteOf(part.category) : null;
       const badge = !isInstalled
         ? ''
@@ -1150,7 +1149,7 @@ if (params.has('autofill')) autoFill();
 // ?parts=case,motherboard,cpu,paste —— 只装指定的几件，方便截局部图
 if (params.has('parts')) {
   const wanted = params.get('parts').split(',').map((s) => s.trim()).filter(Boolean);
-  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+  const byCategory = demoBuild();
   for (const category of wanted) {
     if (category === 'paste') {
       applyPasteNow({ patternId: 'dot', amount: IDEAL_ML });
@@ -1228,7 +1227,8 @@ function dragInstall(part, degrees = 0) {
   carry.group.position.set(...mountPoint(part.category));
   carry.distance = 0;
   carry.verdict = seatAttempt({
-    category: part.category, degrees: carry.degrees, distance: 0, installed: installedRecord()
+    category: part.category, degrees: carry.degrees, distance: 0,
+    installed: installedRecord(), part
   });
   const ok = carry.verdict.ok;
   if (ok) finishCarry(null);
@@ -1244,7 +1244,7 @@ function runSelfTest() {
   };
 
   clearAll();
-  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+  const byCategory = demoBuild();
 
   check('机箱能被拖进桌面（不被内腔墙卡住）', dragInstall(byCategory.case));
   check('机箱确实装上了', installed.has('case'));
@@ -1316,7 +1316,7 @@ function runFreePlacementTest() {
     results.push({ name, ok });
     console.log(`[selftest] ${ok ? 'ok  ' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`);
   };
-  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+  const byCategory = demoBuild();
 
   clearAll();
   dragInstall(byCategory.case);
@@ -1364,7 +1364,7 @@ function runTutorialTest() {
     results.push({ name, ok });
     console.log(`[selftest] ${ok ? 'ok  ' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`);
   };
-  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+  const byCategory = demoBuild();
 
   clearAll();
   state.tutorial.autoShown = true;   // 先关掉自动弹出，自己控制

@@ -324,8 +324,13 @@ function makeRam(part) {
 
 // ---------------------------------------------------------------- 散热器
 
-function makeCooler() {
+function makeCooler(part) {
   const g = new THREE.Group();
+  // 高度读真实规格（165 / 158 / 155 / 145mm），塔身高度跟着变
+  const height = (part?.metrics?.heightMM ?? 165) / 10;
+  const towerTop = -(height - 1.0);
+  const finTop = towerTop + 0.4;
+  const fanRadius = Math.min(7.0, Math.max(5.0, height * 0.43));
   const copper = metal(0xc98a52, { roughness: 0.28, metalness: 0.95 });
   const alu = metal(0xb9bec6, { roughness: 0.3, metalness: 0.9 });
   const noctua = plastic(0x8c6b4f, { roughness: 0.55 });
@@ -336,42 +341,46 @@ function makeCooler() {
   g.add(box(0.35, 8.0, 8.0, metal(0x3f3f46, { roughness: 0.4 }), -0.85, 0, 0));
 
   // 六根热管：从底座沿 -X 穿过两个塔（每塔三根）
+  const pipeLength = Math.abs(towerTop) - 1.4;
   for (const towerZ of [-4.5, 4.5]) {
     for (const dy of [-1.1, 0, 1.1]) {
-      g.add(cylinder(0.32, 14.6, copper, -8.0, dy, towerZ, 'x', 12));
+      g.add(cylinder(0.32, pipeLength, copper, -(1.0 + pipeLength / 2), dy, towerZ, 'x', 12));
     }
     // 热管在塔顶弯回去，做成 U 形收尾
-    g.add(ring(0.9, 0.32, copper, -15.3, 0, towerZ, 'x'));
+    g.add(ring(0.9, 0.32, copper, towerTop + 0.3, 0, towerZ, 'x'));
   }
 
   // 双塔：鳍片沿 X 叠（塔身朝玻璃侧板延伸），两组塔在 Z 方向前后排开
   const finGeo = new THREE.BoxGeometry(0.08, 14.6, 4.6);
   const finMat = metal(0xc7ccd2, { roughness: 0.35, metalness: 0.85 });
+  const finCount = Math.max(20, Math.round((Math.abs(finTop) - 3.4) / 0.3));
+  const finSpan = Math.abs(finTop) - 3.4;
   for (const towerZ of [-4.5, 4.5]) {
-    const fins = new THREE.InstancedMesh(finGeo, finMat, 40);
+    const fins = new THREE.InstancedMesh(finGeo, finMat, finCount);
     const m = new THREE.Matrix4();
-    for (let i = 0; i < 40; i += 1) {
+    for (let i = 0; i < finCount; i += 1) {
       m.makeTranslation(-3.4 - i * 0.3, 0, towerZ);
       fins.setMatrixAt(i, m);
     }
     fins.castShadow = true;
     g.add(fins);
     // 塔顶装饰条（Noctua 的减震垫位置）
-    g.add(box(12.5, 0.22, 4.2, noctua, -9.6, 7.35, towerZ));
-    g.add(box(12.5, 0.22, 4.2, noctuaDark, -9.6, -7.35, towerZ));
+    g.add(box(finSpan, 0.22, 4.2, noctua, -(3.4 + finSpan / 2), 7.35, towerZ));
+    g.add(box(finSpan, 0.22, 4.2, noctuaDark, -(3.4 + finSpan / 2), -7.35, towerZ));
   }
 
   // 两把 140mm 风扇：一把在最前（推），一把夹在两塔之间（接力），风朝后置 I/O 吹
+  const fanX = -(height * 0.55);
   for (const [z, tone] of [[7.8, noctua], [1.0, noctuaDark]]) {
-    const f = fan({ radius: 7.0, thickness: 2.4, axis: 'z', frame: tone, blade: 0x6b5138, hub: 0x2c2620 });
-    f.position.set(-9.1, 0, z);
+    const f = fan({ radius: fanRadius, thickness: 2.4, axis: 'z', frame: tone, blade: 0x6b5138, hub: 0x2c2620 });
+    f.position.set(fanX, 0, z);
     g.add(f);
     // 风扇线
-    g.add(box(0.06, 3.2, 0.06, plastic(0x111111), -9.1, -6.2, z));
+    g.add(box(0.06, 3.2, 0.06, plastic(0x111111), fanX, -fanRadius + 0.6, z));
   }
 
   // 顶盖装饰
-  g.add(box(0.3, 3.2, 10.0, noctua, -16.0, 5.6, 0));
+  g.add(box(0.3, 3.2, 10.0, noctua, towerTop - 0.1, 5.6, 0));
   return g;
 }
 
@@ -379,7 +388,8 @@ function makeCooler() {
 
 function makeGpu(part) {
   const g = new THREE.Group();
-  const L = 33.6;
+  // 长度读真实规格（245 / 267 / 310 / 336mm…）
+  const L = (part?.metrics?.lengthMM ?? 336) / 10;
   const TH = 5.4;          // 三槽厚
   const H = 13.2;          // 从 PCB 到挡板顶边
   const shroud = plastic(part.color, { roughness: 0.5, metalness: 0.25 });
