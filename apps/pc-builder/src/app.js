@@ -122,7 +122,7 @@ function buildGhosts() {
     if (id === 'ram') {
       ghostByCategory.set(id, MOUNTS.ram.slots.map((z) => makeGhost(id, [BOARD.x, BOARD.y1 - BOARD_FEATURES.dimm.length + 6.6, z])));
     } else if (id === 'case') {
-      ghostByCategory.set(id, [makeGhost(id, [0, 2, 0])]);
+      ghostByCategory.set(id, [makeGhost(id, [0, CASE.height / 2, 0])]);
     } else {
       ghostByCategory.set(id, [makeGhost(id, mountPoint(id))]);
     }
@@ -351,7 +351,8 @@ function finishCarry(event) {
 function prerequisiteOf(category) {
   if (category === 'case') return null;
   if (!installed.has('case')) return '先把机箱拖进来，才有地方装别的';
-  if (['cpu', 'ram', 'gpu', 'storage', 'motherboard'].includes(category) && !installed.has('motherboard')) {
+  // 只有「插在主板上的东西」才需要先有主板；主板自己不需要
+  if (['cpu', 'ram', 'gpu', 'storage'].includes(category) && !installed.has('motherboard')) {
     return '先把主板装进去，才有插槽';
   }
   if (category === 'cooler' && !installed.has('cpu')) return '先装 CPU，散热器才有地方扣';
@@ -926,6 +927,25 @@ if (params.has('snapshot') || params.has('probe')) {
 // ---------------------------------------------------------------- 自检（?selftest=1）
 // 在真实浏览器里跑一遍「装、涂、装错、掉件、自检」的完整链路，把结果打到控制台。
 // 无头环境没有可点的鼠标，这个入口能把交互相关的代码路径也跑一遍。
+/** 模拟「拖到安装位 → 松手」：判定走真实的 seatAttempt，安装走真实的 finishCarry */
+function dragInstall(part, degrees = 0) {
+  startCarry(part, null);
+  const carry = state.carrying;
+  if (!carry) return false;
+  carry.moved = true;
+  carry.degrees = normDeg(degrees);
+  carry.group.rotation.x = THREE.MathUtils.degToRad(carry.degrees);
+  carry.group.position.set(...mountPoint(part.category));
+  carry.distance = 0;
+  carry.verdict = seatAttempt({
+    category: part.category, degrees: carry.degrees, distance: 0, installed: installedRecord()
+  });
+  const ok = carry.verdict.ok;
+  if (ok) finishCarry(null);
+  else cancelCarry();
+  return ok;
+}
+
 function runSelfTest() {
   const results = [];
   const check = (name, ok, detail = '') => {
@@ -936,11 +956,11 @@ function runSelfTest() {
   clearAll();
   const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
 
-  commitInstall(byCategory.case, makePart(byCategory.case), 0);
-  check('机箱能装进来', installed.has('case'));
-  commitInstall(byCategory.motherboard, makePart(byCategory.motherboard), 0);
-  commitInstall(byCategory.cpu, makePart(byCategory.cpu), 0);
-  check('主板 + CPU 装好', installed.has('motherboard') && installed.has('cpu'));
+  check('机箱能被拖进桌面（不被内腔墙卡住）', dragInstall(byCategory.case));
+  check('机箱确实装上了', installed.has('case'));
+  check('主板能对准装好', dragInstall(byCategory.motherboard));
+  check('CPU 能对准装好', dragInstall(byCategory.cpu));
+  check('主板 + CPU 在位', installed.has('motherboard') && installed.has('cpu'));
 
   applyPasteNow({ patternId: 'dot', amount: IDEAL_ML });
   check('硅脂涂上了', state.paste && state.paste.coverage > 0.9, `coverage=${state.paste?.coverage}`);
@@ -980,6 +1000,10 @@ function runSelfTest() {
   check('风道反了更热', tempFlipped > tempNormal, `${tempNormal} → ${tempFlipped}`);
 
   // 清空重来，走一遍正常装机 + 自检
+  // 电源在副仓：贴着托盘也算装好
+  removeCategory('psu');
+  check('电源能被拖进副仓（不卡主板托盘）', dragInstall(byCategory.psu));
+
   autoFill();
   check('示例装机 8 件齐全', CATEGORIES.every((c) => installed.has(c.id)));
   runBoot();

@@ -425,7 +425,7 @@
 - 依赖：T-032
 - 涉及文件：`apps/pc-builder/src/{layout,models,scene,app,paste,physics,assembly}.js`、
   `src/{index.html,styles.css}`、`tests/{layout,assembly,paste,physics}.test.js`、`main.js`、`README.md`
-- 验收：`cd apps/pc-builder && npm test` 53 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
+- 验收：`cd apps/pc-builder && npm test` 57 项全绿；`npm run build` 与 `npm run check:syntax` 成功；
   无头浏览器 `?selftest=1` 输出 `SELFTEST_PASS (14/14)`
 - 说明：上一版的机箱布局是错的（主板贴在后板上、散热器竖着摆顶部、显卡悬空）。
   这次按官方规格与实机照片重做：O11D EVO 285×465×459 双仓、ATX 305×244 竖装、
