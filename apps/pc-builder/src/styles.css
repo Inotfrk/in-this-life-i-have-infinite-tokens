@@ -78,3 +78,15 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1
 .tutorial-target{outline:2px solid #e0a458;outline-offset:3px;border-radius:10px;animation:tutorial-pulse 1.6s ease-out 2}
 .tutorial-link{width:100%;margin-top:10px;font-size:10px;padding:7px;background:#f7f4ec;border-color:#e6dcc7;color:#8a6a2f;border-radius:8px}
 .tutorial-link:hover{background:#f3ecdc;border-color:#d9c9a6}
+
+/* ---- 点部件弹出的小菜单 ---- */
+.part-menu{position:absolute;z-index:6;min-width:140px;background:#16181df2;border:1px solid #343a45;border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px;box-shadow:0 12px 30px #00000066;backdrop-filter:blur(8px)}
+.part-menu[hidden]{display:none}
+.part-menu-title{font-size:10px;color:#9aa2ae;padding:2px 4px 4px;border-bottom:1px solid #262b33;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
+.part-menu button{font-size:11px;padding:7px 9px;background:#232830;border-color:#343a45;color:#e2e5ea;text-align:left}
+.part-menu button:hover{background:#2c323c;border-color:#414a57}
+.part-menu button.danger{color:#f2a79c;border-color:#4a2f2c}
+.part-menu button.danger:hover{background:#3a2622;border-color:#6b3a33}
+
+/* 提示条挪到画布顶部：底部已经被教程卡片占住，提示会看不见 */
+.drop-hint{bottom:auto;top:96px;z-index:5}

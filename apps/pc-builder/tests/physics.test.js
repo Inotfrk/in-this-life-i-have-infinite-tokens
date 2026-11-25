@@ -36,10 +36,27 @@ test('不会穿出机箱，反弹后也不会飞出去', () => {
   assert.equal(body.resting, true);
 });
 
-test('旋转 90° 后碰撞用的半长会跟着换', () => {
+test('任意角度都按真实投影算半长（斜着躺也不会陷进地板）', () => {
   assert.deepEqual(orientedHalfExtents([1, 2, 3], 0), [1, 2, 3]);
-  assert.deepEqual(orientedHalfExtents([1, 2, 3], 90), [1, 3, 2]);
-  assert.deepEqual(orientedHalfExtents([1, 2, 3], 180), [1, 2, 3]);
+  const flat = orientedHalfExtents([1, 2, 3], 90).map((v) => +v.toFixed(6));
+  assert.deepEqual(flat, [1, 3, 2]);
+  const slant = orientedHalfExtents([1, 2, 3], 45).map((v) => +v.toFixed(6));
+  assert.ok(Math.abs(slant[1] - (2 + 3) * Math.SQRT1_2) < 1e-6, '45° 时的竖直半长应该更大');
+  assert.ok(slant[1] > 3, '斜着时竖直投影比不转时更大');
+});
+
+test('斜着落地的部件不会陷进地板', () => {
+  const body = createBody({ half: [2, 4, 6], position: [0, 30, 0], rotation: 37 });
+  settleAll([body], bounds);
+  const halfY = orientedHalfExtents(body.half, body.rotation)[1];
+  assert.ok(body.position[1] >= bounds.min[1] + halfY - 0.05, '底面不能低于地板');
+});
+
+test('掉下来的部件会在地板上滑一段然后停住', () => {
+  const body = createBody({ half: [2, 2, 2], position: [0, 20, 0], velocity: [220, 0, 120] });
+  settleAll([body], bounds, 10);
+  assert.equal(body.resting, true, '有摩擦，最终必须停下来');
+  assert.ok(Math.abs(body.velocity[0]) < 0.01);
 });
 
 test('静止的部件不再参与积分', () => {
