@@ -8,3 +8,45 @@ main{flex:1;min-height:0;display:grid;grid-template-columns:272px minmax(260px,1
 @media(max-width:820px){html,body{overflow:auto}body{min-width:360px;height:auto;min-height:100dvh}.topbar{height:66px;position:sticky;top:0;z-index:5}.brand{font-size:14px}.quick{font-size:10px}.quick .fps,.quick .divider{display:none}main{display:grid;grid-template-columns:200px minmax(0,1fr);grid-template-rows:62dvh auto;flex:none}.viewport{grid-column:2;grid-row:1}.palette{grid-column:1;grid-row:1}.inspector{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;overflow:visible;border-top:1px solid var(--line)}.inspector>.panel-title{grid-column:1/-1;margin:0}.card{margin:0}.toolbar{top:50px;left:10px;right:10px}.stage-label{left:12px}.drop-hint{font-size:10px}.quick{max-width:43%;overflow:hidden}}
 @media(max-width:540px){main{grid-template-columns:152px minmax(0,1fr)}.panel{padding:14px 9px}.inspector{grid-template-columns:1fr}.section-index{display:none}.part{padding:8px}.part .name{font-size:10px}.part .meta{font-size:9px}.panel-description{font-size:10px}.chip{font-size:9px;padding:3px 6px}.toolbar button{font-size:9px;padding:5px 6px}.brand .logo{width:30px;height:30px}.brand small{font-size:8px}.topbar{padding:0 10px}.stage-label{font-size:10px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---- 拖拽 HUD（浮在 3D 视图上） ---- */
+.hud{position:absolute;left:22px;bottom:84px;z-index:2;min-width:186px;padding:11px 13px;border-radius:10px;background:#14161aee;border:1px solid #2c3038;color:#e8e6df;font-size:11px;display:flex;flex-direction:column;gap:6px;backdrop-filter:blur(6px)}
+.hud[hidden]{display:none}
+.hud-row{display:flex;justify-content:space-between;gap:12px;font-variant-numeric:tabular-nums}
+.hud-key{color:#9aa1ad;font-size:10px;letter-spacing:1px}
+.hud-tip{color:#8d94a1;font-size:10px;border-top:1px solid #262a31;padding-top:6px}
+.hud .ok{color:#7fd9a3}
+.hud .warn{color:#e6b96a}
+.hud .bad{color:#f08a7c}
+.aim-dot{position:absolute;width:14px;height:14px;margin:-7px 0 0 -7px;border-radius:50%;border:2px solid #e0a458;pointer-events:none;z-index:2;opacity:0;transition:opacity .12s}
+.aim-dot.on{opacity:.95}
+
+/* ---- 硅脂面板 ---- */
+.paste-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.paste-row button{padding:6px 9px;font-size:10px;border-radius:7px}
+.paste-row button.active{background:#343b32;border-color:#343b32;color:#fff}
+.paste-slider{display:flex;align-items:center;gap:10px;font-size:10px;color:var(--muted);margin-bottom:10px}
+.paste-slider input[type=range]{flex:1;accent-color:#6f7d63}
+.paste-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.paste-stat{border:1px solid #eceee5;border-radius:8px;padding:8px;text-align:center}
+.paste-stat b{display:block;font-size:16px;color:#3d4a37;font-variant-numeric:tabular-nums}
+.paste-stat span{font-size:9px;color:var(--muted)}
+.paste-actions{display:flex;gap:8px}
+.paste-actions button{flex:1;font-size:10px;padding:8px}
+.paste-note{font-size:10px;color:#967324;background:#faf3df;border-radius:6px;padding:6px 8px;margin-top:8px}
+.paste-note.error{color:#a34334;background:#fceee9}
+
+/* ---- 温度面板 ---- */
+.temp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.temp{border:1px solid #eceee5;border-radius:9px;padding:10px;text-align:center}
+.temp b{display:block;font-size:22px;line-height:1.2;font-variant-numeric:tabular-nums;color:#3d4a37}
+.temp.cool b{color:#347251}.temp.warm b{color:#b07a2a}.temp.hot b{color:#af453c}
+.temp span{font-size:9px;color:var(--muted)}
+.temp-bar{height:5px;border-radius:3px;background:#edf0e6;margin-top:8px;overflow:hidden}
+.temp-bar i{display:block;height:100%;background:linear-gradient(90deg,#5f8f6d,#c7a24a,#c25b4a)}
+.boot-list{list-style:none;padding:0;margin:10px 0 0;display:flex;flex-direction:column;gap:5px}
+.boot-list li{font-size:10px;padding:6px 8px;border-radius:5px;background:#f4f6f0;color:#6f7867}
+.boot-list li.ok{background:#edf4eb;color:#3d6b45}
+.boot-list li.error{background:#fceee9;color:#a34334}
+.boot-list li.warn{background:#faf3df;color:#967324}
+
