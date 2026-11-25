@@ -54,7 +54,7 @@
   `src/ui/qml/Main.qml`、`src/ui/qml/RailButton.qml`、`src/ui/qml/HeaderButton.qml`、
   `src/ui/qml/SubjectRow.qml`、`src/ui/qml/GlyphIcon.qml`
 - 验收：`scripts\build.ps1 -Task test` 通过；三套主题（dark / light / star）都能 offscreen 出图
-- 说明：纯界面骨架，不接任何功能。已落地 [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 的
+- 说明：纯界面骨架，不接任何功能。已落地 `docs/design-study-app-ui.md`（已清空） 的
   **结构化界面结论**：左侧图标栏、卡片头部（☰ + 右端「＋ / AI / 用户」组，C1–C3）、
   学科侧栏、右侧留空主内容区、侧栏底部预留区。
 
@@ -85,7 +85,7 @@
 ## 记录待做（需要接功能，本阶段只登记不实现）
 
 > 以下条目**只把设计意图落到待办**，本阶段一律不实现。它们的详细背景见
-> [docs/design-study-app-ui.md](docs/design-study-app-ui.md) 第 4.4.1–4.4.3、7.1、7.2 与第 8 节。
+> `docs/design-study-app-ui.md`（已清空） 第 4.4.1–4.4.3、7.1、7.2 与第 8 节。
 
 ### T-016 学科专属功能模块（按学科渲染不同内容）
 
@@ -166,7 +166,7 @@
 - 依赖：T-021
 - 涉及文件：新增服务端（语言与部署方式待定）
 - 验收：客户端配置该地址后能正常对话并返回合法指令
-- 说明：协议已在 [docs/design-ai-protocol.md](docs/design-ai-protocol.md) 定义完毕，
+- 说明：协议已在 `docs/design-ai-protocol.md`（已清空） 定义完毕，
   客户端侧已按协议实现并验证。服务端职责：接收 `{message, context}` →
   调用所选厂商 → 把模型输出规整成 `{reply, commands}`。
   **待定**：认证方式、限额与计费、是否中转用户自备 Key（协议文档第 6 节）。
@@ -222,7 +222,7 @@
 - 说明：对应 C21 / C22。目前**只有用户图标外观**（单人剪影，位于 AI 右侧），点击无行为。
   作者意图：多个用户各登各的账号，**数据跟着账号走而不是跟机器走**。
   **阻塞**：点击后的形态（26）、登录后图标是否变头像（27）。同步通道（28）、
-  同步范围（29）、未登录能否使用（30）三项已由 T-027 出方案（[docs/server-plan.md](docs/server-plan.md)），
+  同步范围（29）、未登录能否使用（30）三项已由 T-027 出方案（`docs/server-plan.md`（已清空）），
   但**服务端本身尚未实现**，所以仍按 blocked 处理，可先做本地多用户 profile 作为过渡。
 
 ### T-027 服务端方案：账号 · 同步 · 配置下发
@@ -393,13 +393,15 @@
 
 ### T-031 AI 历史沙盘 MVP：多 agent 通信与记忆骨架
 
-- 状态：done
+- 状态：blocked
 - 目标分支：`lihaoyuan114-FedoraChan-worldsim`
 - 优先级：P0
 - 依赖：无
 - 涉及文件：`worldsim/`（message / memory / agent / manager / llm / social）、`examples/mvp_demo.py`、
   `tests/test_worldsim.py`、`docs/worldsim-mvp.md`
 - 验收：`python3 -m unittest discover -s tests` 全绿（14 项，全离线）；`python3 -m examples.mvp_demo` 跑完三轮
-- 说明：参考 Ayaka V2.5 的 `WorldEngine` / `AIThread`，先验证「agent 实例化 + 互相通信 + 独立记忆 +
-  独立数值 + 每实例队列调度」这条骨架。Manager 用名字做 key 管理实例，注册表加 `asyncio.Lock`，
+- 说明：**2026-11-25 已随仓库清空作废**——`worldsim/`、`tests/`、`examples/` 与 `docs/worldsim-mvp.md`
+  已删除，代码在 git 历史里（`git log --all --oneline` 找 SHA）。原实现参考 Ayaka V2.5 的
+  `WorldEngine` / `AIThread`，验证「agent 实例化 + 互相通信 + 独立记忆 + 独立数值 + 每实例队列调度」。
+  原说明保留如下：Manager 用名字做 key 管理实例，注册表加 `asyncio.Lock`，
   每个实例一条队列与专属 worker 保证不串线；趋势层用 DeGroot 占位，后续换理论模型。
