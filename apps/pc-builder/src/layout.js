@@ -76,7 +76,7 @@ export const MOUNTS = {
   case: {
     axis: 'y',                 // 机箱落在桌面上
     point: [0, 0, 0],
-    tolerance: 12,
+    tolerance: 16,
     keyed: null,
     size: [CASE.width, CASE.height, CASE.depth]
   },

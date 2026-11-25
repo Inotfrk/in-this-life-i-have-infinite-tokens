@@ -104,7 +104,7 @@ apps/pc-builder/
     compat.js        兼容性规则
     perf.js          性能评分（纯函数）
     resources.js     移除对象时释放 GPU 资源
-  tests/             node:test 用例（53 个），不依赖 Electron
+  tests/             node:test 用例（57 个），不依赖 Electron
 ```
 
 ## 数据模型
@@ -144,7 +144,7 @@ apps/pc-builder/
 
 ```bash
 cd apps/pc-builder
-npm test            # node --test，53 个用例
+npm test            # node --test，57 个用例
 npm run build
 npm run check:syntax
 ```

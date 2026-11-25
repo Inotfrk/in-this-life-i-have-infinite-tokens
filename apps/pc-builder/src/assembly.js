@@ -67,16 +67,27 @@ export function coolerInterference(degrees, installed = {}) {
   return [...hits];
 }
 
-/** 除了散热器以外的部件：只检查是否撞到机箱内壁 */
+/**
+ * 除了散热器以外的部件：检查是否撞到机箱内壁。
+ *
+ * 两个特例不能按「主仓的墙」算：
+ * - 机箱自己就是容器，它的包围盒本来就比内腔大，不能拿内腔去卡它；
+ * - 电源在右侧副仓（托盘后面），卡它的是副仓的墙，不是主板托盘。
+ */
 export function caseInterference(category, degrees = 0) {
+  if (category === 'case') return [];
   const hits = [];
+  const rear = category === 'psu';
+  const xMin = rear ? CASE.xRearChamber : CASE.xLeft + 0.15;
+  const xMax = rear ? CASE.xRight : CASE.xTray;
+  // 0.02cm 的浮点容差：贴着墙面不算撞
   for (const box of installedBoxes(category, degrees)) {
-    if (box.min[0] < CASE.xLeft + 0.15) hits.push('玻璃侧板');
-    if (box.max[0] > CASE.xTray) hits.push('主板托盘');
-    if (box.min[1] < CASE.yFloor) hits.push('机箱底板');
-    if (box.max[1] > CASE.yCeil) hits.push('机箱顶盖');
-    if (box.min[2] < CASE.zBack) hits.push('背板');
-    if (box.max[2] > CASE.zFront) hits.push('前面板');
+    if (box.min[0] < xMin - 0.02) hits.push(rear ? '副仓隔板' : '玻璃侧板');
+    if (box.max[0] > xMax + 0.02) hits.push(rear ? '右侧板' : '主板托盘');
+    if (box.min[1] < CASE.yFloor - 0.02) hits.push('机箱底板');
+    if (box.max[1] > CASE.yCeil + 0.02) hits.push('机箱顶盖');
+    if (box.min[2] < CASE.zBack - 0.02) hits.push('背板');
+    if (box.max[2] > CASE.zFront + 0.02) hits.push('前面板');
   }
   return [...new Set(hits)];
 }
