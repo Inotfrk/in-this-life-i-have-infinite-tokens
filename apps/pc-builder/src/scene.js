@@ -102,56 +102,75 @@ export function createScene(container) {
   const slots = new THREE.Group();
   scene.add(slots);
 
-  function resize() {
-    const w = Math.max(container.clientWidth, 1);
-    const h = Math.max(container.clientHeight, 1);
-    const dpr = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
-    camera.aspect = w / h;
-    camera.updateProjectionMatrix();
-    renderer.setPixelRatio(dpr);
-    renderer.setSize(w, h, false);
-    renderer.render(scene, camera);
-  }
-
-  resize();
-  window.addEventListener('resize', resize);
-  if (typeof ResizeObserver !== 'undefined') {
-    new ResizeObserver(resize).observe(container);
-  }
-
-  // 浏览器缩放 / 换显示器时 devicePixelRatio 会变，matchMedia 是唯一可靠的信号
-  function watchPixelRatio() {
-    const dpr = window.devicePixelRatio || 1;
-    const mq = window.matchMedia(`(resolution: ${dpr}dppx)`);
-    const onChange = () => {
-      resize();
-      watchPixelRatio();
-    };
-    if (mq.addEventListener) mq.addEventListener('change', onChange, { once: true });
-    else if (mq.addListener) mq.addListener(onChange);
-  }
-  watchPixelRatio();
-
+  // 按需调度：静止后不提交 GPU 帧，阻尼未收敛时继续下一帧。
   let frameCallback = null;
-  renderer.setAnimationLoop((time) => {
-    if (document.hidden) return;
-    controls.update();
-    if (frameCallback) frameCallback(time);
+  let frame = 0;
+  let disposed = false;
+  let width = 0, height = 0, pixelRatio = 0;
+  function invalidate() {
+    if (!disposed && !document.hidden && !frame) frame = requestAnimationFrame(draw);
+  }
+  function draw(time) {
+    frame = 0;
+    if (disposed || document.hidden) return;
+    const moving = controls.update();
     renderer.render(scene, camera);
-  });
+    if (frameCallback) frameCallback(time);
+    if (moving) invalidate();
+  }
+  function resize() {
+    const w = Math.round(container.clientWidth);
+    const h = Math.round(container.clientHeight);
+    if (w <= 0 || h <= 0) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, MAX_PIXEL_RATIO);
+    if (w !== width || h !== height || dpr !== pixelRatio) {
+      width = w; height = h; pixelRatio = dpr;
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      renderer.setPixelRatio(dpr);
+      renderer.setSize(w, h, false);
+    }
+    invalidate();
+  }
+  const observer = new ResizeObserver(resize);
+  observer.observe(container);
+  window.addEventListener('resize', resize);
+  window.visualViewport?.addEventListener('resize', resize);
+  let removeDprListener = () => {};
+  function watchPixelRatio() {
+    removeDprListener();
+    const mq = window.matchMedia('(resolution: ' + (window.devicePixelRatio || 1) + 'dppx)');
+    const change = () => { resize(); watchPixelRatio(); };
+    mq.addEventListener('change', change, { once: true });
+    removeDprListener = () => mq.removeEventListener('change', change);
+  }
+  const visibility = () => {
+    if (document.hidden) { cancelAnimationFrame(frame); frame = 0; }
+    else resize();
+  };
+  document.addEventListener('visibilitychange', visibility);
+  controls.addEventListener('change', invalidate);
+  const restored = () => resize();
+  renderer.domElement.addEventListener('webglcontextrestored', restored);
+  watchPixelRatio();
+  resize();
 
   return {
-    scene,
-    camera,
-    renderer,
-    controls,
-    slots,
-    resize,
-    render() {
-      renderer.render(scene, camera);
-    },
-    onFrame(cb) {
-      frameCallback = cb;
+    scene, camera, renderer, controls, slots, resize,
+    render() { renderer.render(scene, camera); invalidate(); },
+    onFrame(cb) { frameCallback = cb; },
+    dispose() {
+      disposed = true;
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+      removeDprListener();
+      window.removeEventListener('resize', resize);
+      window.visualViewport?.removeEventListener('resize', resize);
+      document.removeEventListener('visibilitychange', visibility);
+      renderer.domElement.removeEventListener('webglcontextrestored', restored);
+      controls.dispose();
+      scene.environment?.dispose();
+      renderer.dispose();
     }
   };
 }
