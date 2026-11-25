@@ -9,12 +9,32 @@ import * as THREE from 'three';
 
 const CM = 1;
 
+/**
+ * 材质统一走 FrontSide（默认值，这里显式写出来）：背面剔除是开着的，
+ * 盒子内壁不会被画，省一半填充率；透明件额外关掉 depthWrite，避免排序把内部件糊掉。
+ */
 function metal(color, { roughness = 0.5, metalness = 0.6, opacity = 1, transparent = false } = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness, metalness, transparent, opacity });
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness,
+    metalness,
+    transparent,
+    opacity,
+    side: THREE.FrontSide,
+    depthWrite: !transparent
+  });
 }
 
 function plastic(color, { roughness = 0.7, metalness = 0.1, opacity = 1, transparent = false } = {}) {
-  return new THREE.MeshStandardMaterial({ color, roughness, metalness, transparent, opacity });
+  return new THREE.MeshStandardMaterial({
+    color,
+    roughness,
+    metalness,
+    transparent,
+    opacity,
+    side: THREE.FrontSide,
+    depthWrite: !transparent
+  });
 }
 
 function box(w, h, d, material, x = 0, y = 0, z = 0) {
@@ -38,8 +58,8 @@ function cylinder(radius, height, material, x, y, z, axis = 'y') {
 function makeCase(part) {
   const g = new THREE.Group();
   const W = 24, H = 50, D = 48;
-  const shell = plastic(part.color, { opacity: 0.16, transparent: true, metalness: 0.4 });
-  const frame = metal(0x94a3b8, { opacity: 0.9 });
+  const shell = plastic(0xb9c2cc, { opacity: 0.07, transparent: true, metalness: 0.15 });
+  const frame = metal(0x7d8694, { opacity: 0.95, roughness: 0.5, metalness: 0.35 });
 
   g.add(box(W, 1.2, D, frame, 0, 0, 0));            // 底板
   g.add(box(W, 1.2, D, frame, 0, H, 0));            // 顶板

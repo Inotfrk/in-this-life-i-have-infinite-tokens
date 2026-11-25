@@ -13,16 +13,22 @@ import fs from 'node:fs/promises';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SMOKE = process.env.SMOKE === '1';
 
-// 无 GPU 的机器（CI / 容器）也能起窗口，否则 Chromium 会直接崩
-app.disableHardwareAcceleration();
-app.commandLine.appendSwitch('disable-gpu');
+// 默认走硬件加速；只有在无 GPU 的 CI / 容器里才用 PC_BUILDER_SOFTWARE=1 / SMOKE=1 退回软件渲染
+const SOFTWARE = process.env.PC_BUILDER_SOFTWARE === '1' || process.env.SMOKE === '1';
+if (SOFTWARE) {
+  app.disableHardwareAcceleration();
+  app.commandLine.appendSwitch('disable-gpu');
+} else {
+  app.commandLine.appendSwitch('ignore-gpu-blocklist');
+  if (process.platform === 'linux') app.commandLine.appendSwitch('ozone-platform-hint', 'auto');
+}
 
 async function createWindow() {
   const win = new BrowserWindow({
     width: 1440,
     height: 900,
     show: !SMOKE,
-    backgroundColor: '#070b12',
+    backgroundColor: '#0d0c0b',
     title: '3D 装机模拟器 · Demo',
     webPreferences: {
       contextIsolation: true,
