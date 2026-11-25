@@ -168,7 +168,7 @@ function makeCooler(part) {
   // 两组鳍片
   for (const x of [-3.6, 3.6]) {
     const finGeo = new THREE.BoxGeometry(0.18, 15.2, 12.4);
-    const finMat = metal(0xb45309, { roughness: 0.4, metalness: 0.8 });
+    const finMat = metal(0xb8b2a8, { roughness: 0.35, metalness: 0.85 });
     const fins = new THREE.InstancedMesh(finGeo, finMat, 26);
     const m = new THREE.Matrix4();
     for (let i = 0; i < 26; i += 1) {
@@ -186,9 +186,9 @@ function makeCooler(part) {
   }
   // 两把风扇（前后各一）
   for (const z of [-6.6, 6.6]) {
-    const fan = cylinder(6.4, 1.6, plastic(0x3f2a1a), 0, 8.2, z, 'z');
+    const fan = cylinder(6.4, 1.6, plastic(0x26262a), 0, 8.2, z, 'z');
     g.add(fan);
-    g.add(cylinder(1.6, 1.7, plastic(0x1f2937), 0, 8.2, z, 'z'));
+    g.add(cylinder(1.6, 1.7, plastic(0x9a958e), 0, 8.2, z, 'z'));
   }
   return g;
 }
