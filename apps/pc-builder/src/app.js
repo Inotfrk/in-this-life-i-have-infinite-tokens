@@ -10,6 +10,7 @@ import * as THREE from 'three';
 import { CATEGORIES, PARTS, VENDORS, partById } from './catalog.js';
 import { SLOTS, createScene } from './scene.js';
 import { makePart } from './models.js';
+import { disposeObject } from './resources.js';
 import { checkCompatibility } from './compat.js';
 import { scoreBuild } from './perf.js';
 
@@ -109,6 +110,7 @@ function showSlots(visible, onlyCategory = null) {
     ghost.material.opacity = allowed ? 0.05 : 0;
     ghost.children[0].material.opacity = allowed ? 0.28 : 0;
   }
+  world.render();
 }
 
 function highlight(categoryId) {
@@ -119,6 +121,7 @@ function highlight(categoryId) {
     ghost.children[0].material.opacity = active ? 0.95 : 0.2;
     ghost.children[0].material.color.set(active ? 0xe0a458 : 0xc9c9cf);
   }
+  world.render();
 }
 
 function pickSlot(event) {
@@ -139,7 +142,7 @@ function placePart(part) {
     return;
   }
   const existing = installed.get(part.category);
-  if (existing) world.scene.remove(existing.group);
+  if (existing) disposeObject(existing.group);
 
   const group = makePart(part);
   const slot = SLOTS[part.category];
@@ -156,7 +159,7 @@ function placePart(part) {
 function removeCategory(categoryId) {
   const entry = installed.get(categoryId);
   if (!entry) return;
-  world.scene.remove(entry.group);
+  disposeObject(entry.group);
   installed.delete(categoryId);
   if (categoryId === 'case') {
     // 机箱没了，里面的部件也没有落脚点
@@ -168,7 +171,7 @@ function removeCategory(categoryId) {
 }
 
 function clearAll() {
-  for (const key of [...installed.keys()]) world.scene.remove(installed.get(key).group);
+  for (const entry of installed.values()) disposeObject(entry.group);
   installed.clear();
   selectedCategory = null;
   hintEl.classList.remove('hidden');
@@ -393,7 +396,7 @@ function renderBom() {
 
 function drawSelection() {
   if (selectionBox) {
-    world.scene.remove(selectionBox);
+    disposeObject(selectionBox);
     selectionBox = null;
   }
   if (!selectedCategory || !installed.has(selectedCategory)) return;
