@@ -37,7 +37,23 @@
         <div class="hud-row"><span class="hud-key">对准</span><span id="hudAim">—</span></div>
         <div class="hud-tip">R 旋转 90° · 放歪就落在桌面/机箱底 · Esc 归位</div>
       </div>
+      <div class="tutorial" id="tutorial" hidden aria-live="polite">
+        <div class="tutorial-head">
+          <span class="tutorial-kicker">🎓 硅脂教程</span>
+          <span class="tutorial-progress" id="tutorialProgress">1 / 6</span>
+          <button class="tutorial-close" id="tutorialClose" title="关闭教程">✕</button>
+        </div>
+        <h4 id="tutorialTitle"></h4>
+        <p id="tutorialBody"></p>
+        <p class="tutorial-tip" id="tutorialTip"></p>
+        <div class="tutorial-dots" id="tutorialDots"></div>
+        <div class="tutorial-actions">
+          <button id="tutorialPrev">上一步</button>
+          <button id="tutorialNext" class="primary">下一步</button>
+        </div>
+      </div>
       <div class="toolbar">
+        <button id="btnTutorial" title="六步学会涂硅脂">🎓 硅脂教程</button>
         <button id="btnRotate" title="拖拽时旋转 90°（快捷键 R）">⟳ 旋转</button>
         <button id="btnView" title="恢复默认相机位置">↺ 重置视角</button>
         <button id="btnReset" title="移除所有已安装部件">清空配置</button>

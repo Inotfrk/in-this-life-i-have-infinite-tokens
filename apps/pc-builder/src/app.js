@@ -19,6 +19,7 @@ import { BOARD, BOARD_FEATURES, CASE, MOUNTS, PART_BOXES, mountPoint } from './l
 import { normDeg, orientationInfo, postCheck, seatAttempt, thermalReport } from './assembly.js';
 import { IDEAL_ML, PATTERNS, evaluatePaste, makePasteMesh, usablePaste } from './paste.js';
 import { createBody, settleAll, stepBody } from './physics.js';
+import { PASTE_TUTORIAL, firstUnfinished, stepStatus, tutorialProgress } from './tutorial.js';
 
 const viewport = document.getElementById('viewport');
 const partsEl = document.getElementById('parts');
@@ -31,6 +32,12 @@ const bomEl = document.getElementById('bomCard');
 const hintEl = document.getElementById('dropHint');
 const quickEl = document.getElementById('quickStats');
 const fpsEl = document.getElementById('fpsChip');
+const tutorialEl = document.getElementById('tutorial');
+const tutorialTitle = document.getElementById('tutorialTitle');
+const tutorialBody = document.getElementById('tutorialBody');
+const tutorialTip = document.getElementById('tutorialTip');
+const tutorialDots = document.getElementById('tutorialDots');
+const tutorialProgressEl = document.getElementById('tutorialProgress');
 const hudEl = document.getElementById('hud');
 const hudOri = document.getElementById('hudOri');
 const hudAim = document.getElementById('hudAim');
@@ -64,7 +71,8 @@ const state = {
   pasteAmount: IDEAL_ML,
   boot: null,
   anim: null,
-  grab: null
+  grab: null,
+  tutorial: { open: false, index: 0, highlighted: null }
 };
 
 const bounds = {
@@ -612,7 +620,7 @@ function renderPaste() {
   const hasCpu = installed.has('cpu');
   const paste = state.paste;
   const stats = paste ? `
-    <div class="paste-stats">
+    <div class="paste-stats" id="pasteStats">
       <div class="paste-stat"><b>${Math.round(paste.coverage * 100)}%</b><span>覆盖率</span></div>
       <div class="paste-stat"><b>${(paste.amount * 1000).toFixed(0)}</b><span>μl 用量</span></div>
       <div class="paste-stat"><b>+${paste.penaltyC.toFixed(1)}</b><span>°C 惩罚</span></div>
@@ -622,11 +630,12 @@ function renderPaste() {
 
   pasteEl.innerHTML = `
     <h3>硅脂</h3>
-    ${!hasCpu ? '<p class="muted">先装 CPU，才有顶盖可以涂。</p>' : `
-      <div class="paste-row">
+    ${!hasCpu ? `<p class="muted">先装 CPU，才有顶盖可以涂。</p>
+      <button class="tutorial-link" id="btnPasteHelp">🎓 先看看怎么装 CPU / 涂硅脂</button>` : `
+      <div class="paste-row" id="pastePatterns">
         ${PATTERNS.map((p) => `<button data-pattern="${p.id}" class="${state.pastePattern === p.id ? 'active' : ''}" title="${p.hint}">${p.label}</button>`).join('')}
       </div>
-      <div class="paste-slider">
+      <div class="paste-slider" id="pasteAmountRow">
         <span>用量</span>
         <input id="pasteAmount" type="range" min="2" max="30" step="1" value="${Math.round(state.pasteAmount * 100)}" />
         <span id="pasteAmountLabel">${(state.pasteAmount * 1000).toFixed(0)} μl</span>
@@ -636,22 +645,37 @@ function renderPaste() {
         <button id="btnWipe">擦干净</button>
       </div>
       ${stats}
+      <button class="tutorial-link" id="btnPasteHelp">🎓 六步学会涂硅脂</button>
     `}`;
 
   pasteEl.querySelectorAll('[data-pattern]').forEach((btn) => {
-    btn.onclick = () => { state.pastePattern = btn.dataset.pattern; renderPaste(); };
+    btn.onclick = () => {
+      state.pastePattern = btn.dataset.pattern;
+      state.tutorial.patternChosen = true;
+      refresh();
+    };
   });
   const slider = pasteEl.querySelector('#pasteAmount');
   if (slider) {
     slider.oninput = () => {
       state.pasteAmount = Number(slider.value) / 100;
+      state.tutorial.amountChosen = true;
       pasteEl.querySelector('#pasteAmountLabel').textContent = `${slider.value}0 μl`;
+      if (state.tutorial.open) renderTutorial();
     };
   }
   const btnPaste = pasteEl.querySelector('#btnPaste');
   if (btnPaste) btnPaste.onclick = () => applyPasteNow({ patternId: state.pastePattern, amount: state.pasteAmount });
   const btnWipe = pasteEl.querySelector('#btnWipe');
   if (btnWipe) btnWipe.onclick = wipePaste;
+  const btnHelp = pasteEl.querySelector('#btnPasteHelp');
+  if (btnHelp) btnHelp.onclick = () => openTutorial();
+
+  // 第一次装好 CPU 时自动把教程推到面前（看过一次就不再打扰）
+  if (hasCpu && !tutorialSeen() && !state.tutorial.open && !state.tutorial.autoShown) {
+    state.tutorial.autoShown = true;
+    openTutorial(0);
+  }
 }
 
 function bar(label, value) {
@@ -747,6 +771,7 @@ function refresh() {
   renderThermal();
   renderScore();
   renderBom();
+  renderTutorial();
   drawSelection();
   world.render();
 }
@@ -986,6 +1011,123 @@ world.onFrame((time) => {
   return active;
 });
 
+// ---------------------------------------------------------------- 硅脂教程
+
+/** 教程的检查点读的是真实装配状态 */
+function tutorialFacts() {
+  return {
+    hasCpu: installed.has('cpu'),
+    pastePattern: state.pastePattern,
+    patternChosen: Boolean(state.tutorial.patternChosen),
+    pasteAmount: state.pasteAmount,
+    amountChosen: Boolean(state.tutorial.amountChosen),
+    pasteApplied: Boolean(state.paste),
+    pastePressed: Boolean(state.paste?.pressed),
+    coolerMounted: installed.has('cooler'),
+    coverage: state.paste?.coverage ?? 0,
+    spill: state.paste?.spill ?? 0
+  };
+}
+
+const TUTORIAL_STORAGE_KEY = 'pcbuilder.pasteTutorialDone';
+
+function tutorialSeen() {
+  try {
+    return localStorage.getItem(TUTORIAL_STORAGE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function markTutorialSeen() {
+  try {
+    localStorage.setItem(TUTORIAL_STORAGE_KEY, '1');
+  } catch {
+    /* 隐私模式下 localStorage 可能不可用，忽略即可 */
+  }
+}
+
+function openTutorial(stepIndex = null) {
+  const facts = tutorialFacts();
+  state.tutorial.open = true;
+  state.tutorial.index = stepIndex ?? firstUnfinished(PASTE_TUTORIAL, facts);
+  state.tutorial.highlighted = null;
+  renderTutorial();
+}
+
+function closeTutorial(finished = false) {
+  state.tutorial.open = false;
+  clearTutorialHighlight();
+  tutorialEl.hidden = true;
+  if (finished) markTutorialSeen();
+}
+
+function gotoStep(index) {
+  const total = PASTE_TUTORIAL.length;
+  state.tutorial.index = Math.max(0, Math.min(total - 1, index));
+  state.tutorial.highlighted = null;
+  renderTutorial();
+}
+
+function clearTutorialHighlight() {
+  if (state.tutorial.target) state.tutorial.target.classList.remove('tutorial-target');
+  state.tutorial.target = null;
+}
+
+function renderTutorial() {
+  const t = state.tutorial;
+  if (!t.open) {
+    tutorialEl.hidden = true;
+    return;
+  }
+  tutorialEl.hidden = false;
+  const step = PASTE_TUTORIAL[t.index];
+  const facts = tutorialFacts();
+  const progress = tutorialProgress(PASTE_TUTORIAL, facts);
+  const status = stepStatus(step, facts);
+
+  tutorialTitle.textContent = step.title + (status === 'done' ? ' ✓' : '');
+  tutorialBody.textContent = step.body;
+  tutorialTip.textContent = status === 'done' ? '这一步已经完成，可以继续下一步。' : step.tip;
+  tutorialProgressEl.textContent = `${t.index + 1} / ${PASTE_TUTORIAL.length} · 完成 ${progress.completed}`;
+  tutorialDots.innerHTML = PASTE_TUTORIAL
+    .map((_, i) => `<i class="${i === t.index ? 'active' : ''}${progress.done[i] ? ' done' : ''}"></i>`)
+    .join('');
+
+  const prev = document.getElementById('tutorialPrev');
+  const next = document.getElementById('tutorialNext');
+  prev.disabled = t.index === 0;
+  next.textContent = t.index === PASTE_TUTORIAL.length - 1 ? '完成教程' : '下一步';
+  next.classList.toggle('primary', status === 'done' || t.index === PASTE_TUTORIAL.length - 1);
+
+  // 高亮目标控件（renderPaste 会重建节点，所以每次都重新套一次）
+  clearTutorialHighlight();
+  const target = step.target ? document.querySelector(step.target) : null;
+  if (target) {
+    target.classList.add('tutorial-target');
+    t.target = target;
+    if (t.highlighted !== step.id) {
+      t.highlighted = step.id;
+      target.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+}
+
+document.getElementById('btnTutorial').onclick = () => {
+  if (state.tutorial.open) closeTutorial();
+  else openTutorial();
+};
+document.getElementById('tutorialClose').onclick = () => closeTutorial();
+document.getElementById('tutorialPrev').onclick = () => gotoStep(state.tutorial.index - 1);
+document.getElementById('tutorialNext').onclick = () => {
+  if (state.tutorial.index >= PASTE_TUTORIAL.length - 1) {
+    closeTutorial(true);
+    toast('教程看完了，按上面的步骤涂就行');
+    return;
+  }
+  gotoStep(state.tutorial.index + 1);
+};
+
 // ---------------------------------------------------------------- 按钮
 
 document.getElementById('btnAuto').onclick = autoFill;
@@ -1019,6 +1161,12 @@ if (params.has('parts')) {
   }
   state.selected = null;
   refresh();
+}
+// ?tutorial=1 直接打开硅脂教程（截图 / 演示用）；?tutorial=3 打开第 4 步
+if (params.has('tutorial')) {
+  state.tutorial.autoShown = true;
+  const raw = params.get('tutorial');
+  openTutorial(raw === '1' || raw === '' ? 0 : Math.max(0, Number(raw) - 1) || 0);
 }
 if (params.has('cam')) {
   const [x, y, z, tx, ty, tz] = params.get('cam').split(',').map(Number);
@@ -1207,3 +1355,54 @@ function runFreePlacementTest() {
 if (new URLSearchParams(location.search).has('selftest')) {
   setTimeout(runFreePlacementTest, 600);
 }
+
+
+// 硅脂教程的自检：打开、高亮、步骤推进、完成后不再自动弹
+function runTutorialTest() {
+  const results = [];
+  const check = (name, ok, detail = '') => {
+    results.push({ name, ok });
+    console.log(`[selftest] ${ok ? 'ok  ' : 'FAIL'} ${name}${detail ? ' :: ' + detail : ''}`);
+  };
+  const byCategory = Object.fromEntries(PARTS.map((p) => [p.category, p]));
+
+  clearAll();
+  state.tutorial.autoShown = true;   // 先关掉自动弹出，自己控制
+  try { localStorage.removeItem('pcbuilder.pasteTutorialDone'); } catch { /* ignore */ }
+
+  openTutorial(0);
+  check('教程能打开', state.tutorial.open === true && tutorialEl.hidden === false);
+  check('当前步骤有高亮', Boolean(document.querySelector('.tutorial-target')));
+  check('第一步未完成时是 pending', stepStatus(PASTE_TUTORIAL[0], tutorialFacts()) === 'pending');
+
+  gotoStep(5);
+  check('能跳到最后一步', state.tutorial.index === 5);
+  gotoStep(0);
+
+  dragInstall(byCategory.case);
+  dragInstall(byCategory.motherboard);
+  dragInstall(byCategory.cpu);
+  check('装好 CPU 后第一步完成', stepStatus(PASTE_TUTORIAL[0], tutorialFacts()) === 'done');
+
+  state.tutorial.patternChosen = true;
+  state.tutorial.amountChosen = true;
+  state.pasteAmount = 0.1;
+  applyPasteNow({ patternId: 'dot', amount: 0.1 });
+  check('涂上以后第四步完成', stepStatus(PASTE_TUTORIAL[3], tutorialFacts()) === 'done');
+
+  dragInstall(byCategory.cooler);
+  const progress = tutorialProgress(PASTE_TUTORIAL, tutorialFacts());
+  check('六步全绿', progress.finished === true, `${progress.completed}/${progress.total}`);
+
+  closeTutorial(true);
+  check('关闭后不再显示', tutorialEl.hidden === true);
+  check('看过一次就记下来', tutorialSeen() === true);
+
+  const failed = results.filter((r) => !r.ok);
+  console.log(`[selftest] ${failed.length ? 'TUTORIAL_FAIL' : 'TUTORIAL_PASS'} (${results.length - failed.length}/${results.length})`);
+}
+
+if (new URLSearchParams(location.search).has('selftest')) {
+  setTimeout(runTutorialTest, 1100);
+}
+
